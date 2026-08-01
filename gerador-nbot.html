@@ -272,19 +272,18 @@
 
 <script>
     // ============================================================
-    // CONFIGURAÇÃO - GITHUB GIST COM PROXY CORS
+    // CONFIGURAÇÃO - GITHUB GIST (COM PROXY NETLIFY)
     // ============================================================
 
-    // Seus dados do Gist
     const GIST_ID = '363ae81662880bdaf8950670b30579e0';
     const GITHUB_TOKEN = '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';
     const FILENAME = 'nbot-data.json';
     
-    // URL direta do Gist (RAW)
+    // URL RAW (para leitura - SEM CORS)
     const RAW_URL = `https://gist.githubusercontent.com/raw/${GIST_ID}/${FILENAME}`;
     
-    // URL da API do GitHub
-    const API_URL = `https://api.github.com/gists/${GIST_ID}`;
+    // URL do proxy Netlify (para escrita)
+    const PROXY_URL = '/.netlify/functions/nbot';
 
     // ============================================================
     // VARIÁVEIS GLOBAIS
@@ -301,39 +300,16 @@
 
     async function fetchDataFromCloud() {
         try {
-            console.log('🔄 Buscando dados do Gist...');
+            console.log('🔄 Buscando dados do Gist (RAW)...');
             
-            // Tenta via URL RAW (funciona com CORS)
             const response = await fetch(RAW_URL);
             
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ Dados carregados via RAW:', data);
-                return data;
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
             }
             
-            // Fallback: tenta via API com token (pode ter CORS)
-            console.log('🔄 Tentando via API...');
-            const response2 = await fetch(API_URL, {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            
-            if (!response2.ok) {
-                throw new Error(`HTTP ${response2.status}`);
-            }
-            
-            const gist = await response2.json();
-            const content = gist.files[FILENAME]?.content;
-            
-            if (!content) {
-                throw new Error('Arquivo não encontrado');
-            }
-            
-            const data = JSON.parse(content);
-            console.log('✅ Dados carregados via API:', data);
+            const data = await response.json();
+            console.log('✅ Dados carregados:', data);
             return data;
             
         } catch (error) {
@@ -343,68 +319,23 @@
     }
 
     // ============================================================
-    // FUNÇÃO PARA SALVAR DADOS (via API com token)
+    // FUNÇÃO PARA SALVAR DADOS (via Proxy Netlify)
     // ============================================================
 
     async function saveDataToCloud(data) {
         try {
-            console.log('💾 Salvando dados no Gist...');
+            console.log('💾 Salvando dados via proxy Netlify...');
             
-            const response = await fetch(API_URL, {
-                method: 'PATCH',
+            const response = await fetch(PROXY_URL, {
+                method: 'POST',
                 headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    files: {
-                        [FILENAME]: {
-                            content: JSON.stringify(data, null, 2)
-                        }
-                    }
-                })
-            });
-            
-            if (!response.ok) {
-                // Se der CORS, tenta via proxy
-                if (response.status === 0 || response.status === 401) {
-                    console.warn('⚠️ CORS detectado, tentando via proxy...');
-                    return await saveViaProxy(data);
-                }
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            console.log('✅ Dados salvos com sucesso!');
-            return await response.json();
-            
-        } catch (error) {
-            console.error('❌ Erro ao salvar dados:', error);
-            throw error;
-        }
-    }
-
-    // ============================================================
-    // FUNÇÃO PARA SALVAR VIA PROXY (fallback)
-    // ============================================================
-
-    async function saveViaProxy(data) {
-        try {
-            // Usa um CORS proxy público (apenas para teste)
-            const PROXY_URL = 'https://corsproxy.io/?';
-            const response = await fetch(PROXY_URL + encodeURIComponent(API_URL), {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    files: {
-                        [FILENAME]: {
-                            content: JSON.stringify(data, null, 2)
-                        }
-                    }
+                    ano: data.ano,
+                    ultimoNumero: data.ultimoNumero,
+                    totalGerados: data.totalGerados,
+                    historico: data.historico || []
                 })
             });
             
@@ -412,11 +343,17 @@
                 throw new Error(`HTTP ${response.status}`);
             }
             
-            console.log('✅ Dados salvos via proxy!');
-            return await response.json();
+            const result = await response.json();
+            console.log('✅ Dados salvos:', result);
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Erro desconhecido');
+            }
+            
+            return result.data;
             
         } catch (error) {
-            console.error('❌ Erro no proxy:', error);
+            console.error('❌ Erro ao salvar dados:', error);
             throw error;
         }
     }
@@ -568,7 +505,7 @@
 
             saveLocalData(validatedData);
             updateUI(validatedData, false);
-            setStatus('online', '✅ Conectado');
+            setStatus('online', '✅ Conectado ao Gist');
 
             return true;
         } catch (error) {
@@ -654,9 +591,9 @@
 
             try {
                 await saveDataToCloud(data);
-                setStatus('online', '✅ Salvo!');
+                setStatus('online', '✅ Salvo no Gist!');
             } catch (cloudError) {
-                console.warn('Erro ao salvar na nuvem:', cloudError);
+                console.warn('Erro ao salvar no Gist:', cloudError);
                 setStatus('offline', '⚠️ Salvo localmente');
             }
 
