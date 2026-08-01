@@ -271,21 +271,16 @@
     </div>
 
 <script>
-    // ============================================================
-    // CONFIGURAÇÃO - SUPABASE (BANCO DE DADOS EM NUVEM)
-    // ============================================================
+   
 
-    // 🔑 Suas credenciais do Supabase
     const SUPABASE_URL = 'https://aqrqkhnteuijjdfzdrtv.supabase.co';  
     const SUPABASE_KEY = 'sb_publishable_bOj28NYItc1HZpaQoK5kxQ_gwCbU-rQ';  
 
-    // ============================================================
-    // FUNÇÃO PARA BUSCAR DADOS
-    // ============================================================
+
 
     async function fetchDataFromCloud() {
         try {
-            console.log('🔄 Buscando dados do Supabase...');
+            console.log('🔄 Buscando dados do Sistema MIRA...');
 
             const response = await fetch(`${SUPABASE_URL}/rest/v1/nbot?select=*`, {
                 headers: {
@@ -317,13 +312,11 @@
         }
     }
 
-    // ============================================================
-    // FUNÇÃO PARA SALVAR DADOS
-    // ============================================================
+
 
     async function saveDataToCloud(data) {
         try {
-            console.log('💾 Salvando dados no Supabase...');
+            console.log('💾 Salvando dados no Sistema MIRA...');
 
             const payload = {
                 ano: data.ano,
@@ -356,9 +349,7 @@
         }
     }
 
-    // ============================================================
-    // CONVERSÃO DE DADOS
-    // ============================================================
+  
 
     function convertToInternal(data) {
         return {
@@ -378,18 +369,14 @@
         };
     }
 
-    // ============================================================
-    // VARIÁVEIS GLOBAIS
-    // ============================================================
+ 
 
     let currentData = null;
     let pendingGeneration = false;
     let isOnline = false;
     let isGenerating = false;
 
-    // ============================================================
-    // FUNÇÕES DE NEGÓCIO
-    // ============================================================
+  
 
     function formatNbot(ano, numero) {
         return `${numero}/${ano}`;
@@ -503,7 +490,7 @@
 
     async function loadCurrentNumber() {
         try {
-            setStatus('syncing', 'Sincronizando com o Supabase...');
+            setStatus('syncing', 'Sincronizando com o Sistema MIRA...');
 
             const cloudData = await fetchDataFromCloud();
             const internalData = convertToInternal(cloudData);
@@ -514,7 +501,7 @@
 
             return true;
         } catch (error) {
-            console.warn('Falha ao conectar ao Supabase:', error);
+            console.warn('Falha ao conectar ao Sistema MIRA:', error);
 
             const localData = loadLocalData();
             if (localData) {
@@ -596,9 +583,9 @@
             try {
                 const externalData = convertToExternal(data);
                 await saveDataToCloud(externalData);
-                setStatus('online', '✅ Salvo no Supabase!');
+                setStatus('online', '✅ Salvo no Sistema MIRA!');
             } catch (cloudError) {
-                console.warn('Erro ao salvar no Supabase:', cloudError);
+                console.warn('Erro ao salvar no Sistema MIRA:', cloudError);
                 setStatus('offline', '⚠️ Salvo localmente');
             }
 
