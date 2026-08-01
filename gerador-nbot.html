@@ -270,12 +270,11 @@
         </div>
     </div>
 
-  <script>
+ <script>
     // ============================================================
-    // CONFIGURAÇÃO - SERVERLESS PROXY (FUNCIONA 100%)
+    // CONFIGURAÇÃO - SERVERLESS PROXY
     // ============================================================
 
-    // URL da função serverless no Netlify
     const FUNCTIONS_URL = '/.netlify/functions/nbot';
 
     // ============================================================
@@ -288,7 +287,7 @@
     let isGenerating = false;
 
     // ============================================================
-    // FUNÇÕES DE COMUNICAÇÃO (VIA PROXY SERVERLESS)
+    // FUNÇÕES DE COMUNICAÇÃO
     // ============================================================
 
     async function fetchDataFromCloud() {
@@ -297,14 +296,10 @@
 
             const response = await fetch(FUNCTIONS_URL, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('❌ Erro do serverless:', errorText);
                 throw new Error(`HTTP ${response.status}`);
             }
 
@@ -328,9 +323,7 @@
 
             const response = await fetch(FUNCTIONS_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ano: data.ano,
                     ultimoNumero: data.ultimoNumero,
@@ -340,8 +333,6 @@
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('❌ Erro do serverless:', errorText);
                 throw new Error(`HTTP ${response.status}`);
             }
 
@@ -499,14 +490,14 @@
 
     async function loadCurrentNumber() {
         try {
-            setStatus('syncing', 'Sincronizando com o Sistema COI...');
+            setStatus('syncing', 'Sincronizando...');
 
             const cloudData = await fetchDataFromCloud();
             const validatedData = validateAndFixData(cloudData);
 
             saveLocalData(validatedData);
             updateUI(validatedData, false);
-            setStatus('online', '✅ Conectado ao Sistema COI');
+            setStatus('online', '✅ Conectado');
 
             return true;
         } catch (error) {
@@ -523,7 +514,7 @@
             const defaultData = getDefaultData();
             updateUI(defaultData, false);
             saveLocalData(defaultData);
-            setStatus('offline', '⚠️ Offline - novo arquivo local');
+            setStatus('offline', '⚠️ Offline - novo arquivo');
             return false;
         }
     }
@@ -544,7 +535,7 @@
             console.log('⚠️ Carregando dados...');
             await loadCurrentNumber();
             if (!currentData) {
-                alert('❌ Erro ao carregar dados. Tente novamente.');
+                alert('❌ Erro ao carregar dados.');
                 return;
             }
         }
@@ -588,13 +579,11 @@
                 data.historico = data.historico.slice(-1000);
             }
 
-            console.log('📦 Salvando:', data);
-
             try {
                 await saveDataToCloud(data);
-                setStatus('online', '✅ Número salvo!');
+                setStatus('online', '✅ Salvo!');
             } catch (cloudError) {
-                console.warn('Erro ao salvar:', cloudError);
+                console.warn('Erro ao salvar na nuvem:', cloudError);
                 setStatus('offline', '⚠️ Salvo localmente');
             }
 
@@ -605,7 +594,7 @@
 
         } catch (error) {
             console.error('❌ Erro:', error);
-            setError('Erro ao gerar número');
+            setError('Erro ao gerar');
         } finally {
             isGenerating = false;
             const btn = document.getElementById('generateBtn');
@@ -614,15 +603,17 @@
         }
     }
 
+    // ============================================================
+    // MODAL DE CONFIRMAÇÃO
+    // ============================================================
+
     function showConfirmation() {
-        const modal = document.getElementById('confirmationModal');
-        modal.style.display = 'flex';
+        document.getElementById('confirmationModal').style.display = 'flex';
         pendingGeneration = true;
     }
 
     function hideConfirmation() {
-        const modal = document.getElementById('confirmationModal');
-        modal.style.display = 'none';
+        document.getElementById('confirmationModal').style.display = 'none';
         pendingGeneration = false;
     }
 
@@ -651,6 +642,7 @@
         });
 
         console.log('✅ Sistema inicializado!');
+        console.log('📊 Último número:', currentData?.ultimoNumero || 'Nenhum');
     });
 
     console.log('📄 Script carregado!');
