@@ -293,7 +293,7 @@
 
     async function fetchDataFromCloud() {
         try {
-            console.log('🔄 Buscando dados do JSONSilo...');
+            console.log('🔄 Buscando dados do Sistema MIRA...');
             
             const response = await fetch(JSONSILO_URL);
             
@@ -312,7 +312,7 @@
 
     async function saveDataToCloud(data) {
         try {
-            console.log('💾 Salvando dados no JSONSilo...');
+            console.log('💾 Salvando dados na nuvem MIRA...');
             
             const response = await fetch(JSONSILO_URL, {
                 method: 'PUT',
@@ -481,11 +481,11 @@
 
             saveLocalData(validatedData);
             updateUI(validatedData, false);
-            setStatus('online', 'Conectado ao JSONSilo - dados sincronizados');
+            setStatus('online', 'Conectado ao Sistema MIRA - dados sincronizados');
 
             return true;
         } catch (error) {
-            console.warn('Falha ao conectar ao JSONSilo:', error);
+            console.warn('Falha ao conectar ao Sistema MIRA:', error);
 
             const localData = loadLocalData();
             if (localData) {
@@ -573,9 +573,9 @@
 
             try {
                 await saveDataToCloud(data);
-                setStatus('online', 'Número salvo no JSONSilo');
+                setStatus('online', 'Número salvo na nuvem MIRA');
             } catch (cloudError) {
-                console.warn('Erro ao salvar no JSONSilo:', cloudError);
+                console.warn('Erro ao salvar no Sistema MIRA:', cloudError);
                 setStatus('offline', 'Offline - salvo apenas localmente');
             }
 
