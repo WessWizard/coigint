@@ -270,439 +270,410 @@
         </div>
     </div>
 
-    <script>
-        // ============================================================
-        // CONFIGURAÇÃO - SERVERLESS PROXY (SEM CORS, SEM TOKEN EXPOSTO)
-        // ============================================================
+   <script>
+    // ============================================================
+    // CONFIGURAÇÃO - JSONSilo (100% FUNCIONAL)
+    // ============================================================
 
-        // URL da função serverless no Netlify
-        // O token está NO SERVIDOR (arquivo .netlify/functions/nbot.js)
-        const FUNCTIONS_URL = '/.netlify/functions/nbot';
+    // 🔗 URL do seu arquivo no JSONSilo
+    const JSONSILO_URL = 'https://api.jsonsilo.com/public/e1d33a99-f841-4821-9a8d-341808bc06ea';
 
-        // ============================================================
-        // VARIÁVEIS GLOBAIS
-        // ============================================================
+    // ============================================================
+    // VARIÁVEIS GLOBAIS
+    // ============================================================
 
-        let currentData = null;
-        let pendingGeneration = false;
-        let isOnline = false;
-        let isGenerating = false;
+    let currentData = null;
+    let pendingGeneration = false;
+    let isOnline = false;
+    let isGenerating = false;
 
-        // ============================================================
-        // FUNÇÕES DE COMUNICAÇÃO (VIA PROXY SERVERLESS)
-        // ============================================================
+    // ============================================================
+    // FUNÇÕES DE COMUNICAÇÃO
+    // ============================================================
 
-        async function fetchDataFromCloud() {
-            try {
-                console.log('🔄 Buscando dados via serverless...');
-                console.log('📡 URL:', FUNCTIONS_URL);
-
-                const response = await fetch(FUNCTIONS_URL, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Erro do serverless:', errorText);
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                console.log('✅ Dados carregados:', result);
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Erro desconhecido');
-                }
-
-                return result.data;
-            } catch (error) {
-                console.error('❌ Erro ao buscar dados:', error);
-                throw error;
+    async function fetchDataFromCloud() {
+        try {
+            console.log('🔄 Buscando dados do JSONSilo...');
+            
+            const response = await fetch(JSONSILO_URL);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+            
+            const data = await response.json();
+            console.log('✅ Dados carregados:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Erro ao buscar dados:', error);
+            throw error;
         }
+    }
 
-        async function saveDataToCloud(data) {
-            try {
-                console.log('💾 Salvando dados via serverless...');
-                console.log('📡 URL:', FUNCTIONS_URL);
-
-                const response = await fetch(FUNCTIONS_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ano: data.ano,
-                        ultimoNumero: data.ultimoNumero,
-                        totalGerados: data.totalGerados,
-                        historico: data.historico || []
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Erro do serverless:', errorText);
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                console.log('✅ Dados salvos:', result);
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Erro desconhecido');
-                }
-
-                return result.data;
-            } catch (error) {
-                console.error('❌ Erro ao salvar dados:', error);
-                throw error;
+    async function saveDataToCloud(data) {
+        try {
+            console.log('💾 Salvando dados no JSONSilo...');
+            
+            const response = await fetch(JSONSILO_URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+            
+            console.log('✅ Dados salvos com sucesso!');
+            return await response.json();
+        } catch (error) {
+            console.error('❌ Erro ao salvar dados:', error);
+            throw error;
+        }
+    }
+
+    // ============================================================
+    // FUNÇÕES DE NEGÓCIO
+    // ============================================================
+
+    function formatNbot(ano, numero) {
+        return `${numero}/${ano}`;
+    }
+
+    function getDefaultData() {
+        const anoAtual = new Date().getFullYear();
+        return {
+            ano: anoAtual,
+            ultimoNumero: 760,
+            totalGerados: 760,
+            historico: []
+        };
+    }
+
+    function validateAndFixData(data) {
+        const anoAtual = new Date().getFullYear();
+
+        if (!data || typeof data !== 'object') {
+            return getDefaultData();
         }
 
-        // ============================================================
-        // FUNÇÕES DE NEGÓCIO
-        // ============================================================
-
-        function formatNbot(ano, numero) {
-            return `${numero}/${ano}`;
-        }
-
-        function getDefaultData() {
-            const anoAtual = new Date().getFullYear();
+        if (data.ano !== anoAtual) {
             return {
                 ano: anoAtual,
-                ultimoNumero: 732,
-                totalGerados: 732,
-                historico: []
+                ultimoNumero: 0,
+                totalGerados: 0,
+                historico: data.historico || []
             };
         }
 
-        function validateAndFixData(data) {
-            const anoAtual = new Date().getFullYear();
+        if (typeof data.ultimoNumero !== 'number') data.ultimoNumero = 0;
+        if (typeof data.totalGerados !== 'number') data.totalGerados = 0;
+        if (!Array.isArray(data.historico)) data.historico = [];
 
-            if (!data || typeof data !== 'object') {
-                return getDefaultData();
-            }
+        return data;
+    }
 
-            if (data.ano !== anoAtual) {
-                return {
-                    ano: anoAtual,
-                    ultimoNumero: 0,
-                    totalGerados: 0,
-                    historico: data.historico || []
-                };
-            }
+    // ============================================================
+    // FALLBACK: localStorage
+    // ============================================================
 
-            if (typeof data.ultimoNumero !== 'number') data.ultimoNumero = 0;
-            if (typeof data.totalGerados !== 'number') data.totalGerados = 0;
-            if (!Array.isArray(data.historico)) data.historico = [];
+    const LOCAL_STORAGE_KEY = 'nbot_data_jsonsilo_fallback';
 
-            return data;
+    function loadLocalData() {
+        try {
+            const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (!stored) return null;
+            return JSON.parse(stored);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function saveLocalData(data) {
+        try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('Erro ao salvar local:', e);
+        }
+    }
+
+    // ============================================================
+    // FUNÇÕES DE UI
+    // ============================================================
+
+    function updateUI(data, showNumber = false) {
+        if (!data) {
+            console.error('❌ updateUI: dados inválidos');
+            return;
         }
 
-        // ============================================================
-        // FALLBACK: localStorage
-        // ============================================================
+        const display = document.getElementById('nbotNumber');
 
-        const LOCAL_STORAGE_KEY = 'nbot_data_serverless_fallback';
-
-        function loadLocalData() {
-            try {
-                const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-                if (!stored) return null;
-                return JSON.parse(stored);
-            } catch (e) {
-                return null;
-            }
+        if (showNumber && data.ultimoNumero > 0) {
+            const nbot = formatNbot(data.ano, data.ultimoNumero);
+            display.textContent = nbot;
+            display.classList.remove('pop');
+            void display.offsetWidth;
+            display.classList.add('pop');
+        } else {
+            display.textContent = '---';
+            display.classList.remove('pop');
         }
 
-        function saveLocalData(data) {
-            try {
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-            } catch (e) {
-                console.error('Erro ao salvar local:', e);
+        const ultimoNbot = data.ultimoNumero > 0
+            ? formatNbot(data.ano, data.ultimoNumero)
+            : '---';
+
+        document.getElementById('lastNumber').textContent = ultimoNbot;
+        document.getElementById('totalCount').textContent = data.totalGerados || 0;
+        document.getElementById('currentYear').textContent = data.ano || '----';
+
+        currentData = data;
+
+        const btn = document.getElementById('generateBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
+    }
+
+    function setStatus(status, message) {
+        const statusBar = document.getElementById('statusBar');
+        statusBar.className = `status-bar ${status}`;
+
+        const icons = {
+            'online': '<i class="fas fa-check-circle"></i>',
+            'offline': '<i class="fas fa-exclamation-circle"></i>',
+            'syncing': '<i class="fas fa-spinner fa-spin"></i>'
+        };
+
+        statusBar.innerHTML = `${icons[status] || ''} ${message || ''}`;
+        isOnline = (status === 'online');
+    }
+
+    function setLoading() {
+        const btn = document.getElementById('generateBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+    }
+
+    function setError(message) {
+        const btn = document.getElementById('generateBtn');
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+        setTimeout(() => {
+            if (!btn.disabled) {
+                btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
             }
+        }, 3000);
+    }
+
+    // ============================================================
+    // FUNÇÃO PRINCIPAL - CARREGAR DADOS
+    // ============================================================
+
+    async function loadCurrentNumber() {
+        try {
+            setStatus('syncing', 'Sincronizando com a nuvem...');
+
+            const cloudData = await fetchDataFromCloud();
+            const validatedData = validateAndFixData(cloudData);
+
+            saveLocalData(validatedData);
+            updateUI(validatedData, false);
+            setStatus('online', 'Conectado ao JSONSilo - dados sincronizados');
+
+            return true;
+        } catch (error) {
+            console.warn('Falha ao conectar ao JSONSilo:', error);
+
+            const localData = loadLocalData();
+            if (localData) {
+                const validatedData = validateAndFixData(localData);
+                updateUI(validatedData, false);
+                setStatus('offline', 'Offline - usando dados locais');
+                return true;
+            }
+
+            const defaultData = getDefaultData();
+            updateUI(defaultData, false);
+            saveLocalData(defaultData);
+            setStatus('offline', 'Offline - novo arquivo criado localmente');
+            return false;
+        }
+    }
+
+    // ============================================================
+    // FUNÇÃO PRINCIPAL - GERAR NÚMERO
+    // ============================================================
+
+    async function handleGenerate() {
+        console.log('🖱️ Botão clicado!');
+
+        if (isGenerating) {
+            console.log('⏳ Já está gerando, aguarde...');
+            return;
         }
 
-        // ============================================================
-        // FUNÇÕES DE UI
-        // ============================================================
-
-        function updateUI(data, showNumber = false) {
-            if (!data) {
-                console.error('❌ updateUI: dados inválidos');
+        if (!currentData) {
+            console.log('⚠️ Dados não carregados, carregando...');
+            await loadCurrentNumber();
+            if (!currentData) {
+                alert('❌ Erro ao carregar dados. Tente novamente.');
                 return;
             }
+        }
 
-            const display = document.getElementById('nbotNumber');
+        if (currentData.ultimoNumero === 0) {
+            console.log('📝 Primeiro número, gerando sem confirmação...');
+            await doGenerate();
+            return;
+        }
 
-            if (showNumber && data.ultimoNumero > 0) {
-                const nbot = formatNbot(data.ano, data.ultimoNumero);
-                display.textContent = nbot;
-                display.classList.remove('pop');
-                void display.offsetWidth;
-                display.classList.add('pop');
-            } else {
-                display.textContent = '---';
-                display.classList.remove('pop');
+        console.log('❓ Pedindo confirmação...');
+        showConfirmation();
+    }
+
+    async function doGenerate() {
+        if (isGenerating) {
+            console.log('⏳ Já está gerando...');
+            return;
+        }
+
+        isGenerating = true;
+        console.log('🚀 Iniciando geração...');
+        setLoading();
+
+        try {
+            const anoAtual = new Date().getFullYear();
+            let data = currentData || getDefaultData();
+
+            if (data.ano !== anoAtual) {
+                console.log('📅 Reiniciando ano...');
+                data.ano = anoAtual;
+                data.ultimoNumero = 0;
+                data.totalGerados = 0;
             }
 
-            const ultimoNbot = data.ultimoNumero > 0
-                ? formatNbot(data.ano, data.ultimoNumero)
-                : '---';
+            data.ultimoNumero += 1;
+            data.totalGerados += 1;
 
-            document.getElementById('lastNumber').textContent = ultimoNbot;
-            document.getElementById('totalCount').textContent = data.totalGerados || 0;
-            document.getElementById('currentYear').textContent = data.ano || '----';
+            if (!data.historico) data.historico = [];
+            data.historico.push({
+                numero: formatNbot(data.ano, data.ultimoNumero),
+                data: new Date().toISOString(),
+                sequencial: data.ultimoNumero
+            });
 
-            currentData = data;
+            if (data.historico.length > 1000) {
+                data.historico = data.historico.slice(-1000);
+            }
 
+            console.log('📦 Dados a salvar:', data);
+
+            try {
+                await saveDataToCloud(data);
+                setStatus('online', 'Número salvo no JSONSilo');
+            } catch (cloudError) {
+                console.warn('Erro ao salvar no JSONSilo:', cloudError);
+                setStatus('offline', 'Offline - salvo apenas localmente');
+            }
+
+            saveLocalData(data);
+            updateUI(data, true);
+
+            console.log('✅ Número gerado com sucesso!');
+
+        } catch (error) {
+            console.error('❌ Erro ao gerar número:', error);
+            setError('Erro ao gerar número');
+        } finally {
+            isGenerating = false;
             const btn = document.getElementById('generateBtn');
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
         }
+    }
 
-        function setStatus(status, message) {
-            const statusBar = document.getElementById('statusBar');
-            statusBar.className = `status-bar ${status}`;
+    // ============================================================
+    // MODAL DE CONFIRMAÇÃO
+    // ============================================================
 
-            const icons = {
-                'online': '<i class="fas fa-check-circle"></i>',
-                'offline': '<i class="fas fa-exclamation-circle"></i>',
-                'syncing': '<i class="fas fa-spinner fa-spin"></i>'
-            };
+    function showConfirmation() {
+        const modal = document.getElementById('confirmationModal');
+        modal.style.display = 'flex';
+        pendingGeneration = true;
+    }
 
-            statusBar.innerHTML = `${icons[status] || ''} ${message || ''}`;
-            isOnline = (status === 'online');
+    function hideConfirmation() {
+        const modal = document.getElementById('confirmationModal');
+        modal.style.display = 'none';
+        pendingGeneration = false;
+    }
+
+    // ============================================================
+    // INICIALIZAÇÃO
+    // ============================================================
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log('🚀 Página carregada, inicializando...');
+
+        await loadCurrentNumber();
+
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            console.log('✅ Botão encontrado, adicionando evento...');
+            generateBtn.addEventListener('click', function(e) {
+                console.log('🖱️ Evento de clique disparado!');
+                handleGenerate();
+            });
+        } else {
+            console.error('❌ Botão não encontrado!');
         }
 
-        function setLoading() {
-            const btn = document.getElementById('generateBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
-        }
-
-        function setError(message) {
-            const btn = document.getElementById('generateBtn');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-            setTimeout(() => {
-                if (!btn.disabled) {
-                    btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
-                }
-            }, 3000);
-        }
-
-        // ============================================================
-        // FUNÇÃO PRINCIPAL - CARREGAR DADOS
-        // ============================================================
-
-        async function loadCurrentNumber() {
-            try {
-                setStatus('syncing', 'Sincronizando com o Sistema COI...');
-
-                const cloudData = await fetchDataFromCloud();
-                const validatedData = validateAndFixData(cloudData);
-
-                saveLocalData(validatedData);
-                updateUI(validatedData, false);
-                setStatus('online', 'Conectado ao Sistema COI - dados sincronizados');
-
-                return true;
-            } catch (error) {
-                console.warn('Falha ao conectar ao Sistema COI:', error);
-
-                const localData = loadLocalData();
-                if (localData) {
-                    const validatedData = validateAndFixData(localData);
-                    updateUI(validatedData, false);
-                    setStatus('offline', 'Offline - usando dados locais');
-                    return true;
-                }
-
-                const defaultData = getDefaultData();
-                updateUI(defaultData, false);
-                saveLocalData(defaultData);
-                setStatus('offline', 'Offline - novo arquivo criado localmente');
-                return false;
-            }
-        }
-
-        // ============================================================
-        // FUNÇÃO PRINCIPAL - GERAR NÚMERO
-        // ============================================================
-
-        async function handleGenerate() {
-            console.log('🖱️ Botão clicado!');
-
-            if (isGenerating) {
-                console.log('⏳ Já está gerando, aguarde...');
-                return;
-            }
-
-            if (!currentData) {
-                console.log('⚠️ Dados não carregados, carregando...');
-                await loadCurrentNumber();
-                if (!currentData) {
-                    alert('❌ Erro ao carregar dados. Tente novamente.');
-                    return;
-                }
-            }
-
-            if (currentData.ultimoNumero === 0) {
-                console.log('📝 Primeiro número, gerando sem confirmação...');
+        const confirmBtn = document.getElementById('confirmGenerate');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', async function() {
+                console.log('✅ Confirmação recebida');
+                hideConfirmation();
                 await doGenerate();
-                return;
-            }
-
-            console.log('❓ Pedindo confirmação...');
-            showConfirmation();
+            });
         }
 
-        async function doGenerate() {
-            if (isGenerating) {
-                console.log('⏳ Já está gerando...');
-                return;
-            }
-
-            isGenerating = true;
-            console.log('🚀 Iniciando geração...');
-            setLoading();
-
-            try {
-                const anoAtual = new Date().getFullYear();
-                let data = currentData || getDefaultData();
-
-                if (data.ano !== anoAtual) {
-                    console.log('📅 Reiniciando ano...');
-                    data.ano = anoAtual;
-                    data.ultimoNumero = 0;
-                    data.totalGerados = 0;
-                }
-
-                data.ultimoNumero += 1;
-                data.totalGerados += 1;
-
-                if (!data.historico) data.historico = [];
-                data.historico.push({
-                    numero: formatNbot(data.ano, data.ultimoNumero),
-                    data: new Date().toISOString(),
-                    sequencial: data.ultimoNumero
-                });
-
-                if (data.historico.length > 1000) {
-                    data.historico = data.historico.slice(-1000);
-                }
-
-                console.log('📦 Dados a salvar:', data);
-
-                try {
-                    await saveDataToCloud(data);
-                    setStatus('online', 'Número salvo no Sistema COI');
-                } catch (cloudError) {
-                    console.warn('Erro ao salvar no Sistema COI:', cloudError);
-                    setStatus('offline', 'Offline - salvo apenas localmente');
-                }
-
-                saveLocalData(data);
-                updateUI(data, true);
-
-                console.log('✅ Número gerado com sucesso!');
-
-            } catch (error) {
-                console.error('❌ Erro ao gerar número:', error);
-                setError('Erro ao gerar número');
-            } finally {
-                isGenerating = false;
-                const btn = document.getElementById('generateBtn');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
-            }
+        const cancelBtn = document.getElementById('cancelGenerate');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                console.log('❌ Cancelado pelo usuário');
+                hideConfirmation();
+            });
         }
 
-        // ============================================================
-        // MODAL DE CONFIRMAÇÃO
-        // ============================================================
-
-        function showConfirmation() {
-            const modal = document.getElementById('confirmationModal');
-            modal.style.display = 'flex';
-            pendingGeneration = true;
-        }
-
-        function hideConfirmation() {
-            const modal = document.getElementById('confirmationModal');
-            modal.style.display = 'none';
-            pendingGeneration = false;
-        }
-
-        // ============================================================
-        // INICIALIZAÇÃO
-        // ============================================================
-
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Página carregada, inicializando...');
-
-            await loadCurrentNumber();
-
-            const generateBtn = document.getElementById('generateBtn');
-            if (generateBtn) {
-                console.log('✅ Botão encontrado, adicionando evento...');
-                generateBtn.addEventListener('click', function(e) {
-                    console.log('🖱️ Evento de clique disparado!');
-                    handleGenerate();
-                });
-            } else {
-                console.error('❌ Botão não encontrado!');
-            }
-
-            const confirmBtn = document.getElementById('confirmGenerate');
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', async function() {
-                    console.log('✅ Confirmação recebida');
-                    hideConfirmation();
-                    await doGenerate();
-                });
-            }
-
-            const cancelBtn = document.getElementById('cancelGenerate');
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', function() {
-                    console.log('❌ Cancelado pelo usuário');
-                    hideConfirmation();
-                });
-            }
-
-            const modal = document.getElementById('confirmationModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        hideConfirmation();
-                    }
-                });
-            }
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && pendingGeneration) {
+        const modal = document.getElementById('confirmationModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
                     hideConfirmation();
                 }
             });
+        }
 
-            console.log('✅ Sistema inicializado com sucesso!');
-
-            // Reconexão automática a cada 2 minutos
-            setInterval(async () => {
-                if (!isOnline) {
-                    console.log('🔄 Tentando reconectar...');
-                    await loadCurrentNumber();
-                }
-            }, 120000);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && pendingGeneration) {
+                hideConfirmation();
+            }
         });
 
-        console.log('📄 Script carregado!');
-    </script>
+        console.log('✅ Sistema inicializado com sucesso!');
+
+        setInterval(async () => {
+            if (!isOnline) {
+                console.log('🔄 Tentando reconectar...');
+                await loadCurrentNumber();
+            }
+        }, 120000);
+    });
+
+    console.log('📄 Script carregado!');
+</script>
 </body>
 </html>
