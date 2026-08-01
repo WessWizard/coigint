@@ -270,12 +270,21 @@
         </div>
     </div>
 
- <script>
+<script>
     // ============================================================
-    // CONFIGURAÇÃO - SERVERLESS PROXY
+    // CONFIGURAÇÃO - GITHUB GIST COM PROXY CORS
     // ============================================================
 
-    const FUNCTIONS_URL = '/.netlify/functions/nbot';
+    // Seus dados do Gist
+    const GIST_ID = '363ae81662880bdaf8950670b30579e0';
+    const GITHUB_TOKEN = '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';
+    const FILENAME = 'nbot-data.json';
+    
+    // URL direta do Gist (RAW)
+    const RAW_URL = `https://gist.githubusercontent.com/raw/${GIST_ID}/${FILENAME}`;
+    
+    // URL da API do GitHub
+    const API_URL = `https://api.github.com/gists/${GIST_ID}`;
 
     // ============================================================
     // VARIÁVEIS GLOBAIS
@@ -287,63 +296,88 @@
     let isGenerating = false;
 
     // ============================================================
-    // FUNÇÕES DE COMUNICAÇÃO
+    // FUNÇÃO PARA BUSCAR DADOS (via RAW - SEM CORS)
     // ============================================================
 
     async function fetchDataFromCloud() {
         try {
-            console.log('🔄 Buscando dados via serverless...');
-
-            const response = await fetch(FUNCTIONS_URL, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+            console.log('🔄 Buscando dados do Gist...');
+            
+            // Tenta via URL RAW (funciona com CORS)
+            const response = await fetch(RAW_URL);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Dados carregados via RAW:', data);
+                return data;
+            }
+            
+            // Fallback: tenta via API com token (pode ter CORS)
+            console.log('🔄 Tentando via API...');
+            const response2 = await fetch(API_URL, {
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+            
+            if (!response2.ok) {
+                throw new Error(`HTTP ${response2.status}`);
             }
-
-            const result = await response.json();
-            console.log('✅ Dados carregados:', result);
-
-            if (!result.success) {
-                throw new Error(result.error || 'Erro desconhecido');
+            
+            const gist = await response2.json();
+            const content = gist.files[FILENAME]?.content;
+            
+            if (!content) {
+                throw new Error('Arquivo não encontrado');
             }
-
-            return result.data;
+            
+            const data = JSON.parse(content);
+            console.log('✅ Dados carregados via API:', data);
+            return data;
+            
         } catch (error) {
             console.error('❌ Erro ao buscar dados:', error);
             throw error;
         }
     }
 
+    // ============================================================
+    // FUNÇÃO PARA SALVAR DADOS (via API com token)
+    // ============================================================
+
     async function saveDataToCloud(data) {
         try {
-            console.log('💾 Salvando dados via serverless...');
-
-            const response = await fetch(FUNCTIONS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            console.log('💾 Salvando dados no Gist...');
+            
+            const response = await fetch(API_URL, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
-                    ano: data.ano,
-                    ultimoNumero: data.ultimoNumero,
-                    totalGerados: data.totalGerados,
-                    historico: data.historico || []
+                    files: {
+                        [FILENAME]: {
+                            content: JSON.stringify(data, null, 2)
+                        }
+                    }
                 })
             });
-
+            
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                // Se der CORS, tenta via proxy
+                if (response.status === 0 || response.status === 401) {
+                    console.warn('⚠️ CORS detectado, tentando via proxy...');
+                    return await saveViaProxy(data);
+                }
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-
-            const result = await response.json();
-            console.log('✅ Dados salvos:', result);
-
-            if (!result.success) {
-                throw new Error(result.error || 'Erro desconhecido');
-            }
-
-            return result.data;
+            
+            console.log('✅ Dados salvos com sucesso!');
+            return await response.json();
+            
         } catch (error) {
             console.error('❌ Erro ao salvar dados:', error);
             throw error;
@@ -351,7 +385,44 @@
     }
 
     // ============================================================
-    // FUNÇÕES DE NEGÓCIO
+    // FUNÇÃO PARA SALVAR VIA PROXY (fallback)
+    // ============================================================
+
+    async function saveViaProxy(data) {
+        try {
+            // Usa um CORS proxy público (apenas para teste)
+            const PROXY_URL = 'https://corsproxy.io/?';
+            const response = await fetch(PROXY_URL + encodeURIComponent(API_URL), {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    files: {
+                        [FILENAME]: {
+                            content: JSON.stringify(data, null, 2)
+                        }
+                    }
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            console.log('✅ Dados salvos via proxy!');
+            return await response.json();
+            
+        } catch (error) {
+            console.error('❌ Erro no proxy:', error);
+            throw error;
+        }
+    }
+
+    // ============================================================
+    // FUNÇÕES DE NEGÓCIO (MANTIDAS)
     // ============================================================
 
     function formatNbot(ano, numero) {
@@ -395,7 +466,7 @@
     // FALLBACK: localStorage
     // ============================================================
 
-    const LOCAL_STORAGE_KEY = 'nbot_data_serverless_fallback';
+    const LOCAL_STORAGE_KEY = 'nbot_data_fallback';
 
     function loadLocalData() {
         try {
@@ -578,6 +649,8 @@
             if (data.historico.length > 1000) {
                 data.historico = data.historico.slice(-1000);
             }
+
+            console.log('📦 Salvando:', data);
 
             try {
                 await saveDataToCloud(data);
