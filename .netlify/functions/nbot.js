@@ -2,40 +2,28 @@
 // PROXY PARA GITHUB GIST - NETLIFY FUNCTIONS
 // ============================================================
 
-// 🔑 Configuração do Gist
 const GIST_ID = '363ae81662880bdaf8950670b30579e0';
 const GITHUB_TOKEN = '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';
 const FILENAME = 'nbot-data.json';
 const API_URL = `https://api.github.com/gists/${GIST_ID}`;
 
-// ============================================================
-// FUNÇÃO PRINCIPAL
-// ============================================================
-
 exports.handler = async function(event, context) {
-    // Cabeçalhos CORS - PERMITINDO TUDO
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept, X-Requested-With',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
         'Access-Control-Max-Age': '86400',
         'Content-Type': 'application/json'
     };
 
-    // Responde requisições OPTIONS (preflight CORS)
     if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 204,
-            headers
-        };
+        return { statusCode: 204, headers };
     }
 
     try {
-        // ============================================================
-        // ROTA: GET - Buscar dados
-        // ============================================================
+        // GET - Buscar dados
         if (event.httpMethod === 'GET') {
-            console.log('🔄 GET - Buscando dados do GitHub Gist...');
+            console.log('🔄 Buscando dados do GitHub Gist...');
 
             const response = await fetch(API_URL, {
                 headers: {
@@ -45,7 +33,7 @@ exports.handler = async function(event, context) {
             });
 
             if (!response.ok) {
-                throw new Error(`GitHub API: ${response.status} - ${response.statusText}`);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
             const gist = await response.json();
@@ -54,8 +42,8 @@ exports.handler = async function(event, context) {
             if (!content) {
                 const defaultData = {
                     ano: new Date().getFullYear(),
-                    ultimoNumero: 732,
-                    totalGerados: 732,
+                    ultimoNumero: 760,
+                    totalGerados: 760,
                     historico: []
                 };
                 return {
@@ -66,7 +54,6 @@ exports.handler = async function(event, context) {
             }
 
             const data = JSON.parse(content);
-
             return {
                 statusCode: 200,
                 headers,
@@ -82,13 +69,11 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // ============================================================
-        // ROTA: POST - Gerar novo número
-        // ============================================================
+        // POST - Gerar novo número
         if (event.httpMethod === 'POST') {
-            console.log('📝 POST - Gerando novo número...');
+            console.log('📝 Gerando novo número...');
 
-            // 1. Busca dados atuais
+            // Busca dados atuais
             const responseGet = await fetch(API_URL, {
                 headers: {
                     'Authorization': `token ${GITHUB_TOKEN}`,
@@ -97,7 +82,7 @@ exports.handler = async function(event, context) {
             });
 
             if (!responseGet.ok) {
-                throw new Error(`GitHub API GET: ${responseGet.status}`);
+                throw new Error(`HTTP ${responseGet.status}: ${responseGet.statusText}`);
             }
 
             const gist = await responseGet.json();
@@ -107,15 +92,15 @@ exports.handler = async function(event, context) {
             if (!content) {
                 data = {
                     ano: new Date().getFullYear(),
-                    ultimoNumero: 732,
-                    totalGerados: 732,
+                    ultimoNumero: 760,
+                    totalGerados: 760,
                     historico: []
                 };
             } else {
                 data = JSON.parse(content);
             }
 
-            // 2. Incrementa
+            // Incrementa
             const anoAtual = new Date().getFullYear();
 
             if (data.ano !== anoAtual) {
@@ -134,12 +119,11 @@ exports.handler = async function(event, context) {
                 sequencial: data.ultimoNumero
             });
 
-            // Limita histórico a 1000
             if (data.historico.length > 1000) {
                 data.historico = data.historico.slice(-1000);
             }
 
-            // 3. Salva no GitHub
+            // Salva no GitHub
             const responseSave = await fetch(API_URL, {
                 method: 'PATCH',
                 headers: {
@@ -157,10 +141,9 @@ exports.handler = async function(event, context) {
             });
 
             if (!responseSave.ok) {
-                throw new Error(`GitHub API SAVE: ${responseSave.status}`);
+                throw new Error(`HTTP ${responseSave.status}: ${responseSave.statusText}`);
             }
 
-            // 4. Retorna
             return {
                 statusCode: 200,
                 headers,
@@ -177,26 +160,18 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // Método não suportado
         return {
             statusCode: 405,
             headers,
-            body: JSON.stringify({
-                success: false,
-                error: `Método ${event.httpMethod} não suportado`
-            })
+            body: JSON.stringify({ success: false, error: 'Método não suportado' })
         };
 
     } catch (error) {
-        console.error('❌ Erro na função:', error);
-
+        console.error('❌ Erro:', error);
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({
-                success: false,
-                error: error.message || 'Erro interno do servidor'
-            })
+            body: JSON.stringify({ success: false, error: error.message })
         };
     }
 };
