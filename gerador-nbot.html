@@ -270,13 +270,13 @@
         </div>
     </div>
 
-   <script>
+  <script>
     // ============================================================
-    // CONFIGURAÇÃO - JSONSilo (100% FUNCIONAL)
+    // CONFIGURAÇÃO - SERVERLESS PROXY (FUNCIONA 100%)
     // ============================================================
 
-    // 🔗 URL do seu arquivo no JSONSilo
-    const JSONSILO_URL = 'https://api.jsonsilo.com/public/e1d33a99-f841-4821-9a8d-341808bc06ea';
+    // URL da função serverless no Netlify
+    const FUNCTIONS_URL = '/.netlify/functions/nbot';
 
     // ============================================================
     // VARIÁVEIS GLOBAIS
@@ -288,22 +288,34 @@
     let isGenerating = false;
 
     // ============================================================
-    // FUNÇÕES DE COMUNICAÇÃO
+    // FUNÇÕES DE COMUNICAÇÃO (VIA PROXY SERVERLESS)
     // ============================================================
 
     async function fetchDataFromCloud() {
         try {
-            console.log('🔄 Buscando dados do Sistema MIRA...');
-            
-            const response = await fetch(JSONSILO_URL);
-            
+            console.log('🔄 Buscando dados via serverless...');
+
+            const response = await fetch(FUNCTIONS_URL, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                console.error('❌ Erro do serverless:', errorText);
+                throw new Error(`HTTP ${response.status}`);
             }
-            
-            const data = await response.json();
-            console.log('✅ Dados carregados:', data);
-            return data;
+
+            const result = await response.json();
+            console.log('✅ Dados carregados:', result);
+
+            if (!result.success) {
+                throw new Error(result.error || 'Erro desconhecido');
+            }
+
+            return result.data;
         } catch (error) {
             console.error('❌ Erro ao buscar dados:', error);
             throw error;
@@ -312,22 +324,35 @@
 
     async function saveDataToCloud(data) {
         try {
-            console.log('💾 Salvando dados na nuvem MIRA...');
-            
-            const response = await fetch(JSONSILO_URL, {
-                method: 'PUT',
+            console.log('💾 Salvando dados via serverless...');
+
+            const response = await fetch(FUNCTIONS_URL, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    ano: data.ano,
+                    ultimoNumero: data.ultimoNumero,
+                    totalGerados: data.totalGerados,
+                    historico: data.historico || []
+                })
             });
-            
+
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                console.error('❌ Erro do serverless:', errorText);
+                throw new Error(`HTTP ${response.status}`);
             }
-            
-            console.log('✅ Dados salvos com sucesso!');
-            return await response.json();
+
+            const result = await response.json();
+            console.log('✅ Dados salvos:', result);
+
+            if (!result.success) {
+                throw new Error(result.error || 'Erro desconhecido');
+            }
+
+            return result.data;
         } catch (error) {
             console.error('❌ Erro ao salvar dados:', error);
             throw error;
@@ -346,8 +371,8 @@
         const anoAtual = new Date().getFullYear();
         return {
             ano: anoAtual,
-            ultimoNumero: 760,
-            totalGerados: 760,
+            ultimoNumero: 732,
+            totalGerados: 732,
             historico: []
         };
     }
@@ -379,7 +404,7 @@
     // FALLBACK: localStorage
     // ============================================================
 
-    const LOCAL_STORAGE_KEY = 'nbot_data_jsonsilo_fallback';
+    const LOCAL_STORAGE_KEY = 'nbot_data_serverless_fallback';
 
     function loadLocalData() {
         try {
@@ -474,31 +499,31 @@
 
     async function loadCurrentNumber() {
         try {
-            setStatus('syncing', 'Sincronizando com a nuvem...');
+            setStatus('syncing', 'Sincronizando com o Sistema COI...');
 
             const cloudData = await fetchDataFromCloud();
             const validatedData = validateAndFixData(cloudData);
 
             saveLocalData(validatedData);
             updateUI(validatedData, false);
-            setStatus('online', 'Conectado ao Sistema MIRA - dados sincronizados');
+            setStatus('online', '✅ Conectado ao Sistema COI');
 
             return true;
         } catch (error) {
-            console.warn('Falha ao conectar ao Sistema MIRA:', error);
+            console.warn('Falha ao conectar:', error);
 
             const localData = loadLocalData();
             if (localData) {
                 const validatedData = validateAndFixData(localData);
                 updateUI(validatedData, false);
-                setStatus('offline', 'Offline - usando dados locais');
+                setStatus('offline', '⚠️ Offline - dados locais');
                 return true;
             }
 
             const defaultData = getDefaultData();
             updateUI(defaultData, false);
             saveLocalData(defaultData);
-            setStatus('offline', 'Offline - novo arquivo criado localmente');
+            setStatus('offline', '⚠️ Offline - novo arquivo local');
             return false;
         }
     }
@@ -511,12 +536,12 @@
         console.log('🖱️ Botão clicado!');
 
         if (isGenerating) {
-            console.log('⏳ Já está gerando, aguarde...');
+            console.log('⏳ Aguarde...');
             return;
         }
 
         if (!currentData) {
-            console.log('⚠️ Dados não carregados, carregando...');
+            console.log('⚠️ Carregando dados...');
             await loadCurrentNumber();
             if (!currentData) {
                 alert('❌ Erro ao carregar dados. Tente novamente.');
@@ -530,18 +555,13 @@
             return;
         }
 
-        console.log('❓ Pedindo confirmação...');
         showConfirmation();
     }
 
     async function doGenerate() {
-        if (isGenerating) {
-            console.log('⏳ Já está gerando...');
-            return;
-        }
+        if (isGenerating) return;
 
         isGenerating = true;
-        console.log('🚀 Iniciando geração...');
         setLoading();
 
         try {
@@ -549,7 +569,6 @@
             let data = currentData || getDefaultData();
 
             if (data.ano !== anoAtual) {
-                console.log('📅 Reiniciando ano...');
                 data.ano = anoAtual;
                 data.ultimoNumero = 0;
                 data.totalGerados = 0;
@@ -569,23 +588,23 @@
                 data.historico = data.historico.slice(-1000);
             }
 
-            console.log('📦 Dados a salvar:', data);
+            console.log('📦 Salvando:', data);
 
             try {
                 await saveDataToCloud(data);
-                setStatus('online', 'Número salvo na nuvem MIRA');
+                setStatus('online', '✅ Número salvo!');
             } catch (cloudError) {
-                console.warn('Erro ao salvar no Sistema MIRA:', cloudError);
-                setStatus('offline', 'Offline - salvo apenas localmente');
+                console.warn('Erro ao salvar:', cloudError);
+                setStatus('offline', '⚠️ Salvo localmente');
             }
 
             saveLocalData(data);
             updateUI(data, true);
 
-            console.log('✅ Número gerado com sucesso!');
+            console.log('✅ Número gerado!');
 
         } catch (error) {
-            console.error('❌ Erro ao gerar número:', error);
+            console.error('❌ Erro:', error);
             setError('Erro ao gerar número');
         } finally {
             isGenerating = false;
@@ -594,10 +613,6 @@
             btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
         }
     }
-
-    // ============================================================
-    // MODAL DE CONFIRMAÇÃO
-    // ============================================================
 
     function showConfirmation() {
         const modal = document.getElementById('confirmationModal');
@@ -616,61 +631,26 @@
     // ============================================================
 
     document.addEventListener('DOMContentLoaded', async function() {
-        console.log('🚀 Página carregada, inicializando...');
+        console.log('🚀 Inicializando...');
 
         await loadCurrentNumber();
 
-        const generateBtn = document.getElementById('generateBtn');
-        if (generateBtn) {
-            console.log('✅ Botão encontrado, adicionando evento...');
-            generateBtn.addEventListener('click', function(e) {
-                console.log('🖱️ Evento de clique disparado!');
-                handleGenerate();
-            });
-        } else {
-            console.error('❌ Botão não encontrado!');
-        }
+        document.getElementById('generateBtn').addEventListener('click', handleGenerate);
+        document.getElementById('confirmGenerate').addEventListener('click', async function() {
+            hideConfirmation();
+            await doGenerate();
+        });
+        document.getElementById('cancelGenerate').addEventListener('click', hideConfirmation);
 
-        const confirmBtn = document.getElementById('confirmGenerate');
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', async function() {
-                console.log('✅ Confirmação recebida');
-                hideConfirmation();
-                await doGenerate();
-            });
-        }
-
-        const cancelBtn = document.getElementById('cancelGenerate');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                console.log('❌ Cancelado pelo usuário');
-                hideConfirmation();
-            });
-        }
-
-        const modal = document.getElementById('confirmationModal');
-        if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideConfirmation();
-                }
-            });
-        }
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && pendingGeneration) {
-                hideConfirmation();
-            }
+        document.getElementById('confirmationModal').addEventListener('click', function(e) {
+            if (e.target === this) hideConfirmation();
         });
 
-        console.log('✅ Sistema inicializado com sucesso!');
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && pendingGeneration) hideConfirmation();
+        });
 
-        setInterval(async () => {
-            if (!isOnline) {
-                console.log('🔄 Tentando reconectar...');
-                await loadCurrentNumber();
-            }
-        }, 120000);
+        console.log('✅ Sistema inicializado!');
     });
 
     console.log('📄 Script carregado!');
