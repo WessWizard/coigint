@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GERADOR NBOT - COI | MIRA</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/Prx3cKFq/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.postimg.cc/9fTNbMgt/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/vT8qGvY3/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #0f2b6d;
+            --primary-light: #1e3a8a;
+            --primary-dark: #0a1a4a;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --bg-card-solid: #1e293b;
+            --bg-input: rgba(15, 23, 42, 0.8);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-sm: 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0f172a, #020617);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            scroll-behavior: smooth;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { max-width: 600px; width: 100%; margin: 0 auto; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.03);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            transition: var(--transition);
+        }
+        .glass-header:hover { border-color: rgba(15, 43, 109, 0.3); }
+        .logo-left, .logo-right { display: flex; align-items: center; gap: 15px; }
+        .logo-left img, .logo-right img { height: 50px; width: 50px; object-fit: contain; transition: var(--transition-fast); }
+        .logo-left img:hover, .logo-right img:hover { transform: scale(1.02); }
+        .title-section { text-align: center; flex: 1; }
+        .title-section h1 { font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.3px; }
+        .title-section .badge { display: flex; gap: 6px; justify-content: center; margin-top: 4px; font-size: 9px; }
+        .title-section .badge span { background: rgba(15, 43, 109, 0.15); padding: 2px 8px; border-radius: 20px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--primary); color: var(--text-primary); transform: translateY(-2px); }
+        .main-card {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+            padding: 40px 32px;
+            text-align: center;
+        }
+        .main-card:hover { border-color: rgba(15, 43, 109, 0.3); }
+        .nbot-icon { font-size: 64px; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 16px; display: inline-block; animation: pulseIcon 2s ease-in-out infinite; }
+        @keyframes pulseIcon { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .nbot-title { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .nbot-subtitle { color: var(--text-secondary); font-size: 13px; margin-bottom: 32px; }
+        .number-display { background: var(--bg-input); border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 24px; margin-bottom: 28px; transition: var(--transition); }
+        .number-display:hover { border-color: rgba(15, 43, 109, 0.4); }
+        .number-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); font-weight: 600; }
+        .number-value { font-size: 48px; font-weight: 800; color: var(--text-primary); font-family: 'Inter', monospace; letter-spacing: 2px; margin-top: 4px; background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text; background-clip: text; color: transparent; transition: var(--transition-bounce); }
+        .number-value.pop { animation: popNumber 0.4s cubic-bezier(0.34, 1.2, 0.64, 1); }
+        @keyframes popNumber { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        .action-btn-large {
+            width: 100%;
+            padding: 16px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+        .action-btn-large::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        .action-btn-large:hover::before { width: 400px; height: 400px; }
+        .action-btn-large:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(15, 43, 109, 0.4); }
+        .action-btn-large:active { transform: translateY(0px); }
+        .action-btn-large i { font-size: 20px; }
+        .action-btn-large:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .info-box { margin-top: 20px; padding: 16px; background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+        .info-item { text-align: center; }
+        .info-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary); font-weight: 600; }
+        .info-item .value { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 2px; }
+        .status-bar { margin-top: 16px; padding: 8px 16px; border-radius: 40px; font-size: 12px; display: inline-block; }
+        .status-bar.online { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-bar.offline { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .status-bar.syncing { background: rgba(59, 130, 246, 0.15); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.2); animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .site-footer { text-align: center; padding: 20px; color: var(--text-tertiary); font-size: 11px; border-top: 1px solid var(--border-color); margin-top: 24px; }
+        .modal-overlay-modern { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.2s ease; }
+        .modal-container-modern { background: var(--bg-card-solid); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 28px; padding: 32px; max-width: 400px; width: 90%; text-align: center; animation: scaleIn 0.25s cubic-bezier(0.34, 1.2, 0.64, 1); }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-container-modern i { font-size: 48px; color: var(--warning); margin-bottom: 14px; }
+        .modal-container-modern p { font-size: 15px; margin-bottom: 8px; color: var(--text-primary); }
+        .modal-container-modern .modal-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+        .modal-buttons-modern { display: flex; gap: 12px; justify-content: center; }
+        .modal-buttons-modern button { padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); font-size: 14px; }
+        .modal-buttons-modern button:hover { transform: translateY(-1px); }
+        .modal-confirm-modern { background: var(--danger); color: white; }
+        .modal-confirm-modern:hover { background: #dc2626; }
+        .modal-cancel-modern { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+        .modal-cancel-modern:hover { background: rgba(255,255,255,0.15); }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .glass-header { flex-direction: column; gap: 12px; padding: 16px; }
+            .main-card { padding: 24px 16px; }
+            .number-value { font-size: 36px; }
+            .nbot-icon { font-size: 48px; }
+            .info-box { gap: 16px; }
+            .title-section h1 { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="glass-header">
+            <div class="logo-left">
+                <img src="https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png" alt="Brasão GCM">
+            </div>
+            <div class="title-section">
+                <h1>CENTRAL DE OPERAÇÕES E INTELIGÊNCIA</h1>
+                <div class="badge">
+                    <span><i class="fas fa-shield-alt"></i> SMDS/GINT/COI</span>
+                    <span><i class="fas fa-file-signature"></i> MIRA v2.0</span>
+                </div>
+            </div>
+            <div class="logo-right">
+                <img src="https://i.postimg.cc/gc4J2ByG/brasao-coi2.png" alt="Brasão COI">
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="main-card">
+            <div class="nbot-icon">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <h2 class="nbot-title">Número de Boletim de Ocorrência - Trânsito</h2>
+            <p class="nbot-subtitle">Clique no botão abaixo para gerar um novo número de boletim</p>
+
+            <!-- Status -->
+            <div style="margin-bottom: 20px;">
+                <span class="status-bar syncing" id="statusBar">
+                    <i class="fas fa-spinner fa-spin"></i> Conectando...
+                </span>
+            </div>
+
+            <!-- Display do Número -->
+            <div class="number-display">
+                <div class="number-label">NÚMERO GERADO</div>
+                <div class="number-value" id="nbotNumber">---</div>
+            </div>
+
+            <!-- Botão Principal -->
+            <button class="action-btn-large" id="generateBtn" disabled>
+                <i class="fas fa-spinner fa-spin"></i> Carregando...
+            </button>
+
+            <!-- Informações Adicionais -->
+            <div class="info-box">
+                <div class="info-item">
+                    <div class="label">Último Número</div>
+                    <div class="value" id="lastNumber">---</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Total Gerado (Ano)</div>
+                    <div class="value" id="totalCount">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Ano</div>
+                    <div class="value" id="currentYear">----</div>
+                </div>
+            </div>
+
+            <!-- Botão Voltar -->
+            <div style="margin-top: 20px;">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Voltar ao Relatório
+                </a>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            MONITORAMENTO INTEGRADO DE RELATÓRIOS E ANÁLISES - <strong>M I R A</strong> | Prefeitura do Cabo de Santo Agostinho
+        </footer>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal" class="modal-overlay-modern">
+        <div class="modal-container-modern">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Deseja realmente gerar um novo número de boletim?</p>
+            <p class="modal-sub">O número atual será descartado.</p>
+            <div class="modal-buttons-modern">
+                <button class="modal-confirm-modern" id="confirmGenerate">Sim, gerar</button>
+                <button class="modal-cancel-modern" id="cancelGenerate">Não, manter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        
+
+const GIST_ID = '363ae81662880bdaf8950670b30579e0';
+const GITHUB_TOKEN = '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';
+const FILENAME = 'nbot-data.json';
+
+// URL da API do GitHub
+const API_URL = `https://api.github.com/gists/${GIST_ID}`;
+
+
+        
+let currentData = null;
+let pendingGeneration = false;
+let isOnline = false;
+let isGenerating = false;
+
+
+        
+async function fetchDataFromCloud() {
+    try {
+        console.log('🔄 Buscando dados do Sistema COI - MIRA...');
+        
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const gist = await response.json();
+        const content = gist.files[FILENAME]?.content;
+        
+        if (!content) {
+            throw new Error('Arquivo não encontrado no Sistema COI');
+        }
+        
+        const data = JSON.parse(content);
+        console.log('✅ Dados carregados:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Erro ao buscar dados:', error);
+        throw error;
+    }
+}
+
+async function saveDataToCloud(data) {
+    try {
+        console.log('💾 Salvando dados no Sistema COI...');
+        
+        const response = await fetch(API_URL, {
+            method: 'PATCH',  
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            },
+            body: JSON.stringify({
+                files: {
+                    [FILENAME]: {
+                        content: JSON.stringify(data, null, 2)
+                    }
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        console.log('✅ Dados salvos com sucesso!');
+        return await response.json();
+    } catch (error) {
+        console.error('❌ Erro ao salvar dados:', error);
+        throw error;
+    }
+}
+
+
+        
+function formatNbot(ano, numero) {
+    return `${numero}/${ano}`;
+}
+
+function getDefaultData() {
+    const anoAtual = new Date().getFullYear();
+    return {
+        ano: anoAtual,
+        ultimoNumero: 732,
+        totalGerados: 732,
+        historico: []
+    };
+}
+
+function validateAndFixData(data) {
+    const anoAtual = new Date().getFullYear();
+    
+    if (!data || typeof data !== 'object') {
+        return getDefaultData();
+    }
+    
+    if (data.ano !== anoAtual) {
+        return {
+            ano: anoAtual,
+            ultimoNumero: 0,
+            totalGerados: 0,
+            historico: data.historico || []
+        };
+    }
+    
+    if (typeof data.ultimoNumero !== 'number') data.ultimoNumero = 0;
+    if (typeof data.totalGerados !== 'number') data.totalGerados = 0;
+    if (!Array.isArray(data.historico)) data.historico = [];
+    
+    return data;
+}
+
+// ============================================================
+// FALLBACK: localStorage
+// ============================================================
+        
+const LOCAL_STORAGE_KEY = 'nbot_data_github_fallback';
+
+function loadLocalData() {
+    try {
+        const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (!stored) return null;
+        return JSON.parse(stored);
+    } catch (e) {
+        return null;
+    }
+}
+
+function saveLocalData(data) {
+    try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.error('Erro ao salvar local:', e);
+    }
+}
+
+
+        
+function updateUI(data, showNumber = false) {
+    if (!data) {
+        console.error('❌ updateUI: dados inválidos');
+        return;
+    }
+    
+    const display = document.getElementById('nbotNumber');
+    
+    if (showNumber && data.ultimoNumero > 0) {
+        const nbot = formatNbot(data.ano, data.ultimoNumero);
+        display.textContent = nbot;
+        display.classList.remove('pop');
+        void display.offsetWidth;
+        display.classList.add('pop');
+    } else {
+        display.textContent = '---';
+        display.classList.remove('pop');
+    }
+
+    const ultimoNbot = data.ultimoNumero > 0 
+        ? formatNbot(data.ano, data.ultimoNumero) 
+        : '---';
+    
+    document.getElementById('lastNumber').textContent = ultimoNbot;
+    document.getElementById('totalCount').textContent = data.totalGerados || 0;
+    document.getElementById('currentYear').textContent = data.ano || '----';
+    
+    currentData = data;
+    
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
+}
+
+function setStatus(status, message) {
+    const statusBar = document.getElementById('statusBar');
+    statusBar.className = `status-bar ${status}`;
+    
+    const icons = {
+        'online': '<i class="fas fa-check-circle"></i>',
+        'offline': '<i class="fas fa-exclamation-circle"></i>',
+        'syncing': '<i class="fas fa-spinner fa-spin"></i>'
+    };
+    
+    statusBar.innerHTML = `${icons[status] || ''} ${message || ''}`;
+    isOnline = (status === 'online');
+}
+
+function setLoading() {
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+}
+
+function setError(message) {
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+    setTimeout(() => {
+        if (!btn.disabled) {
+            btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
+        }
+    }, 3000);
+}
+
+
+        
+async function loadCurrentNumber() {
+    try {
+        setStatus('syncing', 'Sincronizando com o Sistema COI...');
+        
+        const cloudData = await fetchDataFromCloud();
+        const validatedData = validateAndFixData(cloudData);
+        
+        saveLocalData(validatedData);
+        updateUI(validatedData, false);
+        setStatus('online', 'Conectado ao Sistema COI - dados sincronizados');
+        
+        return true;
+    } catch (error) {
+        console.warn('Falha ao conectar ao Sistema COI:', error);
+        
+        const localData = loadLocalData();
+        if (localData) {
+            const validatedData = validateAndFixData(localData);
+            updateUI(validatedData, false);
+            setStatus('offline', 'Offline - usando dados locais');
+            return true;
+        }
+        
+        const defaultData = getDefaultData();
+        updateUI(defaultData, false);
+        saveLocalData(defaultData);
+        setStatus('offline', 'Offline - novo arquivo criado localmente');
+        return false;
+    }
+}
+
+
+        
+async function handleGenerate() {
+    console.log('🖱️ Botão clicado!');
+    
+    if (isGenerating) {
+        console.log('⏳ Já está gerando, aguarde...');
+        return;
+    }
+    
+    if (!currentData) {
+        console.log('⚠️ Dados não carregados, carregando...');
+        await loadCurrentNumber();
+        if (!currentData) {
+            alert('❌ Erro ao carregar dados. Tente novamente.');
+            return;
+        }
+    }
+    
+    if (currentData.ultimoNumero === 0) {
+        console.log('📝 Primeiro número, gerando sem confirmação...');
+        await doGenerate();
+        return;
+    }
+    
+    console.log('❓ Pedindo confirmação...');
+    showConfirmation();
+}
+
+async function doGenerate() {
+    if (isGenerating) {
+        console.log('⏳ Já está gerando...');
+        return;
+    }
+    
+    isGenerating = true;
+    console.log('🚀 Iniciando geração...');
+    setLoading();
+    
+    try {
+        const anoAtual = new Date().getFullYear();
+        let data = currentData || getDefaultData();
+        
+        if (data.ano !== anoAtual) {
+            console.log('📅 Reiniciando ano...');
+            data.ano = anoAtual;
+            data.ultimoNumero = 0;
+            data.totalGerados = 0;
+        }
+        
+        data.ultimoNumero += 1;
+        data.totalGerados += 1;
+        
+        if (!data.historico) data.historico = [];
+        data.historico.push({
+            numero: formatNbot(data.ano, data.ultimoNumero),
+            data: new Date().toISOString(),
+            sequencial: data.ultimoNumero
+        });
+        
+        if (data.historico.length > 1000) {
+            data.historico = data.historico.slice(-1000);
+        }
+        
+        console.log('📦 Dados a salvar:', data);
+        
+        try {
+            await saveDataToCloud(data);
+            setStatus('online', 'Número salvo no Sistema MIRA');
+        } catch (cloudError) {
+            console.warn('Erro ao salvar no Sistema MIRA:', cloudError);
+            setStatus('offline', 'Offline - salvo apenas localmente');
+        }
+        
+        saveLocalData(data);
+        updateUI(data, true);
+        
+        console.log('✅ Número gerado com sucesso!');
+        
+    } catch (error) {
+        console.error('❌ Erro ao gerar número:', error);
+        setError('Erro ao gerar número');
+    } finally {
+        isGenerating = false;
+        const btn = document.getElementById('generateBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-plus-circle"></i> Gerar Número de Boletim';
+    }
+}
+
+
+        
+function showConfirmation() {
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'flex';
+    pendingGeneration = true;
+}
+
+function hideConfirmation() {
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'none';
+    pendingGeneration = false;
+}
+
+
+        
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 Página carregada, inicializando...');
+    
+    await loadCurrentNumber();
+    
+    const generateBtn = document.getElementById('generateBtn');
+    if (generateBtn) {
+        console.log('✅ Botão encontrado, adicionando evento...');
+        generateBtn.addEventListener('click', function(e) {
+            console.log('🖱️ Evento de clique disparado!');
+            handleGenerate();
+        });
+    } else {
+        console.error('❌ Botão não encontrado!');
+    }
+    
+    const confirmBtn = document.getElementById('confirmGenerate');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', async function() {
+            console.log('✅ Confirmação recebida');
+            hideConfirmation();
+            await doGenerate();
+        });
+    }
+    
+    const cancelBtn = document.getElementById('cancelGenerate');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            console.log('❌ Cancelado pelo usuário');
+            hideConfirmation();
+        });
+    }
+    
+    const modal = document.getElementById('confirmationModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideConfirmation();
+            }
+        });
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && pendingGeneration) {
+            hideConfirmation();
+        }
+    });
+    
+    console.log('✅ Sistema inicializado com sucesso!');
+    
+    // Reconexão automática a cada 2 minutos
+    setInterval(async () => {
+        if (!isOnline) {
+            console.log('🔄 Tentando reconectar...');
+            await loadCurrentNumber();
+        }
+    }, 120000);
+});
+        
+console.log('📄 Script carregado!');
+    </script>
+</body>
+</html>

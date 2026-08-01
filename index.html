@@ -1,0 +1,2340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RELATÓRIO DIÁRIO - COI | MIRA</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/Prx3cKFq/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.postimg.cc/9fTNbMgt/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/vT8qGvY3/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #0f2b6d;
+            --primary-light: #1e3a8a;
+            --primary-dark: #0a1a4a;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --bg-card-solid: #1e293b;
+            --bg-input: rgba(15, 23, 42, 0.8);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-sm: 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0f172a, #020617);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .glass-header {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 10px 15px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            flex-wrap: wrap;
+        }
+
+        .glass-header:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .logo-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-left img,
+        .logo-right img {
+            height: 55px;
+            width: 55px;
+            object-fit: contain;
+            transition: var(--transition-fast);
+        }
+
+        .logo-left img:hover,
+        .logo-right img:hover {
+            transform: scale(1.02);
+        }
+
+        .title-section {
+            text-align: center;
+            flex: 1;
+        }
+
+        .title-section h1 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+
+        .title-section .badge {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 4px;
+            font-size: 9px;
+        }
+
+        .title-section .badge span {
+            background: rgba(15, 43, 109, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.04);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .action-btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+
+        .action-btn.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .action-btn.warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, rgba(15, 43, 109, 0.1), rgba(236, 72, 153, 0.05));
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header-custom h2 {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header-custom h2 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-header-custom p {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .form-row-modern {
+            padding: 20px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .input-group-modern {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .input-group-modern label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group-modern label i {
+            margin-right: 6px;
+            color: var(--primary);
+        }
+
+        .input-group-modern input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .input-group-modern input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 43, 109, 0.15);
+        }
+
+        .sections-container {
+            padding: 20px 28px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .occ-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: var(--transition-bounce);
+        }
+
+        .occ-card:hover {
+            border-color: rgba(15, 43, 109, 0.4);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .occ-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .occ-header:hover {
+            background: rgba(15, 43, 109, 0.08);
+        }
+
+        .occ-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .occ-number {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .occ-card:hover .occ-number {
+            transform: scale(1.05);
+        }
+
+        .occ-title h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .occ-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .occ-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            transition: var(--transition-fast);
+        }
+
+        .occ-icon:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+
+        .occ-icon.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .occ-content {
+            padding: 20px;
+            display: none;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .occ-card.expanded .occ-content {
+            display: block;
+            animation: fadeSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-modern {
+            margin-bottom: 20px;
+        }
+
+        .form-modern label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .filter-wrap {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .filter-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        .filter-input-modern {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .filter-input-modern:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .checkbox-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 8px;
+        }
+
+        .checkbox-item-modern {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            transition: var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .checkbox-item-modern:hover {
+            background: rgba(15, 43, 109, 0.1);
+            border-color: rgba(15, 43, 109, 0.3);
+            transform: translateX(3px);
+        }
+
+        .checkbox-item-modern input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .checkbox-item-modern label {
+            flex: 1;
+            margin: 0;
+            font-size: 12px;
+            font-weight: normal;
+            text-transform: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .checkbox-list-modern {
+            max-height: 180px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 14px;
+            padding: 8px;
+            margin-top: 8px;
+        }
+
+        .checkbox-list-modern.expanded {
+            max-height: 420px;
+        }
+
+        .expand-btn-modern {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            transition: var(--transition);
+        }
+
+        .expand-btn-modern:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .input-modern {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .input-modern:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 43, 109, 0.15);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            resize: vertical;
+            min-height: 80px;
+            transition: var(--transition);
+        }
+
+        .image-upload-wrapper {
+            margin-top: 8px;
+        }
+
+        .upload-zone-modern {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(0, 0, 0, 0.15);
+            margin-bottom: 12px;
+        }
+
+        .upload-zone-modern:hover {
+            border-color: var(--primary);
+            background: rgba(15, 43, 109, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone-modern i {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .upload-zone-modern p {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .image-preview-grid-modern {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .preview-item-modern {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .preview-item-modern:hover {
+            transform: scale(1.02);
+        }
+
+        .preview-item-modern img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item-modern .remove-img {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 11px;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .preview-item-modern .remove-img:hover {
+            background: var(--danger);
+            transform: scale(1.05);
+        }
+
+        .more-images-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 43, 109, 0.15);
+            border: 1px solid rgba(15, 43, 109, 0.3);
+            border-radius: 30px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--primary-light);
+            cursor: pointer;
+            margin-top: 12px;
+            transition: var(--transition);
+        }
+
+        .more-images-btn:hover {
+            background: rgba(15, 43, 109, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .boletim-card-modern {
+            background: rgba(245, 158, 11, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            margin: 14px 0;
+            border-left: 3px solid var(--warning);
+        }
+
+        .boletim-field-modern {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .boletim-field-modern input {
+            flex: 1;
+        }
+
+        .mini-btn-modern {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .mini-btn-modern:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .mini-btn-modern.danger:hover {
+            background: var(--danger);
+        }
+
+        .btn-remove-modern {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 40px;
+            color: var(--danger);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .btn-remove-modern:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-add-modern {
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            color: var(--success);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .btn-add-modern:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.1));
+            transform: translateY(-2px);
+            border-color: var(--success);
+        }
+
+        .footer-actions {
+            padding: 20px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .footer-btn {
+            padding: 12px 26px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            transition: var(--transition-bounce);
+        }
+
+        .footer-btn.pdf { background: linear-gradient(135deg, #475569, #334155); color: white; }
+        .footer-btn.excel { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+        .footer-btn.save { background: linear-gradient(135deg, var(--warning), #d97706); color: white; }
+        .footer-btn.load { background: linear-gradient(135deg, var(--info), #2563eb); color: white; }
+        .footer-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+
+        .site-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-tertiary);
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+
+        .modal-overlay-modern {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-container-modern {
+            background: var(--bg-card-solid);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 28px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            animation: scaleIn 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-container-modern i {
+            font-size: 48px;
+            color: var(--warning);
+            margin-bottom: 14px;
+        }
+
+        .modal-container-modern p {
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons-modern {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-buttons-modern button {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .modal-buttons-modern button:hover {
+            transform: translateY(-1px);
+        }
+
+        .modal-confirm-modern { background: var(--danger); color: white; }
+        .modal-cancel-modern { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+
+        .back-to-top-modern {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            z-index: 99;
+            border: none;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 16px rgba(15, 43, 109, 0.4);
+        }
+
+        .back-to-top-modern.visible { display: flex; }
+        .back-to-top-modern:hover { transform: translateY(-4px) scale(1.1); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 10px; }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .glass-header { 
+                flex-direction: column; 
+                gap: 15px;
+                justify-content: center;
+            }
+            .title-section h1 {
+                white-space: normal;
+                font-size: 14px;
+            }
+            .form-row-modern { flex-direction: column; padding: 16px; }
+            .sections-container { padding: 16px; }
+            .checkbox-grid-modern { grid-template-columns: 1fr; }
+            .footer-actions { flex-direction: column; }
+            .footer-btn { justify-content: center; }
+            .action-btn { padding: 8px 16px; font-size: 12px; }
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .btn-add-first {
+            width: auto;
+            margin-top: 0;
+            display: inline-flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-header">
+            <div class="logo-left">
+                <img src="https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png" alt="Brasão GCM" class="logo-gcm" id="logo-gcm">
+            </div>
+            <div class="title-section">
+                <h1>CENTRAL DE OPERAÇÕES E INTELIGÊNCIA</h1>
+                <div class="badge">
+                    <span><i class="fas fa-shield-alt"></i> SMDS/GINT/COI</span>
+                    <span><i class="fas fa-chart-line"></i> MIRA v2.0</span>
+                </div>
+            </div>
+            <div class="logo-right">
+                <img src="https://i.postimg.cc/gc4J2ByG/brasao-coi2.png" alt="Brasão COI" class="logo-coi" id="logo-coi">
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="action-btn primary" id="openShiftBtn"><i class="fas fa-door-open"></i> Abertura de Plantão</button>
+            <button class="action-btn primary" id="openSinespBtn"><i class="fas fa-car"></i> Equipes SINESP</button>
+  <a href="gerador-nbot.html" class="action-btn primary" style="text-decoration: none;">
+    <i class="fas fa-file-signature"></i> Gerar Número de Boletim - Trânsito
+</a>
+            <button class="action-btn success" id="generateMonthlyPdfBtn"><i class="fas fa-calendar-alt"></i> PDF Mensal</button>
+            <button class="action-btn warning" id="dashboardBtn"><i class="fas fa-chart-line"></i> Dashboard</button>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header-custom">
+                <h2><i class="fas fa-file-alt"></i> RELATÓRIO DIÁRIO</h2>
+                <p>Preencha os campos abaixo para registrar as ocorrências do plantão</p>
+            </div>
+
+            <div class="form-row-modern">
+                <div class="input-group-modern">
+                    <label><i class="fas fa-user-shield"></i> RESPONSÁVEL PELO PLANTÃO</label>
+                    <input type="text" id="responsible" placeholder="Digite o nome completo">
+                </div>
+                <div class="input-group-modern">
+                    <label><i class="fas fa-calendar-day"></i> DATA DO RELATÓRIO</label>
+                    <input type="text" id="report-date" placeholder="DD/MM/AAAA">
+                </div>
+            </div>
+
+            <div id="sections-container" class="sections-container">
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhuma ocorrência registrada</p>
+                    <button class="btn-add-modern btn-add-first" id="firstAddBtn"><i class="fas fa-plus-circle"></i> Adicionar Primeira Ocorrência</button>
+                </div>
+            </div>
+
+            <div class="footer-actions">
+                <button class="footer-btn pdf" id="generatePdfBtn"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
+                <button class="footer-btn excel" id="exportExcelBtn"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                <button class="footer-btn save" id="saveReportBtn"><i class="fas fa-save"></i> Salvar</button>
+                <button class="footer-btn load" id="loadReportBtn"><i class="fas fa-folder-open"></i> Carregar</button>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            MONITORAMENTO INTEGRADO DE RELATÓRIOS E ANÁLISES - <strong>M I R A</strong> | Prefeitura do Cabo de Santo Agostinho
+        </footer>
+    </div>
+
+    <div id="confirmationModal" class="modal-overlay-modern">
+        <div class="modal-container-modern">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Tem certeza que deseja remover esta ocorrência?</p>
+            <div class="modal-buttons-modern">
+                <button class="modal-confirm-modern confirm-btn">Sim, remover</button>
+                <button class="modal-cancel-modern cancel-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-to-top-modern" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <input type="file" id="load-file" class="hidden-input" accept=".json">
+    <input type="file" id="load-monthly-files" class="hidden-input" accept=".json" multiple>
+
+    <script>
+
+        const activities = [
+            "1. ACOMPANHAMENTO DA OPERAÇÃO VIA CÂMERAS", "2. ACOMPANHAMENTO DAS PRINCIPAIS VIAS",
+            "3. ACOMPANHAMENTO DE FLUXO DE VEÍCULOS", "4. ACIONAMENTO DA GTT",
+            "5. ACIONAMENTO DA PATRULHA DA MULHER", "6. ACIONAMENTO DA PATRULHA ESCOLAR",
+            "7. ACIONAMENTO DA RONDAP", "8. ACIONAMENTO DA ROMU",
+            "9. ACIONAMENTO GRUPAMENTO AMBIENTAL", "10. ALAGAMENTO",
+            "11. ÁRVORE TOMBADA", "12. ATUALIZAÇÃO PLANILHA DE HOMICÍDIO",
+            "13. BUSCA RETROSPECTIVA", "14. CADASTRO DE VIATURAS",
+            "15. CÂMERAS INOPERANTES", "16. CHAMADA TÉCNICA",
+            "17. DENÚNCIA DE ANIMAIS NA VIA", "18. DENÚNCIA DE ARROMBAMENTO",
+            "19. DENÚNCIA DE INFRAÇÃO DE TRÂNSITO", "20. PERTURBAÇÃO DO SOSSEGO/TRANQUILIDADE PÚBLICA",
+            "21. DENÚNCIA DE VIOLÊNCIA CONTRA MULHER", "22. DESLIZAMENTO DE BARREIRA",
+            "23. DESORDENAMENTO DE COMÉRCIO IRREGULAR", "24. ENCAMINHAMENTO PARA OUTRAS SECRETARIAS",
+            "25. ENCAMINHAMENTO PARA OUTROS ÓRGÃOS", "26. FECHAMENTO DE LIVRO",
+            "27. INCÊNDIO", "28. INOPERÂNCIA DO SISTEMA DE CÂMERAS",
+            "29. LEVANTAMENTO DE INFORMAÇÕES VIA REDES SOCIAIS", "30. MONITORAMENTO DE EVENTO",
+            "31. OCORRÊNCIA DE SINISTRO DE TRÂNSITO", "32. OPERAÇÃO DE PATRULHAMENTO OSTENSIVO",
+            "33. ORDEM DE SERVIÇO", "34. OUTRAS OCORRÊNCIAS NÃO CRIMINAIS",
+            "35. PROTESTO", "36. RECEBIMENTO DAS INFORMAÇÕES",
+            "37. REGISTRO DE ALTERAÇÕES", "38. SINISTRO DE TRÂNSITO SEM VÍTIMA",
+            "39. AMEAÇA", "40. AMEAÇA POR VIOLÊNCIA DOMÉSTICA/FAMILIAR",
+            "41. APROPRIAÇÃO INDÉBITA", "42. ASSÉDIO SEXUAL",
+            "43. CÁRCERE PRIVADO", "44. CRIMES CONTRA AS RELAÇÕES DE CONSUMO",
+            "45. CRUELDADE CONTRA ANIMAIS", "46. DANO/DEPREDACAO",
+            "47. DESACATO", "48. DESCUMPRIMENTO DE MEDIDA PROTETIVA DE URGÊNCIA",
+            "49. DESENTENDIMENTO/DISCUSSÃO", "50. ESTELIONATO/FRAUDE",
+            "51. ESTELIONATO/FRAUDE ELETRÔNICA", "52. FALSA IDENTIDADE/FALSIDADE IDEOLÓGICA",
+            "53. FURTO A OUTRAS INSTITUIÇÕES FINANCEIRAS", "54. FURTO A TRANSEUNTE",
+            "55. FURTO EM ESTABELECIMENTO COMERCIAL OU DE SERVIÇOS", "56. FURTO EM RESIDÊNCIA",
+            "57. FURTO (SAÍDA DE BANCO/INSTITUIÇÃO FINANCEIRA)", "58. OUTROS FURTOS",
+            "59. OUTROS ROUBOS", "60. POSSE/INVASÃO DE PROPRIEDADE",
+            "61. RIXA", "62. REBOQUE",
+            "63. ROUBO A ÔNIBUS", "64. ROUBO A OUTRAS INSTITUIÇÕES FINANCEIRAS",
+            "65. ROUBO A OUTROS TRANSPORTES COLETIVOS", "66. ROUBO A TRANSEUNTE",
+            "67. ROUBO COM RESTRIÇÃO DA LIBERDADE DA VÍTIMA", "68. ROUBO EM ESTABELECIMENTO COMERCIAL OU DE SERVIÇOS",
+            "69. ROUBO EM RESIDÊNCIA", "70. ROUBO (SAÍDA DE BANCO/INSTITUIÇÃO FINANCEIRA)",
+            "71. VIAS DE FATO", "72. OCORRÊNCIA DEFESA CIVIL",
+            "73. SINISTRO DE TRÂNSITO COM VÍTIMA", "74. SOLICITAÇÃO DE IMAGENS", "75. OUTROS"
+        ];
+
+        const cameras = [
+            "Nenhuma", "1. PRAÇA 9 DE JULHO - RETAGUARDA", "2. PRAÇA 9 DE JULHO - FRENTE",
+            "3. EM FRENTE A SMDS E BANCO DO BRASIL", "4. PREFEITURA - FRENTE", "5. PREFEITURA - RETAGUARDA",
+            "6. SECRETARIA DE EDUCAÇÃO", "7. PRAÇA DO CAIC", "8. PRAÇA MARCOS FREIRE",
+            "9. ESTACIONAMENTO DO MERCADO PÚBLICO", "10. ESCOLA VEREADOR REGINALDO LORETO",
+            "11. CREDIMOVEIS NOVOLAR", "12. AV. PROF. DIOGENES X RUA DIACONO ABDIAS",
+            "13. ESCOLA MODELO MANOEL DAVI", "14. POLICLÍNICA JAMACI DE MEDEIROS", "15. RUA DA LINHA",
+            "16. PRAÇA DA ESTAÇÃO", "17. PARQUE DOS EUCALIPTOS", "18. AV. LAURA CAVALCANTI (BRADESCO)",
+            "19. PRAÇA DA ORLA (GAIBU)", "20. AV. LAURA CAVALCANTI (SEMÁFORO)", "21. PE-28 / ANTIGA ESTRADA DE SUAPE",
+            "22. PE 28 PRÓXIMO A ESCOLA MODELO DE ENSEADAS", "23. ACADEMIA DA CIDADE - GARAPU", "24. PRAÇA DA BÍBLIA",
+            "25. AV. HISTORIADOR ISRAEL FELIPE X AV. ALM. PAULO MOREIRA", "26. AV. ALM. PAULO MOREIRA X RUA GOV. MIGUEL ARRAES",
+            "27. FISHEYE - ESCOLA MODELO MANOEL DAVI", "28. ESCOLA MODELO DE GARAPU", "29. VILA CLAUDETE",
+            "30. FISHEYE - AV. LAURA CAVALCANTI (BRADESCO)", "31. PRAÇA DO JACARÉ", "32. ANTIGA BR-101 - EM FRENTE AO HOSPITAL INFANTIL",
+            "33. FH - CENTRAL DA GUARDA", "34. FH - ESTACIONAMENTO CENTRAL DA GUARDA", "35. PRAÇA THÉO SILVA",
+            "36. HOSPITAL MENDO SAMPAIO", "37. ITAPUAMA - PÁTIO DE EVENTOS", "38. ESCOLA MODELO DE PONTEZINHA",
+            "39. IGREJA RAINHA DA PAZ - PONTEZINHA", "40. ATACAREJO DOS BOMBONS - USF TORRINHA",
+            "41. PIRAPAMA I - EM FRENTE A FUNASE", "42. MERCÊS", "43. PE-09 - AV. 5 (ENTRADA ENSEADA DOS CORAIS)",
+            "44. PE-28 TREVO ENSEADA DOS CORAIS", "45. PRAÇA DE SUAPE",
+            "46. CENTRO DE ESPECIALIDADES 1 - PONTE DOS CARVALHOS", "47. CENTRO DE ESPECIALIDADES 2 (PONTE DOS CARVALHOS)",
+            "48. ORLA DE GAIBU (PEDRAS)", "49. PRAÇA DA ORLA 2 (GAIBU)"
+        ];
+
+        let uniqueId = 0;
+        let boletimId = 0;
+        let imageId = 0;
+        let sectionToRemove = null;
+        let sectionImages = {};
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function validateDateFormat(date) {
+            const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            if (!regex.test(date)) return false;
+            const [, day, month, year] = date.match(regex);
+            const dayNum = parseInt(day, 10), monthNum = parseInt(month, 10), yearNum = parseInt(year, 10);
+            if (monthNum < 1 || monthNum > 12 || dayNum < 1 || dayNum > 31) return false;
+            if ([4, 6, 9, 11].includes(monthNum) && dayNum > 30) return false;
+            if (monthNum === 2) {
+                const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || (yearNum % 400 === 0);
+                if (dayNum > (isLeapYear ? 29 : 28)) return false;
+            }
+            return true;
+        }
+
+        function validateTimeFormat(time) {
+            return /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(time);
+        }
+
+        function isNextDayTime(time) {
+            if (!time) return false;
+            const [hours] = time.split(':').map(Number);
+            return hours >= 0 && hours <= 5;
+        }
+
+        function timeToMinutes(time) {
+            if (!time || !validateTimeFormat(time)) return Infinity;
+            const [hours, minutes] = time.split(':').map(Number);
+            const isNextDay = isNextDayTime(time);
+            return (isNextDay ? 24 * 60 : 0) + hours * 60 + minutes;
+        }
+
+        function applyDateMask(input) {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 8) value = value.slice(0, 8);
+                if (value.length > 4) value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4);
+                else if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
+                e.target.value = value;
+            });
+            input.addEventListener('blur', function(e) {
+                if (e.target.value && !validateDateFormat(e.target.value)) {
+                    alert('Data inválida. Use DD/MM/AAAA');
+                    e.target.value = '';
+                }
+            });
+        }
+
+        function applyTimeMask(input) {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 4) value = value.slice(0, 4);
+                if (value.length > 2) value = value.slice(0, 2) + ':' + value.slice(2);
+                e.target.value = value;
+            });
+            input.addEventListener('blur', function(e) {
+                if (e.target.value && !validateTimeFormat(e.target.value)) {
+                    alert('Horário inválido. Use HH:MM');
+                    e.target.value = '';
+                }
+            });
+        }
+
+        function filterList(sectionId, type) {
+            const filterInput = document.getElementById(`filter-${type}-${sectionId}`);
+            if (!filterInput) return;
+            const filterText = filterInput.value.toLowerCase();
+            const items = document.querySelectorAll(`#${type}-list-${sectionId} .checkbox-item-modern`);
+            items.forEach(item => {
+                const label = item.querySelector('label')?.textContent.toLowerCase() || '';
+                item.style.display = label.includes(filterText) ? 'flex' : 'none';
+            });
+        }
+
+        function toggleExpand(sectionId, type) {
+            const list = document.getElementById(`${type}-list-${sectionId}`);
+            const btn = document.getElementById(`expand-${type}-${sectionId}`);
+            if (!list || !btn) return;
+            list.classList.toggle('expanded');
+            btn.innerHTML = list.classList.contains('expanded') ? '<i class="fas fa-chevron-up"></i> Retrair' : '<i class="fas fa-chevron-down"></i> Expandir';
+        }
+
+        function handleActivityChange(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            const selectedOptions = Array.from(section.querySelectorAll(`input[name="option-${sectionId}"]:checked`)).map(i => i.value);
+            const isGTT = selectedOptions.some(opt => opt === "ACIONAMENTO DA GTT");
+            const existingBoletim = section.querySelector(`#boletim-group-${sectionId}`);
+            
+            if (isGTT && !existingBoletim) {
+                const outcomeGroup = section.querySelector(`#outcome-${sectionId}`)?.closest('.form-modern');
+                const boletimHtml = `
+                    <div id="boletim-group-${sectionId}" class="boletim-card-modern">
+                        <div class="boletim-field-modern" id="boletim-field-${sectionId}-0">
+                            <input type="text" id="boletim-num-${sectionId}-0" placeholder="Número do Boletim de Ocorrência de Trânsito" class="input-modern">
+                            <button class="mini-btn-modern" onclick="addBoletimField('${sectionId}')"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="checkbox-item-modern">
+                            <input type="checkbox" id="not-generated-${sectionId}" name="not-generated-${sectionId}">
+                            <label for="not-generated-${sectionId}">Não gerado</label>
+                        </div>
+                    </div>
+                `;
+                if (outcomeGroup) outcomeGroup.insertAdjacentHTML('afterend', boletimHtml);
+                const notGenCheckbox = document.getElementById(`not-generated-${sectionId}`);
+                if (notGenCheckbox) {
+                    notGenCheckbox.addEventListener('change', function() {
+                        const inputs = document.querySelectorAll(`#boletim-group-${sectionId} input[type="text"]`);
+                        inputs.forEach(inp => inp.disabled = this.checked);
+                        if (this.checked) inputs.forEach(inp => inp.value = '');
+                    });
+                }
+            } else if (!isGTT && existingBoletim) {
+                existingBoletim.remove();
+            }
+        }
+
+        function addBoletimField(sectionId) {
+            boletimId++;
+            const group = document.getElementById(`boletim-group-${sectionId}`);
+            if (!group) return;
+            const notGenerated = document.getElementById(`not-generated-${sectionId}`);
+            const newField = document.createElement('div');
+            newField.className = 'boletim-field-modern';
+            newField.id = `boletim-field-${sectionId}-${boletimId}`;
+            newField.innerHTML = `
+                <input type="text" id="boletim-num-${sectionId}-${boletimId}" placeholder="Número do boletim" class="input-modern" ${notGenerated?.checked ? 'disabled' : ''}>
+                <button class="mini-btn-modern danger" onclick="removeBoletimField('${sectionId}', ${boletimId})"><i class="fas fa-trash-alt"></i></button>
+            `;
+            const lastField = group.querySelector('.boletim-field-modern:last-child');
+            if (lastField) {
+                lastField.insertAdjacentElement('afterend', newField);
+            } else {
+                group.insertBefore(newField, group.querySelector('.checkbox-item-modern'));
+            }
+        }
+
+        function removeBoletimField(sectionId, boletimId) {
+            const field = document.getElementById(`boletim-field-${sectionId}-${boletimId}`);
+            if (field) field.remove();
+        }
+
+        function triggerImageUpload(sectionId, imgId) {
+            const input = document.getElementById(`image-input-${sectionId}-${imgId}`);
+            if (input) input.click();
+        }
+
+        function previewImage(sectionId, imgId) {
+            const input = document.getElementById(`image-input-${sectionId}-${imgId}`);
+            const container = document.getElementById(`image-preview-container-${sectionId}-${imgId}`);
+            if (!input || !container) return;
+            
+            container.innerHTML = '';
+            if (input.files && input.files.length > 0) {
+                Array.from(input.files).forEach((file, idx) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'preview-item-modern';
+                        wrapper.innerHTML = `
+                            <img src="${e.target.result}" alt="Prévia">
+                            <div class="remove-img" data-src="${e.target.result}" onclick="removeImage(this, '${sectionId}')">×</div>
+                        `;
+                        container.appendChild(wrapper);
+                        if (!sectionImages[sectionId]) sectionImages[sectionId] = [];
+                        sectionImages[sectionId].push(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+        
+        function removeImage(element, sectionId) {
+            const imgSrc = element.getAttribute('data-src');
+            if (imgSrc && sectionImages[sectionId]) {
+                const index = sectionImages[sectionId].indexOf(imgSrc);
+                if (index !== -1) sectionImages[sectionId].splice(index, 1);
+            }
+            element.closest('.preview-item-modern').remove();
+        }
+
+        function addImageField(sectionId) {
+            imageId++;
+            const container = document.getElementById(`image-container-${sectionId}`);
+            if (!container) return;
+            
+            const uploadWrapper = document.createElement('div');
+            uploadWrapper.className = 'image-upload-wrapper';
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'upload-zone-modern';
+            fieldDiv.innerHTML = `
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Clique para adicionar mais imagens</p>
+                <input type="file" id="image-input-${sectionId}-${imageId}" accept="image/*" multiple style="display: none;" onchange="previewImage('${sectionId}', ${imageId})">
+            `;
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'image-preview-grid-modern';
+            previewDiv.id = `image-preview-container-${sectionId}-${imageId}`;
+            fieldDiv.addEventListener('click', (e) => {
+                e.stopPropagation();
+                triggerImageUpload(sectionId, imageId);
+            });
+            uploadWrapper.appendChild(fieldDiv);
+            uploadWrapper.appendChild(previewDiv);
+            container.appendChild(uploadWrapper);
+        }
+
+        function addFirstImageField(sectionId) {
+            imageId++;
+            const container = document.getElementById(`image-container-${sectionId}`);
+            if (!container) return;
+            container.innerHTML = '';
+            if (sectionImages[sectionId]) delete sectionImages[sectionId];
+            
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'upload-zone-modern';
+            fieldDiv.innerHTML = `
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Clique para adicionar imagens</p>
+                <input type="file" id="image-input-${sectionId}-${imageId}" accept="image/*" multiple style="display: none;" onchange="previewImage('${sectionId}', ${imageId})">
+            `;
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'image-preview-grid-modern';
+            previewDiv.id = `image-preview-container-${sectionId}-${imageId}`;
+            fieldDiv.addEventListener('click', (e) => {
+                e.stopPropagation();
+                triggerImageUpload(sectionId, imageId);
+            });
+            container.appendChild(fieldDiv);
+            container.appendChild(previewDiv);
+        }
+        
+        function loadImagesFromData(sectionId, images) {
+            if (!images || images.length === 0) return;
+            const container = document.getElementById(`image-container-${sectionId}`);
+            if (!container) return;
+            container.innerHTML = '';
+            sectionImages[sectionId] = [...images];
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'image-preview-grid-modern';
+            images.forEach((imgSrc, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'preview-item-modern';
+                wrapper.innerHTML = `
+                    <img src="${imgSrc}" alt="Prévia">
+                    <div class="remove-img" data-src="${imgSrc}" onclick="removeImage(this, '${sectionId}')">×</div>
+                `;
+                previewDiv.appendChild(wrapper);
+            });
+            container.appendChild(previewDiv);
+        }
+
+        function isValidSection(section) {
+            const sectionId = section.id;
+            const options = section.querySelectorAll(`input[name="option-${sectionId}"]:checked`).length;
+            const location = section.querySelector(`#location-${sectionId}`)?.value.trim() || '';
+            const time = section.querySelector(`#time-${sectionId}`)?.value.trim() || '';
+            const comments = section.querySelector(`#comments-${sectionId}`)?.value.trim() || '';
+            return options > 0 || location !== '' || time !== '' || comments !== '';
+        }
+
+        function updateEmptyState() {
+            const sections = document.querySelectorAll('.occ-card');
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = sections.length === 0 ? 'block' : 'none';
+            }
+        }
+
+        function addSection(data = {}) {
+            uniqueId++;
+            const sectionId = `section-${uniqueId}`;
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.style.display = 'none';
+            
+            const optionsHtml = activities.map((opt, idx) => {
+                const value = opt.replace(/^\d+\.\s/, '');
+                const isChecked = data.options?.includes(value);
+                return `
+                    <div class="checkbox-item-modern">
+                        <input type="checkbox" id="option-${sectionId}-${idx}" name="option-${sectionId}" value="${escapeHtml(value)}" ${isChecked ? 'checked' : ''} onchange="handleActivityChange('${sectionId}')">
+                        <label for="option-${sectionId}-${idx}">${escapeHtml(opt)}</label>
+                    </div>
+                `;
+            }).join('');
+
+            const camerasHtml = cameras.map((cam, idx) => {
+                const isChecked = data.cameras?.includes(cam);
+                return `
+                    <div class="checkbox-item-modern">
+                        <input type="checkbox" id="camera-${sectionId}-${idx}" name="camera-${sectionId}" value="${escapeHtml(cam)}" ${isChecked ? 'checked' : ''}>
+                        <label for="camera-${sectionId}-${idx}">${escapeHtml(cam)}</label>
+                    </div>
+                `;
+            }).join('');
+
+            const sectionHtml = `
+                <div class="occ-card expanded" id="${sectionId}">
+                    <div class="occ-header" onclick="window.toggleSectionCard('${sectionId}')">
+                        <div class="occ-title">
+                            <div class="occ-number">${String(uniqueId).padStart(2, '0')}</div>
+                            <h3>Ocorrência</h3>
+                        </div>
+                        <div class="occ-actions">
+                            <button class="occ-icon" onclick="event.stopPropagation(); window.duplicateSection('${sectionId}')" title="Duplicar"><i class="fas fa-copy"></i></button>
+                            <button class="occ-icon danger" onclick="event.stopPropagation(); window.askRemoveSection('${sectionId}')" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                            <button class="occ-icon"><i class="fas fa-chevron-up"></i></button>
+                        </div>
+                    </div>
+                    <div class="occ-content">
+                        <div class="form-modern">
+                            <label><i class="fas fa-tasks"></i> Atividade Observada</label>
+                            <div class="filter-wrap">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="filter-option-${sectionId}" class="filter-input-modern" placeholder="Pesquisar atividade..." oninput="window.filterList('${sectionId}', 'option')">
+                            </div>
+                            <button class="expand-btn-modern" id="expand-option-${sectionId}" onclick="window.toggleExpand('${sectionId}', 'option')"><i class="fas fa-chevron-down"></i> Expandir</button>
+                            <div class="checkbox-list-modern" id="option-list-${sectionId}">
+                                <div class="checkbox-grid-modern">${optionsHtml}</div>
+                            </div>
+                        </div>
+                        <div class="form-modern">
+                            <label><i class="fas fa-video"></i> Câmeras Utilizadas</label>
+                            <div class="filter-wrap">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="filter-camera-${sectionId}" class="filter-input-modern" placeholder="Pesquisar câmera..." oninput="window.filterList('${sectionId}', 'camera')">
+                            </div>
+                            <button class="expand-btn-modern" id="expand-camera-${sectionId}" onclick="window.toggleExpand('${sectionId}', 'camera')"><i class="fas fa-chevron-down"></i> Expandir</button>
+                            <div class="checkbox-list-modern" id="camera-list-${sectionId}">
+                                <div class="checkbox-grid-modern">${camerasHtml}</div>
+                            </div>
+                        </div>
+                        <div class="form-modern">
+                            <label><i class="fas fa-images"></i> Imagens (Opcional)</label>
+                            <div id="image-container-${sectionId}">
+                                <div class="upload-zone-modern" onclick="window.addFirstImageField('${sectionId}')">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Clique para adicionar imagens</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-modern">
+                            <label><i class="fas fa-map-marker-alt"></i> Local</label>
+                            <input type="text" id="location-${sectionId}" class="input-modern" placeholder="Digite o local da ocorrência" value="${escapeHtml(data.location || '')}">
+                        </div>
+                        <div class="form-modern">
+                            <label><i class="fas fa-clock"></i> Horário</label>
+                            <input type="text" id="time-${sectionId}" class="input-modern" placeholder="HH:MM" value="${escapeHtml(data.time || '')}">
+                            <small style="color: var(--text-tertiary); font-size: 10px; display: block; margin-top: 4px;">00:00-05:59 refere-se ao dia seguinte</small>
+                        </div>
+                        <div class="form-modern">
+                            <label><i class="fas fa-align-left"></i> Descrição</label>
+                            <textarea id="comments-${sectionId}" placeholder="Descreva detalhadamente a ocorrência...">${escapeHtml(data.comments || '')}</textarea>
+                        </div>
+                        <div class="form-modern">
+                            <label><i class="fas fa-flag-checkered"></i> Desfecho</label>
+                            <textarea id="outcome-${sectionId}" placeholder="Descreva o desfecho da ocorrência...">${escapeHtml(data.outcome || '')}</textarea>
+                        </div>
+                        <button class="btn-remove-modern" onclick="window.askRemoveSection('${sectionId}')"><i class="fas fa-trash-alt"></i> Remover Ocorrência</button>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('sections-container');
+            const existingEmpty = container.querySelector('#emptyState');
+            if (existingEmpty) existingEmpty.remove();
+            container.insertAdjacentHTML('beforeend', sectionHtml);
+            
+            if (data.images && data.images.length) {
+                setTimeout(() => {
+                    loadImagesFromData(sectionId, data.images);
+                }, 50);
+            }
+            
+            const timeInput = document.getElementById(`time-${sectionId}`);
+            if (timeInput) applyTimeMask(timeInput);
+            updateOccurrenceNumbers();
+            updateAddButtonPosition();
+        }
+
+        window.duplicateSection = function(sectionId) {
+            const originalSection = document.getElementById(sectionId);
+            if (!originalSection) return;
+            const sectionData = {
+                options: Array.from(originalSection.querySelectorAll(`input[name="option-${sectionId}"]:checked`)).map(i => i.value),
+                cameras: Array.from(originalSection.querySelectorAll(`input[name="camera-${sectionId}"]:checked`)).map(i => i.value),
+                location: originalSection.querySelector(`#location-${sectionId}`)?.value || '',
+                time: originalSection.querySelector(`#time-${sectionId}`)?.value || '',
+                comments: originalSection.querySelector(`#comments-${sectionId}`)?.value || '',
+                outcome: originalSection.querySelector(`#outcome-${sectionId}`)?.value || '',
+                images: sectionImages[sectionId] || []
+            };
+            addSection(sectionData);
+        };
+
+        window.toggleSectionCard = function(sectionId) {
+            const card = document.getElementById(sectionId);
+            if (card) card.classList.toggle('expanded');
+        };
+
+        window.askRemoveSection = function(sectionId) {
+            sectionToRemove = sectionId;
+            const modal = document.getElementById('confirmationModal');
+            if (modal) modal.style.display = 'flex';
+        };
+
+        function confirmRemoval() {
+            if (sectionToRemove) {
+                const section = document.getElementById(sectionToRemove);
+                if (section) section.remove();
+                delete sectionImages[sectionToRemove];
+                sectionToRemove = null;
+                updateOccurrenceNumbers();
+                updateAddButtonPosition();
+                updateEmptyState();
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('confirmationModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function updateOccurrenceNumbers() {
+            const sections = document.querySelectorAll('.occ-card');
+            sections.forEach((section, index) => {
+                const numberSpan = section.querySelector('.occ-number');
+                if (numberSpan) numberSpan.textContent = String(index + 1).padStart(2, '0');
+            });
+        }
+
+        function updateAddButtonPosition() {
+            const container = document.getElementById('sections-container');
+            if (!container) return;
+            const existingBtn = container.querySelector('.btn-add-modern:not(#firstAddBtn)');
+            if (existingBtn) existingBtn.remove();
+            const addButton = document.createElement('button');
+            addButton.className = 'btn-add-modern';
+            addButton.innerHTML = '<i class="fas fa-plus-circle"></i> Adicionar Nova Ocorrência';
+            addButton.onclick = () => addSection({});
+            container.appendChild(addButton);
+        }
+
+        async function loadImageAsDataURL(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = reject;
+                img.src = url;
+            });
+        }
+
+async function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const responsible = document.getElementById('responsible')?.value.trim();
+    const reportDate = document.getElementById('report-date')?.value.trim();
+    const sections = Array.from(document.querySelectorAll('.occ-card'));
+
+    if (!responsible) { alert('Preencha o nome do responsável'); return; }
+    if (!reportDate || !validateDateFormat(reportDate)) { alert('Data inválida'); return; }
+    
+    const validSections = sections.filter(s => isValidSection(s));
+    if (validSections.length === 0) { alert('Adicione pelo menos uma ocorrência com informações válidas'); return; }
+
+    for (const section of validSections) {
+        const sectionId = section.id;
+        const options = section.querySelectorAll(`input[name="option-${sectionId}"]:checked`).length;
+        const camerasSel = section.querySelectorAll(`input[name="camera-${sectionId}"]:checked`).length;
+        const time = section.querySelector(`#time-${sectionId}`)?.value.trim();
+        const comments = section.querySelector(`#comments-${sectionId}`)?.value.trim();
+        
+        if (options === 0) { alert('Selecione pelo menos uma atividade'); return; }
+        if (camerasSel === 0) { alert('Selecione pelo menos uma câmera'); return; }
+        if (!time || !validateTimeFormat(time)) { alert('Horário inválido'); return; }
+        if (!comments) { alert('Preencha a descrição'); return; }
+    }
+
+    try {
+        const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+        const marginX = 20;
+        const marginY = 25;
+        let y = marginY;
+        let currentPage = 1;
+        let isFirstPage = true;
+        
+        function checkPage(requiredHeight = 15) {
+            if (y + requiredHeight > pageHeight - marginY) {
+                doc.addPage();
+                currentPage++;
+                y = marginY;
+                isFirstPage = false;
+                return true;
+            }
+            return false;
+        }
+        
+        async function addWrappedText(text, x, y, maxWidth, fontSize = 10, isBold = false) {
+            if (!text || text === 'Não informado') text = '—';
+            doc.setFontSize(fontSize);
+            doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+            const lines = doc.splitTextToSize(text, maxWidth);
+            let currentY = y;
+            for (let i = 0; i < lines.length; i++) {
+                if (currentY + 5 > pageHeight - marginY && i > 0) {
+                    doc.addPage();
+                    currentPage++;
+                    currentY = marginY;
+                    isFirstPage = false;
+                    doc.setFontSize(fontSize);
+                    doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+                }
+                doc.text(lines[i], x, currentY);
+                currentY += 5.5;
+            }
+            return currentY;
+        }
+        
+        async function loadImageAsDataURL(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = reject;
+                img.src = url;
+            });
+        }
+
+        if (isFirstPage) {
+            try {
+                const logoGCMSrc = 'https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png';
+                const logoGCMImg = await loadImageAsDataURL(logoGCMSrc);
+                doc.addImage(logoGCMImg, 'PNG', marginX, y - 8, 20, 20);
+            } catch(e) { console.warn('Logo GCM não pode ser carregada'); }
+            
+            const logoCOISrc = 'https://i.postimg.cc/pLBkYpqC/brasao-coi-transparente.png';
+            try {
+                const logoCOIImg = await loadImageAsDataURL(logoCOISrc);
+                doc.addImage(logoCOIImg, 'PNG', pageWidth - marginX - 20, y - 8, 20, 20);
+            } catch(e) { console.warn('Logo COI não pode ser carregada'); }
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.setTextColor(15, 43, 109);
+            doc.text('RELATÓRIO DIÁRIO - COI', pageWidth / 2, y + 4, { align: 'center' });
+            y += 18;
+            doc.setDrawColor(15, 43, 109);
+            doc.line(marginX, y, pageWidth - marginX, y);
+            y += 8;
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(15, 43, 109);
+            doc.text('RELATÓRIO DIÁRIO - COI (continuação)', pageWidth / 2, y, { align: 'center' });
+            y += 12;
+            doc.setDrawColor(15, 43, 109);
+            doc.line(marginX, y, pageWidth - marginX, y);
+            y += 8;
+        }
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Responsável pelo Plantão:', marginX, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(responsible, marginX + 55, y);
+        y += 7;
+        
+        doc.setFont('helvetica', 'bold');
+        doc.text('Data do Relatório:', marginX, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(reportDate, marginX + 55, y);
+        y += 15;
+        
+        const sortedSections = [...validSections].sort((a, b) => {
+            const timeA = a.querySelector(`#time-${a.id}`)?.value.trim() || '23:59';
+            const timeB = b.querySelector(`#time-${b.id}`)?.value.trim() || '23:59';
+            return timeToMinutes(timeA) - timeToMinutes(timeB);
+        });
+        
+        for (let i = 0; i < sortedSections.length; i++) {
+            const section = sortedSections[i];
+            const sectionId = section.id;
+            
+            checkPage(12);
+            doc.setFillColor(245, 245, 250);
+            doc.rect(marginX, y - 4, pageWidth - (marginX * 2), 8, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(15, 43, 109);
+            doc.text(`OCORRÊNCIA ${String(i + 1).padStart(2, '0')}`, marginX, y);
+            y += 8;
+            doc.setDrawColor(220, 220, 230);
+            doc.line(marginX, y, pageWidth - marginX, y);
+            y += 6;
+            
+            const options = Array.from(section.querySelectorAll(`input[name="option-${sectionId}"]:checked`)).map(i => i.value);
+            const optionsText = options.map(o => o.replace(/^\d+\.\s/, '')).join(' • ');
+            checkPage(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(80, 80, 100);
+            doc.text('ATIVIDADE:', marginX, y);
+            y = await addWrappedText(optionsText, marginX + 30, y, pageWidth - marginX - 50, 10, false);
+            y += 4;
+            
+            const camerasSel = Array.from(section.querySelectorAll(`input[name="camera-${sectionId}"]:checked`)).map(i => i.value);
+            const camerasText = camerasSel.length > 0 ? camerasSel.join(' • ') : 'Nenhuma câmera selecionada';
+            checkPage(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CÂMERAS UTILIZADAS:', marginX, y);
+            y = await addWrappedText(camerasText, marginX + 50, y, pageWidth - marginX - 70, 10, false);
+            y += 4;
+            
+            const location = section.querySelector(`#location-${sectionId}`)?.value || '—';
+            checkPage(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('LOCAL:', marginX, y);
+            y = await addWrappedText(location, marginX + 30, y, pageWidth - marginX - 50, 10, false);
+            y += 4;
+            
+            const time = section.querySelector(`#time-${sectionId}`)?.value || '—';
+            const timeDisplay = isNextDayTime(time) ? `${time} (dia seguinte)` : time;
+            checkPage(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('HORÁRIO:', marginX, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(timeDisplay, marginX + 30, y);
+            y += 8;
+            
+            const comments = section.querySelector(`#comments-${sectionId}`)?.value || '—';
+            checkPage(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DESCRIÇÃO:', marginX, y);
+            y = await addWrappedText(comments, marginX + 30, y, pageWidth - marginX - 50, 10, false);
+            y += 4;
+            
+            const outcome = section.querySelector(`#outcome-${sectionId}`)?.value?.trim();
+            if (outcome && outcome !== '') {
+                checkPage(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('DESFECHO:', marginX, y);
+                y = await addWrappedText(outcome, marginX + 30, y, pageWidth - marginX - 50, 10, false);
+                y += 4;
+            }
+            
+            const boletimGroup = section.querySelector(`#boletim-group-${sectionId}`);
+            if (boletimGroup && options.includes("ACIONAMENTO DA GTT")) {
+                const boletimInputs = boletimGroup.querySelectorAll('input[type="text"]');
+                const boletins = Array.from(boletimInputs).map(inp => inp.value).filter(v => v);
+                const notGenerated = boletimGroup.querySelector(`#not-generated-${sectionId}`)?.checked;
+                
+                if (boletins.length > 0 || notGenerated) {
+                    checkPage(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('BOLETIM DE OCORRÊNCIA:', marginX, y);
+                    const boletimText = notGenerated ? 'Não gerado' : boletins.join(' • ');
+                    y = await addWrappedText(boletimText, marginX + 55, y, pageWidth - marginX - 75, 10, false);
+                    y += 4;
+                }
+            }
+            
+            const images = sectionImages[sectionId] || [];
+            if (images.length > 0) {
+                checkPage(45);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.setTextColor(80, 80, 100);
+                doc.text('IMAGENS:', marginX, y);
+                y += 5;
+                
+                const imgWidth = 60;
+                const imgHeight = 45;
+                const spacing = 8;
+                const maxPerRow = 2;
+                
+                for (let imgIdx = 0; imgIdx < images.length; imgIdx++) {
+                    const col = imgIdx % maxPerRow;
+                    const row = Math.floor(imgIdx / maxPerRow);
+                    const imgX = marginX + (col * (imgWidth + spacing));
+                    const imgY = y + (row * (imgHeight + spacing));
+                    
+                    if (imgY + imgHeight > pageHeight - marginY) {
+                        doc.addPage();
+                        currentPage++;
+                        y = marginY;
+                        isFirstPage = false;
+                        const newImgY = y + (row * (imgHeight + spacing));
+                        try {
+                            doc.addImage(images[imgIdx], 'PNG', imgX, newImgY, imgWidth, imgHeight);
+                        } catch (err) {
+                            console.error(`Erro ao adicionar imagem ${imgIdx + 1}:`, err);
+                        }
+                    } else {
+                        try {
+                            doc.addImage(images[imgIdx], 'PNG', imgX, imgY, imgWidth, imgHeight);
+                        } catch (err) {
+                            console.error(`Erro ao adicionar imagem ${imgIdx + 1}:`, err);
+                        }
+                    }
+                }
+                const totalRows = Math.ceil(images.length / maxPerRow);
+                y += totalRows * (imgHeight + spacing) + 5;
+            }
+            
+            y += 8;
+            if (i < sortedSections.length - 1) {
+                doc.setDrawColor(220, 220, 230);
+                doc.setLineWidth(0.3);
+                doc.line(marginX, y, pageWidth - marginX, y);
+                y += 6;
+            }
+        }
+        
+        y = pageHeight - 12;
+        doc.setDrawColor(200, 200, 210);
+        doc.line(marginX, y - 4, pageWidth - marginX, y - 4);
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 140);
+        const now = new Date();
+        const timestamp = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+        doc.text(`Gerado em: ${timestamp}`, marginX, y);
+        doc.text(`Página ${currentPage}`, pageWidth - marginX, y, { align: 'right' });
+        doc.text('Prefeitura do Cabo de Santo Agostinho - Central de Operações e Inteligência', pageWidth / 2, y + 6, { align: 'center' });
+        
+        const fileName = `relatorio_coi_${reportDate.replace(/\//g, '-')}.pdf`;
+        doc.save(fileName);
+        alert('PDF gerado com sucesso!');
+    } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        alert('Erro ao gerar PDF: ' + error.message);
+    }
+}
+
+        function exportToExcel() {
+            const responsible = document.getElementById('responsible')?.value.trim();
+            const reportDate = document.getElementById('report-date')?.value.trim();
+            const sections = Array.from(document.querySelectorAll('.occ-card')).filter(s => isValidSection(s));
+
+            if (!responsible) { alert('Preencha o nome do responsável'); return; }
+            if (!reportDate || !validateDateFormat(reportDate)) { alert('Data inválida'); return; }
+            if (sections.length === 0) { alert('Adicione pelo menos uma ocorrência'); return; }
+
+            const sortedSections = [...sections].sort((a, b) => {
+                const timeA = a.querySelector(`#time-${a.id}`)?.value.trim() || '23:59';
+                const timeB = b.querySelector(`#time-${b.id}`)?.value.trim() || '23:59';
+                return timeToMinutes(timeA) - timeToMinutes(timeB);
+            });
+            
+            const data = [
+                ['RELATÓRIO DIÁRIO - COI'],
+                ['Responsável:', responsible],
+                ['Data:', reportDate],
+                []
+            ];
+            
+            for (let i = 0; i < sortedSections.length; i++) {
+                const section = sortedSections[i];
+                const sectionId = section.id;
+                const options = Array.from(section.querySelectorAll(`input[name="option-${sectionId}"]:checked`)).map(i => i.value.replace(/^\d+\.\s/, ''));
+                const camerasSel = Array.from(section.querySelectorAll(`input[name="camera-${sectionId}"]:checked`)).map(i => i.value);
+                const location = section.querySelector(`#location-${sectionId}`)?.value || '—';
+                const time = section.querySelector(`#time-${sectionId}`)?.value || '—';
+                const comments = section.querySelector(`#comments-${sectionId}`)?.value || '—';
+                const outcome = section.querySelector(`#outcome-${sectionId}`)?.value || '—';
+                
+                data.push([`Ocorrência ${String(i + 1).padStart(2, '0')}`]);
+                data.push(['Atividade Observada:', options.join('; ')]);
+                data.push(['Câmeras:', camerasSel.join('; ')]);
+                data.push(['Local:', location]);
+                data.push(['Horário:', isNextDayTime(time) ? `${time} (dia seguinte)` : time]);
+                data.push(['Descrição:', comments]);
+                if (outcome && outcome !== '—') data.push(['Desfecho:', outcome]);
+                data.push([]);
+            }
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Relatório COI');
+            XLSX.writeFile(wb, `relatorio_coi_${reportDate.replace(/\//g, '-')}.xlsx`);
+            alert('Excel exportado com sucesso!');
+        }
+
+        function saveReport() {
+            const responsible = document.getElementById('responsible')?.value.trim() || '';
+            const reportDate = document.getElementById('report-date')?.value.trim() || '';
+            const sections = Array.from(document.querySelectorAll('.occ-card')).filter(s => isValidSection(s));
+
+            if (sections.length === 0) {
+                alert('Não é possível salvar um relatório vazio');
+                return;
+            }
+
+            const reportData = {
+                responsible: responsible,
+                reportDate: reportDate,
+                sections: sections.map(section => {
+                    const sectionId = section.id;
+                    return {
+                        options: Array.from(section.querySelectorAll(`input[name="option-${sectionId}"]:checked`)).map(i => i.value),
+                        cameras: Array.from(section.querySelectorAll(`input[name="camera-${sectionId}"]:checked`)).map(i => i.value),
+                        location: section.querySelector(`#location-${sectionId}`)?.value || '',
+                        time: section.querySelector(`#time-${sectionId}`)?.value || '',
+                        comments: section.querySelector(`#comments-${sectionId}`)?.value || '',
+                        outcome: section.querySelector(`#outcome-${sectionId}`)?.value || '',
+                        images: sectionImages[sectionId] || []
+                    };
+                })
+            };
+
+            const fileDate = reportDate && validateDateFormat(reportDate) ? reportDate.replace(/\//g, '-') : new Date().toISOString().slice(0,10);
+            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `relatorio_coi_${fileDate}.json`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            alert('Relatório salvo com sucesso!');
+        }
+
+        function loadSingleReport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    document.getElementById('responsible').value = data.responsible || '';
+                    document.getElementById('report-date').value = data.reportDate || '';
+                    const container = document.getElementById('sections-container');
+                    container.innerHTML = '';
+                    uniqueId = 0;
+                    boletimId = 0;
+                    imageId = 0;
+                    sectionImages = {};
+                    if (data.sections && data.sections.length) {
+                        data.sections.forEach(section => addSection(section));
+                    }
+                    updateOccurrenceNumbers();
+                    updateAddButtonPosition();
+                    updateEmptyState();
+                    alert('Relatório carregado com sucesso!');
+                } catch (err) {
+                    console.error(err);
+                    alert('Erro ao carregar o relatório: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        async function generateMonthlyPDF(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+        alert('Selecione pelo menos um arquivo JSON de relatório');
+        return;
+    }
+
+    const reports = [];
+    
+    for (const file of files) {
+        try {
+            const text = await file.text();
+            const reportData = JSON.parse(text);
+            if (reportData.reportDate && validateDateFormat(reportData.reportDate)) {
+                reports.push(reportData);
+            } else {
+                console.warn(`Arquivo ${file.name} ignorado: data inválida ou ausente`);
+            }
+        } catch (err) {
+            console.error(`Erro ao processar ${file.name}:`, err);
+        }
+    }
+
+    if (reports.length === 0) {
+        alert('Nenhum relatório válido foi carregado. Verifique os arquivos selecionados.');
+        return;
+    }
+
+    reports.sort((a, b) => {
+        const [da, ma, ya] = a.reportDate.split('/').map(Number);
+        const [db, mb, yb] = b.reportDate.split('/').map(Number);
+        return new Date(ya, ma - 1, da) - new Date(yb, mb - 1, db);
+    });
+
+    const firstDate = reports[0].reportDate;
+    const lastDate = reports[reports.length - 1].reportDate;
+    const [firstDay, firstMonth, firstYear] = firstDate.split('/').map(Number);
+    const [lastDay, lastMonth, lastYear] = lastDate.split('/').map(Number);
+    
+    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
+                        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    
+    let fileName = '';
+    if (firstMonth === lastMonth && firstYear === lastYear) {
+        fileName = `relatorio_mensal_${monthNames[firstMonth - 1]}_${firstYear}.pdf`;
+    } else {
+        fileName = `relatorio_periodo_${firstDay}_${firstMonth}_${firstYear}_a_${lastDay}_${lastMonth}_${lastYear}.pdf`;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const marginX = 20;
+    const marginY = 25;
+    let y = marginY;
+    let currentPage = 1;
+    let isFirstPage = true;
+
+    function checkPage(requiredHeight = 15) {
+        if (y + requiredHeight > pageHeight - marginY) {
+            doc.addPage();
+            currentPage++;
+            y = marginY;
+            isFirstPage = false;
+            return true;
+        }
+        return false;
+    }
+
+    function cleanText(text) {
+        if (!text) return '—';
+        return String(text)
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^\x20-\x7E\u00C0-\u00FF]/g, '')
+            .replace(/Ø|Ü|Å|Æ|ß/g, function(match) {
+                const map = { 'Ø': 'O', 'Ü': 'U', 'Å': 'A', 'Æ': 'AE', 'ß': 'ss' };
+                return map[match] || match;
+            })
+            .trim();
+    }
+
+    function addWrappedText(text, x, y, maxWidth, fontSize = 10, isBold = false) {
+        const cleanTextContent = cleanText(text);
+        doc.setFontSize(fontSize);
+        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+        const lines = doc.splitTextToSize(cleanTextContent, maxWidth);
+        let currentY = y;
+        for (let i = 0; i < lines.length; i++) {
+            if (currentY + 5 > pageHeight - marginY && i > 0) {
+                doc.addPage();
+                currentPage++;
+                currentY = marginY;
+                isFirstPage = false;
+                doc.setFontSize(fontSize);
+                doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+            }
+            doc.text(lines[i], x, currentY);
+            currentY += 5.5;
+        }
+        return currentY;
+    }
+
+    function addHeader() {
+        if (isFirstPage) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.setTextColor(15, 43, 109);
+            doc.text('RELATORIO MENSAL - COI', pageWidth / 2, y, { align: 'center' });
+            y += 12;
+            doc.setDrawColor(15, 43, 109);
+            doc.line(marginX, y, pageWidth - marginX, y);
+            y += 10;
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            const periodoText = `Periodo: ${reports[0].reportDate} a ${reports[reports.length - 1].reportDate}`;
+            doc.text(periodoText, pageWidth / 2, y, { align: 'center' });
+            y += 8;
+            doc.text(`Total de relatorios: ${reports.length}`, pageWidth / 2, y, { align: 'center' });
+            y += 15;
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(15, 43, 109);
+            doc.text('RELATORIO MENSAL - COI (continuacao)', pageWidth / 2, y, { align: 'center' });
+            y += 12;
+            doc.setDrawColor(15, 43, 109);
+            doc.line(marginX, y, pageWidth - marginX, y);
+            y += 10;
+        }
+    }
+
+    addHeader();
+
+    for (let rIdx = 0; rIdx < reports.length; rIdx++) {
+    const report = reports[rIdx];
+    
+    checkPage(20);
+    
+    doc.setFillColor(245, 245, 250);
+    doc.rect(marginX, y - 4, pageWidth - (marginX * 2), 15, 'F'); 
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(15, 43, 109);
+    doc.text(`Data: ${report.reportDate}`, marginX, y);
+    y += 10;
+    
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(80, 80, 100);
+    doc.text('Responsavel:', marginX, y);
+    
+    const responsavelText = cleanText(report.responsible || 'Nao informado');
+    const responsavelX = marginX + 42; 
+    const maxWidth = (pageWidth - marginX - 42) - 10; 
+    
+    doc.setFont('helvetica', 'normal');
+    const responsavelLines = doc.splitTextToSize(responsavelText, maxWidth);
+    
+    for (let i = 0; i < responsavelLines.length; i++) {
+        if (i > 0) {
+            y += 5;
+            if (y > (marginY + 25)) { 
+                doc.text(responsavelLines[i], responsavelX, y);
+            } else {
+                doc.text(responsavelLines[i], responsavelX, y);
+            }
+        } else {
+            doc.text(responsavelLines[i], responsavelX, y);
+        }
+    }
+    y += 10;
+    
+    doc.setDrawColor(220, 220, 230);
+    doc.setLineWidth(0.3);
+    doc.line(marginX, y, pageWidth - marginX, y);
+    y += 8;
+    
+    const sections = report.sections || [];
+    
+    if (sections.length === 0) {
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(10);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Nenhuma ocorrencia registrada neste dia', pageWidth / 2, y, { align: 'center' });
+        y += 12;
+    }
+    
+    for (let sIdx = 0; sIdx < sections.length; sIdx++) {
+        const section = sections[sIdx];
+        
+        checkPage(15);
+        
+        doc.setFillColor(15, 43, 109);
+        doc.rect(marginX, y - 3, 25, 7, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.text(`${String(sIdx + 1).padStart(2, '0')}`, marginX + 4, y + 3);
+        
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text(`Ocorrencia ${String(sIdx + 1).padStart(2, '0')}`, marginX + 32, y + 3);
+        y += 10;
+        
+        const optionsText = (section.options || []).join(' • ');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(80, 80, 100);
+        doc.text('ATIVIDADE:', marginX, y);
+        y = addWrappedText(optionsText || '—', marginX + 35, y, pageWidth - marginX - 55, 10, false);
+        y += 4;
+        
+        const camerasText = (section.cameras || []).join(' • ');
+        checkPage(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('CAMERAS:', marginX, y);
+        y = addWrappedText(camerasText || '—', marginX + 35, y, pageWidth - marginX - 55, 10, false);
+        y += 4;
+        
+        const location = section.location || '—';
+        checkPage(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('LOCAL:', marginX, y);
+        y = addWrappedText(location, marginX + 35, y, pageWidth - marginX - 55, 10, false);
+        y += 4;
+        
+        const time = section.time || '—';
+        let timeDisplay = time;
+        if (time && time !== '—') {
+            const [hours] = time.split(':').map(Number);
+            if (hours >= 0 && hours <= 5) timeDisplay = `${time} (dia seguinte)`;
+        }
+        checkPage(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('HORARIO:', marginX, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(timeDisplay, marginX + 35, y);
+        y += 8;
+        
+        const comments = section.comments || '—';
+        checkPage(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('DESCRICAO:', marginX, y);
+        y = addWrappedText(comments, marginX + 35, y, pageWidth - marginX - 55, 10, false);
+        y += 4;
+        
+        if (section.outcome && section.outcome.trim() !== '') {
+            checkPage(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DESFECHO:', marginX, y);
+            y = addWrappedText(section.outcome, marginX + 35, y, pageWidth - marginX - 55, 10, false);
+            y += 4;
+        }
+        
+        if (section.images && section.images.length > 0) {
+            checkPage(70);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(80, 80, 100);
+            doc.text('IMAGENS:', marginX, y);
+            y += 7;
+            
+            const imgWidth = 70;
+            const imgHeight = 50;
+            const imgSpacing = 10;
+            const imagesPerRow = 2;
+            
+            for (let i = 0; i < section.images.length; i++) {
+                const imgSrc = section.images[i];
+                const col = i % imagesPerRow;
+                const row = Math.floor(i / imagesPerRow);
+                
+                const imgX = marginX + (col * (imgWidth + imgSpacing));
+                const imgY = y + (row * (imgHeight + imgSpacing));
+                
+                if (imgY + imgHeight > pageHeight - marginY) {
+                    doc.addPage();
+                    currentPage++;
+                    y = marginY;
+                    isFirstPage = false;
+                    const newImgY = marginY + (row * (imgHeight + imgSpacing));
+                    try {
+                        doc.addImage(imgSrc, 'JPEG', imgX, newImgY, imgWidth, imgHeight);
+                    } catch (err) {
+                        console.error(`Erro ao adicionar imagem:`, err);
+                    }
+                } else {
+                    try {
+                        doc.addImage(imgSrc, 'JPEG', imgX, imgY, imgWidth, imgHeight);
+                    } catch (err) {
+                        console.error(`Erro ao adicionar imagem:`, err);
+                    }
+                }
+            }
+            
+            const totalRows = Math.ceil(section.images.length / imagesPerRow);
+            y += totalRows * (imgHeight + imgSpacing) + 5;
+        }
+        
+        y += 6;
+        
+        if (sIdx < sections.length - 1) {
+            doc.setDrawColor(200, 200, 210);
+            doc.setLineWidth(0.2);
+            doc.line(marginX + 10, y, pageWidth - marginX - 10, y);
+            y += 6;
+        }
+    }
+    
+    if (rIdx < reports.length - 1) {
+        y += 6;
+        doc.setDrawColor(15, 43, 109);
+        doc.setLineWidth(0.5);
+        doc.line(marginX, y, pageWidth - marginX, y);
+        y += 12;
+    }
+}
+    
+    y = pageHeight - 15;
+    doc.setDrawColor(200, 200, 210);
+    doc.line(marginX, y - 4, pageWidth - marginX, y - 4);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 140);
+    const nowDate = new Date();
+    const timestamp = `${nowDate.getDate().toString().padStart(2, '0')}/${(nowDate.getMonth() + 1).toString().padStart(2, '0')}/${nowDate.getFullYear()} ${nowDate.getHours().toString().padStart(2, '0')}:${nowDate.getMinutes().toString().padStart(2, '0')}`;
+    doc.text(`Gerado em: ${timestamp}`, marginX, y);
+    doc.text(`Pagina ${currentPage}`, pageWidth - marginX, y, { align: 'right' });
+    doc.text('Prefeitura do Cabo de Santo Agostinho - Central de Operacoes e Inteligencia', pageWidth / 2, y + 6, { align: 'center' });
+    
+    doc.save(fileName);
+    alert(`PDF mensal gerado com sucesso!\n${reports.length} relatorio(s) processado(s).`);
+}
+
+        document.getElementById('openShiftBtn')?.addEventListener('click', () => window.location.href = 'abertura-plantao.html');
+        document.getElementById('openSinespBtn')?.addEventListener('click', () => window.location.href = 'equipes-sinesp.html');
+        document.getElementById('generateMonthlyPdfBtn')?.addEventListener('click', () => document.getElementById('load-monthly-files').click());
+        document.getElementById('dashboardBtn')?.addEventListener('click', () => window.location.href = 'dashboard.html');
+
+        const backBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => backBtn?.classList.toggle('visible', window.scrollY > 300));
+        backBtn?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('report-date');
+            if (dateInput) applyDateMask(dateInput);
+            updateEmptyState();
+            const firstAddBtn = document.getElementById('firstAddBtn');
+            if (firstAddBtn) {
+                firstAddBtn.addEventListener('click', () => addSection({}));
+            }
+            document.getElementById('generatePdfBtn')?.addEventListener('click', generatePDF);
+            document.getElementById('exportExcelBtn')?.addEventListener('click', exportToExcel);
+            document.getElementById('saveReportBtn')?.addEventListener('click', saveReport);
+            document.getElementById('loadReportBtn')?.addEventListener('click', () => document.getElementById('load-file')?.click());
+            document.getElementById('load-file')?.addEventListener('change', loadSingleReport);
+            document.getElementById('load-monthly-files')?.addEventListener('change', generateMonthlyPDF);
+            document.querySelector('.confirm-btn')?.addEventListener('click', confirmRemoval);
+            document.querySelector('.cancel-btn')?.addEventListener('click', closeModal);
+        });
+
+        window.filterList = filterList;
+        window.toggleExpand = toggleExpand;
+        window.handleActivityChange = handleActivityChange;
+        window.addBoletimField = addBoletimField;
+        window.removeBoletimField = removeBoletimField;
+        window.addImageField = addImageField;
+        window.addFirstImageField = addFirstImageField;
+        window.previewImage = previewImage;
+        window.triggerImageUpload = triggerImageUpload;
+        window.removeImage = removeImage;
+        window.loadImagesFromData = loadImagesFromData;
+    </script>
+</body>
+</html>
