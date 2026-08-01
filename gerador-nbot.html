@@ -272,18 +272,111 @@
 
 <script>
     // ============================================================
-    // CONFIGURAÇÃO - GITHUB GIST (COM PROXY NETLIFY)
+    // CONFIGURAÇÃO - SUPABASE (BANCO DE DADOS EM NUVEM)
     // ============================================================
 
-    const GIST_ID = '363ae81662880bdaf8950670b30579e0';
-    const GITHUB_TOKEN = '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';
-    const FILENAME = 'nbot-data.json';
-    
-    // URL RAW (para leitura - SEM CORS)
-    const RAW_URL = `https://gist.githubusercontent.com/raw/${GIST_ID}/${FILENAME}`;
-    
-    // URL do proxy Netlify (para escrita)
-    const PROXY_URL = '/.netlify/functions/nbot';
+    // 🔑 Suas credenciais do Supabase
+    const SUPABASE_URL = 'https://aqrqkhnteuijjdfzdrtv.supabase.co';  
+    const SUPABASE_KEY = 'sb_publishable_bOj28NYItc1HZpaQoK5kxQ_gwCbU-rQ';  
+
+    // ============================================================
+    // FUNÇÃO PARA BUSCAR DADOS
+    // ============================================================
+
+    async function fetchDataFromCloud() {
+        try {
+            console.log('🔄 Buscando dados do Supabase...');
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/nbot?select=*`, {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Dados carregados:', data);
+
+            if (!data || data.length === 0) {
+                return {
+                    ano: 2026,
+                    ultimo_numero: 760,
+                    total_gerados: 760,
+                    historico: []
+                };
+            }
+
+            return data[0];
+        } catch (error) {
+            console.error('❌ Erro ao buscar dados:', error);
+            throw error;
+        }
+    }
+
+    // ============================================================
+    // FUNÇÃO PARA SALVAR DADOS
+    // ============================================================
+
+    async function saveDataToCloud(data) {
+        try {
+            console.log('💾 Salvando dados no Supabase...');
+
+            const payload = {
+                ano: data.ano,
+                ultimo_numero: data.ultimo_numero,
+                total_gerados: data.total_gerados,
+                historico: data.historico || []
+            };
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/nbot?id=eq.1`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ Dados salvos:', result);
+            return result[0] || data;
+        } catch (error) {
+            console.error('❌ Erro ao salvar dados:', error);
+            throw error;
+        }
+    }
+
+    // ============================================================
+    // CONVERSÃO DE DADOS
+    // ============================================================
+
+    function convertToInternal(data) {
+        return {
+            ano: data.ano || 2026,
+            ultimoNumero: data.ultimo_numero || 760,
+            totalGerados: data.total_gerados || 760,
+            historico: data.historico || []
+        };
+    }
+
+    function convertToExternal(data) {
+        return {
+            ano: data.ano,
+            ultimo_numero: data.ultimoNumero,
+            total_gerados: data.totalGerados,
+            historico: data.historico || []
+        };
+    }
 
     // ============================================================
     // VARIÁVEIS GLOBAIS
@@ -295,71 +388,7 @@
     let isGenerating = false;
 
     // ============================================================
-    // FUNÇÃO PARA BUSCAR DADOS (via RAW - SEM CORS)
-    // ============================================================
-
-    async function fetchDataFromCloud() {
-        try {
-            console.log('🔄 Buscando dados do Gist (RAW)...');
-            
-            const response = await fetch(RAW_URL);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            const data = await response.json();
-            console.log('✅ Dados carregados:', data);
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Erro ao buscar dados:', error);
-            throw error;
-        }
-    }
-
-    // ============================================================
-    // FUNÇÃO PARA SALVAR DADOS (via Proxy Netlify)
-    // ============================================================
-
-    async function saveDataToCloud(data) {
-        try {
-            console.log('💾 Salvando dados via proxy Netlify...');
-            
-            const response = await fetch(PROXY_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ano: data.ano,
-                    ultimoNumero: data.ultimoNumero,
-                    totalGerados: data.totalGerados,
-                    historico: data.historico || []
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            const result = await response.json();
-            console.log('✅ Dados salvos:', result);
-            
-            if (!result.success) {
-                throw new Error(result.error || 'Erro desconhecido');
-            }
-            
-            return result.data;
-            
-        } catch (error) {
-            console.error('❌ Erro ao salvar dados:', error);
-            throw error;
-        }
-    }
-
-    // ============================================================
-    // FUNÇÕES DE NEGÓCIO (MANTIDAS)
+    // FUNÇÕES DE NEGÓCIO
     // ============================================================
 
     function formatNbot(ano, numero) {
@@ -367,43 +396,19 @@
     }
 
     function getDefaultData() {
-        const anoAtual = new Date().getFullYear();
         return {
-            ano: anoAtual,
+            ano: 2026,
             ultimoNumero: 760,
             totalGerados: 760,
             historico: []
         };
     }
 
-    function validateAndFixData(data) {
-        const anoAtual = new Date().getFullYear();
-
-        if (!data || typeof data !== 'object') {
-            return getDefaultData();
-        }
-
-        if (data.ano !== anoAtual) {
-            return {
-                ano: anoAtual,
-                ultimoNumero: 0,
-                totalGerados: 0,
-                historico: data.historico || []
-            };
-        }
-
-        if (typeof data.ultimoNumero !== 'number') data.ultimoNumero = 0;
-        if (typeof data.totalGerados !== 'number') data.totalGerados = 0;
-        if (!Array.isArray(data.historico)) data.historico = [];
-
-        return data;
-    }
-
     // ============================================================
     // FALLBACK: localStorage
     // ============================================================
 
-    const LOCAL_STORAGE_KEY = 'nbot_data_fallback';
+    const LOCAL_STORAGE_KEY = 'nbot_data_supabase_fallback';
 
     function loadLocalData() {
         try {
@@ -498,23 +503,22 @@
 
     async function loadCurrentNumber() {
         try {
-            setStatus('syncing', 'Sincronizando...');
+            setStatus('syncing', 'Sincronizando com o Supabase...');
 
             const cloudData = await fetchDataFromCloud();
-            const validatedData = validateAndFixData(cloudData);
+            const internalData = convertToInternal(cloudData);
 
-            saveLocalData(validatedData);
-            updateUI(validatedData, false);
-            setStatus('online', '✅ Conectado ao Gist');
+            saveLocalData(internalData);
+            updateUI(internalData, false);
+            setStatus('online', '✅ Conectado ao Supabase');
 
             return true;
         } catch (error) {
-            console.warn('Falha ao conectar:', error);
+            console.warn('Falha ao conectar ao Supabase:', error);
 
             const localData = loadLocalData();
             if (localData) {
-                const validatedData = validateAndFixData(localData);
-                updateUI(validatedData, false);
+                updateUI(localData, false);
                 setStatus('offline', '⚠️ Offline - dados locais');
                 return true;
             }
@@ -565,7 +569,7 @@
 
         try {
             const anoAtual = new Date().getFullYear();
-            let data = currentData || getDefaultData();
+            let data = { ...currentData };
 
             if (data.ano !== anoAtual) {
                 data.ano = anoAtual;
@@ -590,10 +594,11 @@
             console.log('📦 Salvando:', data);
 
             try {
-                await saveDataToCloud(data);
-                setStatus('online', '✅ Salvo no Gist!');
+                const externalData = convertToExternal(data);
+                await saveDataToCloud(externalData);
+                setStatus('online', '✅ Salvo no Supabase!');
             } catch (cloudError) {
-                console.warn('Erro ao salvar no Gist:', cloudError);
+                console.warn('Erro ao salvar no Supabase:', cloudError);
                 setStatus('offline', '⚠️ Salvo localmente');
             }
 
