@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DASHBOARD - COI | MIRA</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/Prx3cKFq/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.postimg.cc/9fTNbMgt/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/vT8qGvY3/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #0f2b6d;
+            --primary-light: #1e3a8a;
+            --primary-dark: #0a1a4a;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --bg-card-solid: #1e293b;
+            --bg-input: rgba(15, 23, 42, 0.8);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-sm: 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0f172a, #020617);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.03);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .glass-header:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .logo-left,
+        .logo-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-left img,
+        .logo-right img {
+            height: 50px;
+            width: 50px;
+            object-fit: contain;
+            transition: var(--transition-fast);
+        }
+
+        .logo-left img:hover,
+        .logo-right img:hover {
+            transform: scale(1.02);
+        }
+
+        .title-section {
+            text-align: center;
+            flex: 1;
+        }
+
+        .title-section h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .title-section .badge {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 4px;
+            font-size: 9px;
+        }
+
+        .title-section .badge span {
+            background: rgba(15, 43, 109, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           FILTROS DO DASHBOARD
+           ============================================ */
+        .filter-dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .filter-dashboard .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-dashboard .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .filter-dashboard .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .filter-dashboard .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-dashboard .form-group select option {
+            background: var(--bg-card-solid);
+            color: var(--text-primary);
+        }
+
+        .action-btn {
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .action-btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+
+        .action-btn.info {
+            background: linear-gradient(135deg, var(--info), #2563eb);
+            border: none;
+        }
+
+        /* ============================================
+           CARDS
+           ============================================ */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card-stat {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .card-stat:hover {
+            border-color: rgba(15, 43, 109, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .card-stat .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-stat .label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .card-stat .icon {
+            font-size: 24px;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+        }
+
+        /* ============================================
+           GRÁFICOS
+           ============================================ */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .chart-card:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .chart-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .chart-card h3 i {
+            margin-right: 8px;
+            color: var(--primary-light);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+        }
+
+        .chart-container.pie {
+            height: 250px;
+        }
+
+        /* ============================================
+           TOP 5 CATEGORIAS
+           ============================================ */
+        .top-list {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .top-list:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .top-list h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .top-list h3 i {
+            margin-right: 8px;
+            color: var(--primary-light);
+        }
+
+        .top-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .top-item:last-child {
+            border-bottom: none;
+        }
+
+        .top-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .top-item .rank {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .top-item .name {
+            flex: 1;
+            margin: 0 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .top-item .value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .top-item .bar {
+            width: 60px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-left: 12px;
+        }
+
+        .top-item .bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* ============================================
+           STATUS
+           ============================================ */
+        .status-bar {
+            margin-top: 16px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status-bar.online {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-bar.offline {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-bar.syncing {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-tertiary);
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: var(--text-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .filter-dashboard {
+                flex-direction: column;
+            }
+            .filter-dashboard .form-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="glass-header">
+            <div class="logo-left">
+                <img src="https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png" alt="Brasão GCM">
+            </div>
+            <div class="title-section">
+                <h1>📊 DASHBOARD - COI</h1>
+                <div class="badge">
+                    <span><i class="fas fa-shield-alt"></i> SMDS/GINT/COI</span>
+                    <span><i class="fas fa-chart-line"></i> MIRA v2.0</span>
+                </div>
+            </div>
+            <div class="logo-right">
+                <img src="https://i.postimg.cc/gc4J2ByG/brasao-coi2.png" alt="Brasão COI">
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span class="status-bar syncing" id="statusBar">
+                <i class="fas fa-spinner fa-spin"></i> Carregando dados...
+            </span>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-dashboard">
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> ANO</label>
+                <select id="filtroAno">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> MÊS</label>
+                <select id="filtroMes">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+                <button class="action-btn primary" id="aplicarFiltroBtn">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+                <button class="action-btn" id="limparFiltroBtn" style="background: rgba(255,255,255,0.05);">
+                    <i class="fas fa-times"></i> Limpar
+                </button>
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+                <a href="resumo-estatistico.html" class="back-btn" style="margin: 0; padding: 8px 16px; font-size: 12px;">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-grid" id="cardsGrid">
+            <div class="card-stat">
+                <div class="icon"><i class="fas fa-flag"></i></div>
+                <div class="number" id="totalEventos">0</div>
+                <div class="label">Total de Eventos</div>
+            </div>
+            <div class="card-stat">
+                <div class="icon"><i class="fas fa-calendar-day"></i></div>
+                <div class="number" id="mediaDiaria">0</div>
+                <div class="label">Média Diária</div>
+            </div>
+            <div class="card-stat">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <div class="number" id="totalOperadores">0</div>
+                <div class="label">Operadores Ativos</div>
+            </div>
+            <div class="card-stat">
+                <div class="icon"><i class="fas fa-file-alt"></i></div>
+                <div class="number" id="totalDias">0</div>
+                <div class="label">Dias Registrados</div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> Evolução Mensal</h3>
+                <div class="chart-container">
+                    <canvas id="chartEvolucao"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> Distribuição por Categoria</h3>
+                <div class="chart-container pie">
+                    <canvas id="chartDistribuicao"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 5 Categorias -->
+        <div class="top-list" id="topList">
+            <h3><i class="fas fa-trophy"></i> TOP 5 Categorias</h3>
+            <div id="topItems">
+                <div class="no-data">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhum dado disponível</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            MONITORAMENTO INTEGRADO DE RELATÓRIOS E ANÁLISES - <strong>M I R A</strong> | Prefeitura do Cabo de Santo Agostinho
+        </footer>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURAÇÃO - SUPABASE
+        // ============================================================
+
+        const SUPABASE_URL = 'https://kbisexjpurcjlnrhprqx.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Wb9geOCkayDVHHU7WJqexw_jsawBumN';
+        const TABLE_NAME = 'resumo_estatistico';
+
+        // ============================================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================================
+
+        let dadosCompletos = [];
+        let dadosFiltrados = [];
+        let chartEvolucao = null;
+        let chartDistribuicao = null;
+
+        // ============================================================
+        // FUNÇÕES DE UTILIDADE
+        // ============================================================
+
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateStr;
+        }
+
+        function getNomesMeses() {
+            return ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+        }
+
+        // ============================================================
+        // FUNÇÕES DE UI
+        // ============================================================
+
+        function setStatus(status, message) {
+            const statusBar = document.getElementById('statusBar');
+            statusBar.className = `status-bar ${status}`;
+
+            const icons = {
+                'online': '<i class="fas fa-check-circle"></i>',
+                'offline': '<i class="fas fa-exclamation-circle"></i>',
+                'syncing': '<i class="fas fa-spinner fa-spin"></i>'
+            };
+
+            statusBar.innerHTML = `${icons[status] || ''} ${message || ''}`;
+        }
+
+        // ============================================================
+        // FUNÇÕES DE COMUNICAÇÃO COM SUPABASE
+        // ============================================================
+
+        async function fetchResumos() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=data.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('❌ Erro ao buscar resumos:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
+        // FUNÇÃO: ATUALIZAR FILTROS
+        // ============================================================
+
+        function atualizarFiltros(data) {
+            const anoSelect = document.getElementById('filtroAno');
+            const mesSelect = document.getElementById('filtroMes');
+
+            const anoAtual = anoSelect.value;
+            const mesAtual = mesSelect.value;
+
+            anoSelect.innerHTML = '<option value="">Todos</option>';
+            mesSelect.innerHTML = '<option value="">Todos</option>';
+
+            if (!data || data.length === 0) return;
+
+            const anos = new Set();
+            const meses = new Set();
+
+            data.forEach(item => {
+                if (item.data) {
+                    const parts = item.data.split('-');
+                    if (parts.length === 3) {
+                        anos.add(parts[0]);
+                        meses.add(`${parts[0]}-${parts[1]}`);
+                    }
+                }
+            });
+
+            // Anos (mais recente primeiro)
+            const anosArray = Array.from(anos).sort().reverse();
+            anosArray.forEach(ano => {
+                const option = document.createElement('option');
+                option.value = ano;
+                option.textContent = ano;
+                if (ano === anoAtual) option.selected = true;
+                anoSelect.appendChild(option);
+            });
+
+            // Meses (mais recente primeiro)
+            const mesesArray = Array.from(meses).sort().reverse();
+            const nomesMeses = getNomesMeses();
+            mesesArray.forEach(mes => {
+                const [ano, mesNum] = mes.split('-');
+                const option = document.createElement('option');
+                option.value = mes;
+                option.textContent = `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
+                if (mes === mesAtual) option.selected = true;
+                mesSelect.appendChild(option);
+            });
+        }
+
+        // ============================================================
+        // FUNÇÃO: APLICAR FILTRO
+        // ============================================================
+
+        function aplicarFiltro() {
+            const ano = document.getElementById('filtroAno').value;
+            const mes = document.getElementById('filtroMes').value;
+
+            let filtrados = [...dadosCompletos];
+
+            if (ano) {
+                filtrados = filtrados.filter(item => {
+                    if (!item.data) return false;
+                    return item.data.startsWith(ano);
+                });
+            }
+
+            if (mes) {
+                filtrados = filtrados.filter(item => {
+                    if (!item.data) return false;
+                    return item.data.startsWith(mes);
+                });
+            }
+
+            dadosFiltrados = filtrados;
+            atualizarDashboard();
+        }
+
+        function limparFiltro() {
+            document.getElementById('filtroAno').value = '';
+            document.getElementById('filtroMes').value = '';
+            dadosFiltrados = [...dadosCompletos];
+            atualizarDashboard();
+        }
+
+        // ============================================================
+        // FUNÇÃO: ATUALIZAR DASHBOARD
+        // ============================================================
+
+        function atualizarDashboard() {
+            const data = dadosFiltrados;
+
+            if (!data || data.length === 0) {
+                // Mostra sem dados
+                document.getElementById('totalEventos').textContent = '0';
+                document.getElementById('mediaDiaria').textContent = '0';
+                document.getElementById('totalOperadores').textContent = '0';
+                document.getElementById('totalDias').textContent = '0';
+                document.getElementById('topItems').innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-inbox"></i>
+                        <p>Nenhum dado disponível para o filtro selecionado</p>
+                    </div>
+                `;
+                if (chartEvolucao) { chartEvolucao.destroy();
+                    chartEvolucao = null; }
+                if (chartDistribuicao) { chartDistribuicao.destroy();
+                    chartDistribuicao = null; }
+                return;
+            }
+
+            // ============================================================
+            // CALCULAR ESTATÍSTICAS
+            // ============================================================
+
+            // Total de Eventos (soma de todos os indicadores)
+            let totalEventos = 0;
+            const categorias = {};
+            const operadores = new Set();
+            const dias = new Set();
+
+            const campos = [
+                { id: 'eventos_identificados', label: 'Eventos Identificados', cor: '#0f2b6d' },
+                { id: 'eventos_relevantes', label: 'Eventos Relevantes', cor: '#1e3a8a' },
+                { id: 'ocorrencias_confirmadas', label: 'Ocorrências Confirmadas', cor: '#3b82f6' },
+                { id: 'acionamentos_realizados', label: 'Acionamentos Realizados', cor: '#ec4899' },
+                { id: 'despachos_campo', label: 'Despachos de Campo', cor: '#10b981' },
+                { id: 'solicitacao_apoio', label: 'Solicitação de Apoio', cor: '#f59e0b' },
+                { id: 'furtos_cameras', label: 'Furtos por Câmeras', cor: '#ef4444' },
+                { id: 'veiculos_furtados', label: 'Veículos Furtados', cor: '#8b5cf6' },
+                { id: 'veiculos_recuperados', label: 'Veículos Recuperados', cor: '#06b6d4' },
+                { id: 'pessoas_procuradas', label: 'Pessoas Procuradas', cor: '#f472b6' },
+                { id: 'armas_suspeitas', label: 'Armas Suspeitas', cor: '#f97316' },
+                { id: 'vandalismos', label: 'Vandalismos', cor: '#a3e635' },
+                { id: 'depredacoes', label: 'Depredações', cor: '#fb923c' },
+                { id: 'ocorrencias_violencia', label: 'Ocorrências Violência', cor: '#dc2626' }
+            ];
+
+            data.forEach(item => {
+                campos.forEach(campo => {
+                    const valor = item[campo.id] || 0;
+                    totalEventos += valor;
+                    if (categorias[campo.label]) {
+                        categorias[campo.label] += valor;
+                    } else {
+                        categorias[campo.label] = valor;
+                    }
+                });
+                if (item.responsavel) operadores.add(item.responsavel);
+                if (item.data) dias.add(item.data);
+            });
+
+            const mediaDiaria = dias.size > 0 ? (totalEventos / dias.size) : 0;
+
+            // Atualiza cards
+            document.getElementById('totalEventos').textContent = totalEventos.toLocaleString();
+            document.getElementById('mediaDiaria').textContent = mediaDiaria.toFixed(1);
+            document.getElementById('totalOperadores').textContent = operadores.size;
+            document.getElementById('totalDias').textContent = dias.size;
+
+            // ============================================================
+            // TOP 5 CATEGORIAS
+            // ============================================================
+
+            const sortedCategorias = Object.entries(categorias)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            const maxValor = sortedCategorias.length > 0 ? sortedCategorias[0][1] : 1;
+
+            let topHtml = '';
+            sortedCategorias.forEach(([nome, valor], index) => {
+                const pct = maxValor > 0 ? (valor / maxValor) * 100 : 0;
+                const cores = ['#fbbf24', '#f59e0b', '#d97706', '#b45309', '#92400e'];
+                topHtml += `
+                    <div class="top-item">
+                        <div class="rank" style="background: ${cores[index] || '#0f2b6d'}">${index + 1}</div>
+                        <div class="name">${nome}</div>
+                        <div class="bar">
+                            <div class="fill" style="width: ${pct}%; background: ${cores[index] || '#0f2b6d'}"></div>
+                        </div>
+                        <div class="value">${valor}</div>
+                    </div>
+                `;
+            });
+
+            if (sortedCategorias.length === 0) {
+                topHtml = `
+                    <div class="no-data">
+                        <i class="fas fa-inbox"></i>
+                        <p>Nenhuma categoria com dados</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('topItems').innerHTML = topHtml;
+
+            // ============================================================
+            // GRÁFICO: EVOLUÇÃO MENSAL
+            // ============================================================
+
+            const evolucaoMensal = {};
+            data.forEach(item => {
+                if (item.data) {
+                    const parts = item.data.split('-');
+                    if (parts.length === 3) {
+                        const mesKey = `${parts[0]}-${parts[1]}`;
+                        if (!evolucaoMensal[mesKey]) {
+                            evolucaoMensal[mesKey] = 0;
+                        }
+                        campos.forEach(campo => {
+                            evolucaoMensal[mesKey] += item[campo.id] || 0;
+                        });
+                    }
+                }
+            });
+
+            const mesesOrdenados = Object.keys(evolucaoMensal).sort();
+            const labels = mesesOrdenados.map(mes => {
+                const [ano, mesNum] = mes.split('-');
+                const nomesMeses = getNomesMeses();
+                return `${nomesMeses[parseInt(mesNum) - 1].substring(0, 3)}/${ano}`;
+            });
+            const valores = mesesOrdenados.map(mes => evolucaoMensal[mes]);
+
+            if (chartEvolucao) {
+                chartEvolucao.destroy();
+                chartEvolucao = null;
+            }
+
+            if (labels.length > 0) {
+                const ctx = document.getElementById('chartEvolucao').getContext('2d');
+                chartEvolucao = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total de Eventos',
+                            data: valores,
+                            backgroundColor: 'rgba(15, 43, 109, 0.7)',
+                            borderColor: '#0f2b6d',
+                            borderWidth: 2,
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#94a3b8'
+                                },
+                                grid: {
+                                    color: 'rgba(255,255,255,0.05)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#94a3b8'
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ============================================================
+            // GRÁFICO: DISTRIBUIÇÃO POR CATEGORIA
+            // ============================================================
+
+            if (chartDistribuicao) {
+                chartDistribuicao.destroy();
+                chartDistribuicao = null;
+            }
+
+            const top5Distribuicao = Object.entries(categorias)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6);
+
+            if (top5Distribuicao.length > 0) {
+                const cores = ['#0f2b6d', '#1e3a8a', '#3b82f6', '#ec4899', '#10b981', '#f59e0b'];
+                const ctx2 = document.getElementById('chartDistribuicao').getContext('2d');
+                chartDistribuicao = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: top5Distribuicao.map(item => item[0]),
+                        datasets: [{
+                            data: top5Distribuicao.map(item => item[1]),
+                            backgroundColor: cores.slice(0, top5Distribuicao.length),
+                            borderColor: 'rgba(15, 23, 42, 0.5)',
+                            borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#94a3b8',
+                                    font: { size: 10 }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            setStatus('online', '✅ Dashboard atualizado');
+        }
+
+        // ============================================================
+        // FUNÇÃO: CARREGAR DADOS
+        // ============================================================
+
+        async function carregarDados() {
+            try {
+                setStatus('syncing', 'Carregando dados...');
+                const data = await fetchResumos();
+                dadosCompletos = data || [];
+                dadosFiltrados = [...dadosCompletos];
+                atualizarFiltros(dadosCompletos);
+                atualizarDashboard();
+                setStatus('online', '✅ Dados carregados com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                setStatus('offline', '⚠️ Erro ao carregar dados');
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Inicializando Dashboard...');
+
+            document.getElementById('aplicarFiltroBtn').addEventListener('click', aplicarFiltro);
+            document.getElementById('limparFiltroBtn').addEventListener('click', limparFiltro);
+
+            carregarDados();
+
+            console.log('✅ Dashboard inicializado!');
+        });
+
+        console.log('📄 Dashboard - Script carregado!');
+    </script>
+</body>
+</html>

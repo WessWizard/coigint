@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESUMO ESTATÍSTICO - COI | MIRA</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/Prx3cKFq/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.postimg.cc/9fTNbMgt/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/vT8qGvY3/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #0f2b6d;
+            --primary-light: #1e3a8a;
+            --primary-dark: #0a1a4a;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --bg-card-solid: #1e293b;
+            --bg-input: rgba(15, 23, 42, 0.8);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-sm: 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0f172a, #020617);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.03);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .glass-header:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .logo-left,
+        .logo-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-left img,
+        .logo-right img {
+            height: 50px;
+            width: 50px;
+            object-fit: contain;
+            transition: var(--transition-fast);
+        }
+
+        .logo-left img:hover,
+        .logo-right img:hover {
+            transform: scale(1.02);
+        }
+
+        .title-section {
+            text-align: center;
+            flex: 1;
+        }
+
+        .title-section h1 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .title-section .badge {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 4px;
+            font-size: 9px;
+        }
+
+        .title-section .badge span {
+            background: rgba(15, 43, 109, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .main-card:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .main-card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-card h2 i {
+            color: var(--primary-light);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group label i {
+            margin-right: 6px;
+            color: var(--primary-light);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 43, 109, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        .indicadores-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 600px) {
+            .indicadores-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .indicador-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            transition: var(--transition);
+            gap: 10px;
+        }
+
+        .indicador-item:hover {
+            border-color: rgba(15, 43, 109, 0.3);
+        }
+
+        .indicador-item label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .indicador-item input {
+            width: 70px;
+            padding: 6px 8px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text-primary);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .indicador-item input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 43, 109, 0.15);
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .action-btn {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.04);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .action-btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+
+        .action-btn.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border: none;
+        }
+
+        .action-btn.warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            border: none;
+        }
+
+        .action-btn.info {
+            background: linear-gradient(135deg, var(--info), #2563eb);
+            border: none;
+        }
+
+        .action-btn.danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: none;
+        }
+
+        .status-bar {
+            margin-top: 16px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status-bar.online {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-bar.offline {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-bar.syncing {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .historico-section {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .historico-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .historico-section h3 i {
+            color: var(--primary-light);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+
+        .filter-row .form-group {
+            flex: 1;
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+
+        .filter-row .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .filter-row .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-row .form-group select option {
+            background: var(--bg-card-solid);
+            color: var(--text-primary);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .table-manual {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            min-width: 1200px;
+        }
+
+        .table-manual th {
+            background: rgba(15, 43, 109, 0.25);
+            color: var(--text-primary);
+            padding: 6px 6px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 9px;
+            white-space: nowrap;
+            cursor: help;
+        }
+
+        .table-manual th:first-child {
+            text-align: left;
+            padding-left: 12px;
+        }
+
+        .table-manual td {
+            padding: 5px 6px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .table-manual td:first-child {
+            text-align: left;
+            padding-left: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .table-manual td:nth-child(2) {
+            text-align: left;
+            color: var(--text-primary);
+        }
+
+        .table-manual tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .table-manual .total-row td {
+            font-weight: 700;
+            color: var(--text-primary);
+            background: rgba(15, 43, 109, 0.15);
+            border-top: 2px solid var(--border-color);
+        }
+
+        .table-manual .total-row td:first-child {
+            color: var(--primary-light);
+        }
+
+        .table-manual td.valor-destaque {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-tertiary);
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-top: 12px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-container {
+            background: var(--bg-card-solid);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 32px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            animation: scaleIn 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-container i {
+            font-size: 48px;
+            color: var(--warning);
+            margin-bottom: 14px;
+        }
+
+        .modal-container p {
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .modal-container .modal-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-buttons button {
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .modal-buttons button:hover {
+            transform: translateY(-1px);
+        }
+
+        .modal-confirm {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal-confirm:hover {
+            background: #dc2626;
+        }
+
+        .modal-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            .glass-header {
+                padding: 16px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .main-card {
+                padding: 20px;
+            }
+            .form-group {
+                min-width: 100%;
+            }
+            .filter-row .form-group {
+                min-width: 100%;
+            }
+            .title-section h1 {
+                font-size: 14px;
+            }
+            .indicador-item label {
+                font-size: 10px;
+            }
+            .indicador-item input {
+                width: 60px;
+                font-size: 13px;
+            }
+        }
+
+        @media print {
+            .action-bar,
+            .back-btn,
+            .filter-row {
+                display: none !important;
+            }
+            .glass-header h1 {
+                color: #0f2b6d !important;
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
+            }
+            .main-card {
+                background: white !important;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+            }
+            .main-card p,
+            .main-card li,
+            .indicador-item {
+                color: #333 !important;
+            }
+            .indicador-item {
+                background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
+            }
+            .indicador-item input {
+                background: #f5f5f5 !important;
+                color: #333 !important;
+                border-color: #ddd !important;
+            }
+            .form-group input {
+                background: #f5f5f5 !important;
+                color: #333 !important;
+                border-color: #ddd !important;
+            }
+            .table-manual th {
+                background: #e8e8e8 !important;
+                color: #0f2b6d !important;
+            }
+            .table-manual td {
+                color: #333 !important;
+            }
+            .table-manual .total-row td {
+                background: #f0f0f0 !important;
+                color: #0f2b6d !important;
+            }
+            .site-footer {
+                color: #999 !important;
+                border-top: 1px solid #ddd !important;
+            }
+            .status-bar {
+                display: none !important;
+            }
+            .glass-header {
+                background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="glass-header">
+            <div class="logo-left">
+                <img src="https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png" alt="Brasão GCM">
+            </div>
+            <div class="title-section">
+                <h1>RESUMO ESTATÍSTICO DO DIA - COI</h1>
+                <div class="badge">
+                    <span><i class="fas fa-shield-alt"></i> SMDS/GINT/COI</span>
+                    <span><i class="fas fa-chart-bar"></i> MIRA v2.0</span>
+                </div>
+            </div>
+            <div class="logo-right">
+                <img src="https://i.postimg.cc/gc4J2ByG/brasao-coi2.png" alt="Brasão COI">
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="main-card">
+            <h2><i class="fas fa-chart-bar"></i> INDICADORES DIÁRIOS</h2>
+
+            <!-- Status -->
+            <div style="text-align: center; margin-bottom: 16px;">
+                <span class="status-bar syncing" id="statusBar">
+                    <i class="fas fa-spinner fa-spin"></i> Conectando...
+                </span>
+            </div>
+
+            <!-- Formulário -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-user-shield"></i> RESPONSÁVEL PELO PREENCHIMENTO</label>
+                    <input type="text" id="responsavel" placeholder="Digite o nome">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-id-badge"></i> MATRÍCULA</label>
+                    <input type="text" id="matricula" placeholder="Nº da matrícula">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-day"></i> DATA</label>
+                    <input type="text" id="dataResumo" placeholder="DD/MM/AAAA">
+                </div>
+            </div>
+
+            <!-- Indicadores -->
+            <div class="indicadores-grid" id="indicadoresGrid">
+                <div class="indicador-item">
+                    <label>EVENTOS IDENTIFICADOS PELOS OPERADORES</label>
+                    <input type="number" id="eventos_identificados" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>EVENTOS RELEVANTES</label>
+                    <input type="number" id="eventos_relevantes" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>OCORRÊNCIAS CONFIRMADAS</label>
+                    <input type="number" id="ocorrencias_confirmadas" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>ACIONAMENTOS REALIZADOS</label>
+                    <input type="number" id="acionamentos_realizados" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>DESPACHOS PARA EQUIPES DE CAMPO</label>
+                    <input type="number" id="despachos_campo" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>SOLICITAÇÃO DE APOIO</label>
+                    <input type="number" id="solicitacao_apoio" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>FURTOS IDENTIFICADOS POR CÂMERAS</label>
+                    <input type="number" id="furtos_cameras" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>VEÍCULOS FURTADOS/ROUBADOS IDENTIFICADOS</label>
+                    <input type="number" id="veiculos_furtados" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>VEÍCULOS RECUPERADOS POR ALERTAS CENTRAL</label>
+                    <input type="number" id="veiculos_recuperados" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>PESSOAS PROCURADAS IDENTIFICADAS</label>
+                    <input type="number" id="pessoas_procuradas" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>ARMAS/SITUAÇÕES SUSPEITAS IDENTIFICADAS</label>
+                    <input type="number" id="armas_suspeitas" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>VANDALISMOS IDENTIFICADOS</label>
+                    <input type="number" id="vandalismos" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>DEPREDAÇÕES DO PATRIMÔNIO PÚBLICO</label>
+                    <input type="number" id="depredacoes" min="0" value="0">
+                </div>
+                <div class="indicador-item">
+                    <label>OCORRÊNCIAS DE VIOLÊNCIA</label>
+                    <input type="number" id="ocorrencias_violencia" min="0" value="0">
+                </div>
+            </div>
+
+            <!-- Botões -->
+<div class="action-bar">
+    <button class="action-btn primary" id="salvarBtn">
+        <i class="fas fa-save"></i> Salvar Resumo
+    </button>
+    <button class="action-btn warning" id="gerarPdfBtn">
+        <i class="fas fa-file-pdf"></i> Gerar PDF
+    </button>
+    <button class="action-btn danger" id="limparBtn">
+        <i class="fas fa-undo"></i> Limpar
+    </button>
+    <!-- NOVO BOTÃO -->
+    <a href="dashboard-resumo-estatistico.html" class="action-btn info" style="text-decoration: none; background: linear-gradient(135deg, #3b82f6, #2563eb);">
+        <i class="fas fa-chart-line"></i> 📊 Ver Gráficos
+    </a>
+</div>
+
+            <!-- Histórico -->
+            <div class="historico-section">
+                <h3><i class="fas fa-history"></i> HISTÓRICO</h3>
+
+                <div class="filter-row">
+    <div class="form-group">
+        <label><i class="fas fa-calendar-alt"></i> MÊS/ANO</label>
+        <select id="filtroMes">
+            <option value="">Todos</option>
+        </select>
+    </div>
+    <div class="form-group" id="diaGroup">
+        <label><i class="fas fa-calendar-day"></i> DIA</label>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="filtroDia" style="flex: 1;">
+                <option value="">Todos</option>
+            </select>
+            <button id="buscarDiaBtn" class="action-btn" style="padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.05); flex: 0 0 auto;" title="Buscar dia específico">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+    <div class="form-group" style="flex: 0 0 auto;">
+        <button class="action-btn info" id="aplicarFiltroBtn" style="padding: 8px 20px; font-size: 12px;">
+            <i class="fas fa-filter"></i> Filtrar
+        </button>
+    </div>
+    <div class="form-group" style="flex: 0 0 auto;">
+        <button class="action-btn" id="limparFiltroBtn" style="padding: 8px 20px; font-size: 12px; background: rgba(255,255,255,0.05);">
+            <i class="fas fa-times"></i> Limpar
+        </button>
+    </div>
+</div>
+
+<!-- Campo de busca rápida de dias (aparece apenas quando um mês é selecionado) -->
+<div id="buscaDiaContainer" style="display: none; margin-bottom: 12px;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <input type="text" id="buscaDiaInput" placeholder="Digite o dia (ex: 15) ou data (ex: 15/08/2026)" style="
+            flex: 1;
+            padding: 8px 14px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: var(--transition);
+        ">
+        <button id="buscaDiaConfirmar" class="action-btn" style="padding: 8px 16px; font-size: 12px; background: linear-gradient(135deg, var(--info), #2563eb); border: none;">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+        <button id="buscaDiaCancelar" class="action-btn" style="padding: 8px 16px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">
+        <i class="fas fa-info-circle"></i> Digite o número do dia ou a data completa (DD/MM/AAAA)
+    </div>
+</div>
+
+                <div class="table-wrapper">
+                    <table class="table-manual" id="historicoTable">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 90px;">📅 Data</th>
+                                <th style="min-width: 130px;">👤 Responsável</th>
+                                <th title="Eventos Identificados pelos Operadores">📋 Eventos Identificados</th>
+                                <th title="Eventos Relevantes">⭐ Eventos Relevantes</th>
+                                <th title="Ocorrências Confirmadas">✅ Ocorrências Confirmadas</th>
+                                <th title="Acionamentos Realizados">📞 Acionamentos Realizados</th>
+                                <th title="Despachos para Equipes de Campo">🚓 Despachos para Equipes</th>
+                                <th title="Solicitação de Apoio">🆘 Solicitação de Apoio</th>
+                                <th title="Furtos Identificados por Câmeras">🎥 Furtos por Câmeras</th>
+                                <th title="Veículos Furtados/Roubados Identificados">🚗 Veículos Furtados</th>
+                                <th title="Veículos Recuperados por Alertas Central">✅ Veículos Recuperados</th>
+                                <th title="Pessoas Procuradas Identificadas">🔍 Pessoas Procuradas</th>
+                                <th title="Armas/Situações Suspeitas Identificadas">🔫 Armas/Situações Suspeitas</th>
+                                <th title="Vandalismos Identificados">💢 Vandalismos</th>
+                                <th title="Depredações do Patrimônio Público">🏛️ Depredações</th>
+                                <th title="Ocorrências de Violência">⚠️ Violência</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoBody">
+                            <tr>
+                                <td colspan="16" style="text-align: center; padding: 20px; color: var(--text-tertiary);">
+                                    <i class="fas fa-inbox"></i> Nenhum registro encontrado
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="historicoFooter" style="display: none;">
+                            <tr class="total-row">
+                                <td><strong>📊 TOTAIS</strong></td>
+                                <td></td>
+                                <td id="totEventos">0</td>
+                                <td id="totRelevantes">0</td>
+                                <td id="totOcorrencias">0</td>
+                                <td id="totAcionamentos">0</td>
+                                <td id="totDespachos">0</td>
+                                <td id="totApoio">0</td>
+                                <td id="totFurtos">0</td>
+                                <td id="totVeicFurtados">0</td>
+                                <td id="totVeicRecup">0</td>
+                                <td id="totProcurados">0</td>
+                                <td id="totArmas">0</td>
+                                <td id="totVandalismos">0</td>
+                                <td id="totDepredacoes">0</td>
+                                <td id="totViolencia">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div style="text-align: right; margin-top: 8px; font-size: 11px; color: var(--text-tertiary);">
+                    <span id="registrosCount">0 registros</span>
+                    <span id="filtroInfo" style="margin-left: 12px; color: var(--info);"></span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 16px;">
+                <a href="relatorio.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Voltar ao Relatório
+                </a>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            MONITORAMENTO INTEGRADO DE RELATÓRIOS E ANÁLISES - <strong>M I R A</strong> | Prefeitura do Cabo de Santo Agostinho
+        </footer>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal" class="modal-overlay">
+        <div class="modal-container">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Deseja realmente salvar este resumo?</p>
+            <p class="modal-sub">Os dados serão salvos na nuvem.</p>
+            <div class="modal-buttons">
+                <button class="modal-confirm" id="confirmSalvar">Sim, salvar</button>
+                <button class="modal-cancel" id="cancelSalvar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURAÇÃO - SUPABASE
+        // ============================================================
+
+        const SUPABASE_URL = 'https://kbisexjpurcjlnrhprqx.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Wb9geOCkayDVHHU7WJqexw_jsawBumN';
+        const TABLE_NAME = 'resumo_estatistico';
+
+        // ============================================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================================
+
+        let isOnline = false;
+        let isSaving = false;
+        let dadosCompletos = [];
+        let dadosFiltrados = [];
+        let filtroAtivo = { mes: '', dia: '' };
+
+        // ============================================================
+        // FUNÇÕES DE UTILIDADE
+        // ============================================================
+
+        function getToday() {
+            const today = new Date();
+            return `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dateStr;
+        }
+
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            const parts2 = dateStr.split('/');
+            if (parts2.length === 3) {
+                return dateStr;
+            }
+            return dateStr;
+        }
+
+        function isValidDate(dateStr) {
+            const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            if (!regex.test(dateStr)) return false;
+            const [, day, month, year] = dateStr.match(regex);
+            const d = parseInt(day),
+                m = parseInt(month),
+                y = parseInt(year);
+            if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+            if ([4, 6, 9, 11].includes(m) && d > 30) return false;
+            if (m === 2) {
+                const isLeap = (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+                if (d > (isLeap ? 29 : 28)) return false;
+            }
+            return true;
+        }
+
+        function applyDateMask(input) {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 8) value = value.slice(0, 8);
+                if (value.length > 4) value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4);
+                else if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
+                e.target.value = value;
+            });
+            input.addEventListener('blur', function(e) {
+                if (e.target.value && !isValidDate(e.target.value)) {
+                    alert('Data inválida. Use DD/MM/AAAA');
+                    e.target.value = '';
+                }
+            });
+        }
+
+        // ============================================================
+        // FUNÇÕES DE UI
+        // ============================================================
+
+        function setStatus(status, message) {
+            const statusBar = document.getElementById('statusBar');
+            statusBar.className = `status-bar ${status}`;
+
+            const icons = {
+                'online': '<i class="fas fa-check-circle"></i>',
+                'offline': '<i class="fas fa-exclamation-circle"></i>',
+                'syncing': '<i class="fas fa-spinner fa-spin"></i>'
+            };
+
+            let mensagemFinal = message;
+
+            if (status === 'online' && (!message || message === '')) {
+                mensagemFinal = 'Conectado ao Sistema MIRA Analytics';
+            }
+
+            if (status === 'syncing' && (!message || message === '')) {
+                mensagemFinal = 'Conectando ao Sistema MIRA Analytics...';
+            }
+
+            statusBar.innerHTML = `${icons[status] || ''} ${mensagemFinal || ''}`;
+            isOnline = (status === 'online');
+        }
+
+        function showConfirmation() {
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        function hideConfirmation() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        // ============================================================
+        // FUNÇÕES DE COMUNICAÇÃO COM SUPABASE
+        // ============================================================
+
+        async function fetchResumos() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=data.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('❌ Erro ao buscar resumos:', error);
+                throw error;
+            }
+        }
+
+        async function saveResumo(resumo) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(resumo)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('❌ Erro ao salvar resumo:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
+        // FUNÇÕES PRINCIPAIS
+        // ============================================================
+
+        function getIndicadoresFromUI() {
+            const indicadores = {};
+            const inputs = document.querySelectorAll('.indicador-item input');
+            inputs.forEach(input => {
+                indicadores[input.id] = parseInt(input.value) || 0;
+            });
+            return indicadores;
+        }
+
+        function getFormData() {
+            const responsavel = document.getElementById('responsavel').value.trim();
+            const matricula = document.getElementById('matricula').value.trim();
+            const data = document.getElementById('dataResumo').value.trim();
+
+            if (!responsavel) { alert('Preencha o nome do responsável'); return null; }
+            if (!matricula) { alert('Preencha a matrícula'); return null; }
+            if (!data || !isValidDate(data)) { alert('Preencha uma data válida (DD/MM/AAAA)'); return null; }
+
+            const indicadores = getIndicadoresFromUI();
+
+            return {
+                data: formatDate(data),
+                responsavel: responsavel,
+                matricula: matricula,
+                ...indicadores
+            };
+        }
+
+        async function salvarResumo() {
+            if (isSaving) return;
+
+            const formData = getFormData();
+            if (!formData) return;
+
+            const existe = await verificarExistente(formData.data);
+            if (existe) {
+                if (!confirm(`Já existe um resumo para a data ${formatDateDisplay(formData.data)}. Deseja substituí-lo?`)) {
+                    return;
+                }
+                await atualizarResumo(formData);
+                return;
+            }
+
+            showConfirmation();
+            document.getElementById('confirmSalvar').onclick = async function() {
+                hideConfirmation();
+                await doSalvar(formData);
+            };
+            document.getElementById('cancelSalvar').onclick = hideConfirmation;
+        }
+
+        async function doSalvar(formData) {
+            isSaving = true;
+            setStatus('syncing', 'Salvando...');
+
+            try {
+                await saveResumo(formData);
+                setStatus('online', '✅ Resumo salvo com sucesso!');
+                await carregarHistorico();
+                limparCampos();
+            } catch (error) {
+                setStatus('offline', '❌ Erro ao salvar: ' + error.message);
+            } finally {
+                isSaving = false;
+            }
+        }
+
+        async function verificarExistente(data) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?data=eq.${data}&select=data`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (!response.ok) return false;
+                const result = await response.json();
+                return result && result.length > 0;
+            } catch {
+                return false;
+            }
+        }
+
+        async function atualizarResumo(formData) {
+            isSaving = true;
+            setStatus('syncing', 'Atualizando...');
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?data=eq.${formData.data}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                setStatus('online', '✅ Resumo atualizado com sucesso!');
+                await carregarHistorico();
+                limparCampos();
+            } catch (error) {
+                setStatus('offline', '❌ Erro ao atualizar: ' + error.message);
+            } finally {
+                isSaving = false;
+            }
+        }
+
+        // ============================================================
+        // CARREGAR HISTÓRICO
+        // ============================================================
+
+        async function carregarHistorico() {
+            try {
+                setStatus('syncing', 'Carregando histórico...');
+                
+                const data = await fetchResumos();
+                dadosCompletos = data || [];
+                dadosFiltrados = [...dadosCompletos];
+                
+                renderizarHistorico(dadosFiltrados);
+                atualizarFiltros(dadosCompletos);
+                
+                document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros`;
+                document.getElementById('filtroInfo').textContent = '';
+                
+                setStatus('online', 'Conectado ao Sistema MIRA Analytics');
+                
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                
+                // Fallback para dados locais
+                const localData = loadLocalData();
+                if (localData && localData.length > 0) {
+                    dadosCompletos = localData;
+                    dadosFiltrados = [...dadosCompletos];
+                    renderizarHistorico(dadosFiltrados);
+                    atualizarFiltros(dadosCompletos);
+                    document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros (offline)`;
+                    document.getElementById('filtroInfo').textContent = '';
+                    setStatus('offline', '⚠️ Offline - dados locais');
+                } else {
+                    // Se não tem dados locais, mostra tabela vazia
+                    dadosCompletos = [];
+                    dadosFiltrados = [];
+                    renderizarHistorico([]);
+                    document.getElementById('registrosCount').textContent = '0 registros';
+                    setStatus('offline', '⚠️ Offline - sem dados');
+                }
+            }
+        }
+
+        function renderizarHistorico(data) {
+            const tbody = document.getElementById('historicoBody');
+            const footer = document.getElementById('historicoFooter');
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="16" style="text-align: center; padding: 20px; color: var(--text-tertiary);">
+                            <i class="fas fa-inbox"></i> Nenhum registro encontrado
+                        </td>
+                    </tr>
+                `;
+                footer.style.display = 'none';
+                return;
+            }
+
+            let html = '';
+            let totais = {
+                eventos_identificados: 0,
+                eventos_relevantes: 0,
+                ocorrencias_confirmadas: 0,
+                acionamentos_realizados: 0,
+                despachos_campo: 0,
+                solicitacao_apoio: 0,
+                furtos_cameras: 0,
+                veiculos_furtados: 0,
+                veiculos_recuperados: 0,
+                pessoas_procuradas: 0,
+                armas_suspeitas: 0,
+                vandalismos: 0,
+                depredacoes: 0,
+                ocorrencias_violencia: 0
+            };
+
+            data.forEach(item => {
+                const dataFormatada = formatDateDisplay(item.data);
+                const responsavelUpper = (item.responsavel || '').toUpperCase();
+
+                const valores = [
+                    item.eventos_identificados || 0,
+                    item.eventos_relevantes || 0,
+                    item.ocorrencias_confirmadas || 0,
+                    item.acionamentos_realizados || 0,
+                    item.despachos_campo || 0,
+                    item.solicitacao_apoio || 0,
+                    item.furtos_cameras || 0,
+                    item.veiculos_furtados || 0,
+                    item.veiculos_recuperados || 0,
+                    item.pessoas_procuradas || 0,
+                    item.armas_suspeitas || 0,
+                    item.vandalismos || 0,
+                    item.depredacoes || 0,
+                    item.ocorrencias_violencia || 0
+                ];
+
+                const highlightClass = (val) => val > 0 ? 'class="valor-destaque"' : '';
+
+                html += `
+                    <tr>
+                        <td><strong>${dataFormatada}</strong></td>
+                        <td>${responsavelUpper}</td>
+                        <td ${highlightClass(valores[0])}>${valores[0]}</td>
+                        <td ${highlightClass(valores[1])}>${valores[1]}</td>
+                        <td ${highlightClass(valores[2])}>${valores[2]}</td>
+                        <td ${highlightClass(valores[3])}>${valores[3]}</td>
+                        <td ${highlightClass(valores[4])}>${valores[4]}</td>
+                        <td ${highlightClass(valores[5])}>${valores[5]}</td>
+                        <td ${highlightClass(valores[6])}>${valores[6]}</td>
+                        <td ${highlightClass(valores[7])}>${valores[7]}</td>
+                        <td ${highlightClass(valores[8])}>${valores[8]}</td>
+                        <td ${highlightClass(valores[9])}>${valores[9]}</td>
+                        <td ${highlightClass(valores[10])}>${valores[10]}</td>
+                        <td ${highlightClass(valores[11])}>${valores[11]}</td>
+                        <td ${highlightClass(valores[12])}>${valores[12]}</td>
+                        <td ${highlightClass(valores[13])}>${valores[13]}</td>
+                    </tr>
+                `;
+
+                totais.eventos_identificados += valores[0];
+                totais.eventos_relevantes += valores[1];
+                totais.ocorrencias_confirmadas += valores[2];
+                totais.acionamentos_realizados += valores[3];
+                totais.despachos_campo += valores[4];
+                totais.solicitacao_apoio += valores[5];
+                totais.furtos_cameras += valores[6];
+                totais.veiculos_furtados += valores[7];
+                totais.veiculos_recuperados += valores[8];
+                totais.pessoas_procuradas += valores[9];
+                totais.armas_suspeitas += valores[10];
+                totais.vandalismos += valores[11];
+                totais.depredacoes += valores[12];
+                totais.ocorrencias_violencia += valores[13];
+            });
+
+            tbody.innerHTML = html;
+
+            document.getElementById('totEventos').textContent = totais.eventos_identificados;
+            document.getElementById('totRelevantes').textContent = totais.eventos_relevantes;
+            document.getElementById('totOcorrencias').textContent = totais.ocorrencias_confirmadas;
+            document.getElementById('totAcionamentos').textContent = totais.acionamentos_realizados;
+            document.getElementById('totDespachos').textContent = totais.despachos_campo;
+            document.getElementById('totApoio').textContent = totais.solicitacao_apoio;
+            document.getElementById('totFurtos').textContent = totais.furtos_cameras;
+            document.getElementById('totVeicFurtados').textContent = totais.veiculos_furtados;
+            document.getElementById('totVeicRecup').textContent = totais.veiculos_recuperados;
+            document.getElementById('totProcurados').textContent = totais.pessoas_procuradas;
+            document.getElementById('totArmas').textContent = totais.armas_suspeitas;
+            document.getElementById('totVandalismos').textContent = totais.vandalismos;
+            document.getElementById('totDepredacoes').textContent = totais.depredacoes;
+            document.getElementById('totViolencia').textContent = totais.ocorrencias_violencia;
+
+            footer.style.display = 'table-footer-group';
+        }
+
+        // ============================================================
+        // FILTROS
+        // ============================================================
+function atualizarFiltros(data) {
+    const mesSelect = document.getElementById('filtroMes');
+    const diaSelect = document.getElementById('filtroDia');
+
+    const mesAtual = mesSelect.value;
+    const diaAtual = diaSelect.value;
+
+    mesSelect.innerHTML = '<option value="">Todos os meses</option>';
+    diaSelect.innerHTML = '<option value="">Todos os dias</option>';
+
+    if (!data || data.length === 0) return;
+
+    // Extrai meses únicos
+    const meses = new Set();
+    const diasPorMes = {};
+
+    data.forEach(item => {
+        if (item.data) {
+            const parts = item.data.split('-');
+            if (parts.length === 3) {
+                const mes = `${parts[0]}-${parts[1]}`;
+                meses.add(mes);
+                if (!diasPorMes[mes]) {
+                    diasPorMes[mes] = new Set();
+                }
+                diasPorMes[mes].add(item.data);
+            }
+        }
+    });
+
+    // Ordena meses (mais recente primeiro)
+    const mesesArray = Array.from(meses).sort().reverse();
+    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    mesesArray.forEach(mes => {
+        const [ano, mesNum] = mes.split('-');
+        const option = document.createElement('option');
+        option.value = mes;
+        option.textContent = `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
+        if (mes === mesAtual) option.selected = true;
+        mesSelect.appendChild(option);
+    });
+
+    // Se um mês está selecionado, preenche os dias desse mês
+    if (mesAtual && diasPorMes[mesAtual]) {
+        const dias = Array.from(diasPorMes[mesAtual]).sort().reverse();
+        dias.forEach(dia => {
+            const option = document.createElement('option');
+            option.value = dia;
+            option.textContent = formatDateDisplay(dia);
+            if (dia === diaAtual) option.selected = true;
+            diaSelect.appendChild(option);
+        });
+    }
+
+    // Mostra/esconde o campo de busca
+    const buscaContainer = document.getElementById('buscaDiaContainer');
+    if (mesAtual) {
+        buscaContainer.style.display = 'block';
+    } else {
+        buscaContainer.style.display = 'none';
+    }
+}
+
+// ============================================================
+// BUSCA RÁPIDA DE DIAS
+// ============================================================
+
+function buscarDia() {
+    const mes = document.getElementById('filtroMes').value;
+    const busca = document.getElementById('buscaDiaInput').value.trim();
+    
+    if (!mes) {
+        alert('Selecione um mês primeiro para buscar dias.');
+        return;
+    }
+    
+    if (!busca) {
+        alert('Digite um dia para buscar.');
+        return;
+    }
+    
+    // Verifica se é um número (dia) ou data completa
+    const diaSelect = document.getElementById('filtroDia');
+    const options = diaSelect.options;
+    let encontrado = false;
+    
+    // Se for apenas número, busca por dia
+    if (/^\d{1,2}$/.test(busca)) {
+        const diaNum = parseInt(busca).toString().padStart(2, '0');
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.value) {
+                const parts = option.value.split('-');
+                if (parts.length === 3 && parts[2] === diaNum) {
+                    option.selected = true;
+                    encontrado = true;
+                    break;
+                }
+            }
+        }
+    } else {
+        // Busca por data completa (DD/MM/AAAA) ou parcial
+        const buscaFormatada = busca.replace(/\//g, '-').split('-').reverse().join('-');
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.value && option.value.includes(buscaFormatada)) {
+                option.selected = true;
+                encontrado = true;
+                break;
+            }
+        }
+    }
+    
+    if (!encontrado) {
+        alert(`Nenhum dia encontrado para "${busca}" no mês selecionado.`);
+    } else {
+        // Aplica o filtro automaticamente
+        aplicarFiltro();
+        // Limpa o campo de busca
+        document.getElementById('buscaDiaInput').value = '';
+    }
+}
+
+function fecharBuscaDia() {
+    document.getElementById('buscaDiaInput').value = '';
+    document.getElementById('buscaDiaContainer').style.display = 'none';
+    // Reseta o filtro de dia
+    document.getElementById('filtroDia').value = '';
+    aplicarFiltro();
+}
+
+        function aplicarFiltro() {
+            const mes = document.getElementById('filtroMes').value;
+            const dia = document.getElementById('filtroDia').value;
+
+            filtroAtivo = { mes, dia };
+
+            let filtrados = [...dadosCompletos];
+
+            if (mes) {
+                filtrados = filtrados.filter(item => {
+                    if (!item.data) return false;
+                    return item.data.startsWith(mes);
+                });
+            }
+
+            if (dia) {
+                filtrados = filtrados.filter(item => item.data === dia);
+            }
+
+            dadosFiltrados = filtrados;
+            renderizarHistorico(dadosFiltrados);
+
+            let infoMsg = '';
+            if (mes) {
+                const [ano, mesNum] = mes.split('-');
+                const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                ];
+                infoMsg += `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
+            }
+            if (dia) {
+                if (infoMsg) infoMsg += ' - ';
+                infoMsg += formatDateDisplay(dia);
+            }
+            if (infoMsg) {
+                document.getElementById('filtroInfo').textContent = `🔍 Filtrado por: ${infoMsg}`;
+            } else {
+                document.getElementById('filtroInfo').textContent = '📋 Todos os registros';
+            }
+
+            document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros`;
+        }
+
+        function limparFiltro() {
+            document.getElementById('filtroMes').value = '';
+            document.getElementById('filtroDia').value = '';
+            filtroAtivo = { mes: '', dia: '' };
+            dadosFiltrados = [...dadosCompletos];
+            renderizarHistorico(dadosFiltrados);
+            document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros`;
+            document.getElementById('filtroInfo').textContent = '📋 Todos os registros';
+        }
+
+        // ============================================================
+        // LIMPAR CAMPOS
+        // ============================================================
+
+        function limparCampos() {
+            document.getElementById('responsavel').value = '';
+            document.getElementById('matricula').value = '';
+            document.getElementById('dataResumo').value = '';
+
+            const inputs = document.querySelectorAll('.indicador-item input');
+            inputs.forEach(input => {
+                input.value = '0';
+            });
+        }
+
+        // ============================================================
+        // FALLBACK: localStorage
+        // ============================================================
+
+        const LOCAL_STORAGE_KEY = 'resumo_estatistico_local';
+
+        function loadLocalData() {
+            try {
+                const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (!stored) return null;
+                return JSON.parse(stored);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function saveLocalData(data) {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('Erro ao salvar local:', e);
+            }
+        }
+
+        // ============================================================
+        // GERAR PDF (VERSÃO OTIMIZADA)
+        // ============================================================
+
+        async function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+
+            if (dadosFiltrados.length === 0) {
+                alert('Nenhum dado para gerar PDF. Aplique um filtro ou carregue dados primeiro.');
+                return;
+            }
+
+            // ============================================================
+            // FUNÇÃO: REMOVER ACENTOS E CARACTERES ESTRANHOS
+            // ============================================================
+            function removerAcentos(texto) {
+                if (!texto) return '';
+                const mapa = {
+                    'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
+                    'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+                    'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
+                    'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+                    'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u',
+                    'ç': 'c', 'Ç': 'C',
+                    'Á': 'A', 'À': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A',
+                    'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E',
+                    'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I',
+                    'Ó': 'O', 'Ò': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O',
+                    'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U',
+                    'Ø': 'O', 'Å': 'A', 'Æ': 'AE', 'ß': 'ss'
+                };
+                return String(texto).replace(/[^\x00-\x7F]/g, function(c) {
+                    return mapa[c] || c;
+                });
+            }
+
+            function limparTexto(texto) {
+                if (!texto) return '';
+                let limpo = String(texto);
+                limpo = limpo.replace(/Ø/g, '');
+                limpo = limpo.replace(/Ü/g, '');
+                limpo = limpo.replace(/Å/g, '');
+                limpo = limpo.replace(/Æ/g, '');
+                limpo = limpo.replace(/ß/g, '');
+                limpo = limpo.replace(/[📊📅📋🔍✅📞🚓🆘🎥🚗🔫💢🏛️⚠️⭐]/g, '');
+                return limpo.trim();
+            }
+
+            // ============================================================
+            // CRIAÇÃO DO DOCUMENTO
+            // ============================================================
+            const doc = new jsPDF({
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            });
+
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+            const margemEsquerda = 15;
+            const margemDireita = 15;
+            const margemTopo = 20;
+            let yAtual = margemTopo;
+            let paginaAtual = 1;
+
+            // ============================================================
+            // FUNÇÃO PARA ADICIONAR OS BRASÕES
+            // ============================================================
+async function adicionarBrasoes() {
+    try {
+        console.log('🖼️ Tentando carregar brasões...');
+        
+        // Brasão GCM
+        const imgGCM = new Image();
+        imgGCM.crossOrigin = 'Anonymous';
+        imgGCM.src = 'https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png';
+        
+        // Brasão COI (modo escuro)
+        const imgCOI = new Image();
+        imgCOI.crossOrigin = 'Anonymous';
+        imgCOI.src = 'https://i.postimg.cc/pLBkYpqC/brasao-coi-transparente.png';
+        
+        // Aguarda o carregamento das imagens
+        await Promise.all([
+            new Promise((resolve) => {
+                imgGCM.onload = function() {
+                    console.log('✅ Brasão GCM carregado');
+                    resolve();
+                };
+                imgGCM.onerror = function() {
+                    console.warn('⚠️ Falha ao carregar Brasão GCM');
+                    resolve();
+                };
+                // Timeout para não travar
+                setTimeout(resolve, 5000);
+            }),
+            new Promise((resolve) => {
+                imgCOI.onload = function() {
+                    console.log('✅ Brasão COI carregado');
+                    resolve();
+                };
+                imgCOI.onerror = function() {
+                    console.warn('⚠️ Falha ao carregar Brasão COI');
+                    resolve();
+                };
+                setTimeout(resolve, 5000);
+            })
+        ]);
+        
+        // Adiciona as imagens ao PDF se foram carregadas
+        if (imgGCM.complete && imgGCM.naturalWidth > 0) {
+            doc.addImage(imgGCM, 'PNG', margemEsquerda, margemTopo - 2, 22, 22);
+            console.log('✅ Brasão GCM adicionado ao PDF');
+        } else {
+            console.warn('⚠️ Brasão GCM NÃO foi adicionado');
+        }
+        
+        if (imgCOI.complete && imgCOI.naturalWidth > 0) {
+            doc.addImage(imgCOI, 'PNG', pageWidth - margemDireita - 22, margemTopo - 2, 22, 22);
+            console.log('✅ Brasão COI adicionado ao PDF');
+        } else {
+            console.warn('⚠️ Brasão COI NÃO foi adicionado');
+        }
+        
+    } catch (e) {
+        console.error('❌ Erro ao carregar brasões:', e);
+    }
+}
+
+            // ============================================================
+            // FUNÇÃO: ADICIONAR CABEÇALHO DA PÁGINA
+            // ============================================================
+            async function adicionarCabecalhoPagina() {
+                await adicionarBrasoes();
+
+                let y = margemTopo + 28;
+
+                doc.setFontSize(16);
+                doc.setFont('courier', 'bold');
+                doc.setTextColor(15, 43, 109);
+                doc.text('RESUMO ESTATISTICO - COI', pageWidth / 2, y, { align: 'center' });
+                y += 9;
+
+                let filtroTexto = 'Todos os registros';
+                if (filtroAtivo.mes) {
+                    const [ano, mesNum] = filtroAtivo.mes.split('-');
+                    const nomesMeses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
+                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                    ];
+                    filtroTexto = `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
+                    if (filtroAtivo.dia) {
+                        filtroTexto += ` - ${removerAcentos(formatDateDisplay(filtroAtivo.dia))}`;
+                    }
+                } else if (filtroAtivo.dia) {
+                    filtroTexto = `Dia: ${removerAcentos(formatDateDisplay(filtroAtivo.dia))}`;
+                }
+
+                doc.setFontSize(10);
+                doc.setFont('courier', 'normal');
+                doc.setTextColor(80, 80, 100);
+                doc.text(`Filtro: ${filtroTexto} - ${dadosFiltrados.length} registro(s)`, pageWidth / 2, y, { align: 'center' });
+                y += 6;
+
+                const now = new Date();
+                const dataGeracao =
+                    `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                doc.setFontSize(8);
+                doc.setTextColor(120, 120, 140);
+                doc.text(`Gerado em: ${dataGeracao}`, pageWidth / 2, y, { align: 'center' });
+                y += 7;
+
+                doc.setDrawColor(200, 200, 210);
+                doc.line(margemEsquerda, y, pageWidth - margemDireita, y);
+                y += 5;
+
+                return y;
+            }
+
+            // ============================================================
+            // FUNÇÃO: ESCREVER UM DIA COMPLETO (BLOCO ÚNICO)
+            // ============================================================
+            function escreverBlocoDia(item, yInicio) {
+                const dataFormatada = removerAcentos(formatDateDisplay(item.data));
+                const responsavel = removerAcentos((item.responsavel || 'Responsavel nao informado').toUpperCase());
+                const matricula = removerAcentos(item.matricula || 'Nao informada');
+
+                let y = yInicio;
+                const xEsquerda = margemEsquerda + 3;
+                const xDireita = pageWidth / 2 + 3;
+
+                // Altura estimada do bloco
+                const alturaBloco = 38;
+
+                // Verifica se cabe na página
+                if (y + alturaBloco > pageHeight - 15) {
+                    return null; // Indica que precisa de nova página
+                }
+
+                // Cabeçalho do dia
+                doc.setFontSize(10);
+                doc.setFont('courier', 'bold');
+                doc.setTextColor(15, 43, 109);
+                doc.text(`${dataFormatada} - ${responsavel}`, margemEsquerda, y);
+                y += 5;
+
+                doc.setFontSize(8);
+                doc.setFont('courier', 'normal');
+                doc.setTextColor(80, 80, 100);
+                doc.text(`Matricula: ${matricula}`, margemEsquerda + 5, y);
+                y += 4;
+
+                doc.setDrawColor(200, 200, 210);
+                doc.setLineWidth(0.2);
+                doc.line(margemEsquerda, y, pageWidth - margemDireita, y);
+                y += 3;
+
+                // Indicadores - 2 colunas
+                const campos = [
+                    { id: 'eventos_identificados', label: 'Eventos Identificados' },
+                    { id: 'eventos_relevantes', label: 'Eventos Relevantes' },
+                    { id: 'ocorrencias_confirmadas', label: 'Ocorrências Confirmadas' },
+                    { id: 'acionamentos_realizados', label: 'Acionamentos Realizados' },
+                    { id: 'despachos_campo', label: 'Despachos para Equipes' },
+                    { id: 'solicitacao_apoio', label: 'Solicitação de Apoio' },
+                    { id: 'furtos_cameras', label: 'Furtos por Câmeras' },
+                    { id: 'veiculos_furtados', label: 'Veículos Furtados' },
+                    { id: 'veiculos_recuperados', label: 'Veículos Recuperados' },
+                    { id: 'pessoas_procuradas', label: 'Pessoas Procuradas' },
+                    { id: 'armas_suspeitas', label: 'Armas Suspeitas' },
+                    { id: 'vandalismos', label: 'Vandalismos' },
+                    { id: 'depredacoes', label: 'Depredações' },
+                    { id: 'ocorrencias_violencia', label: 'Ocorrências Violência' }
+                ];
+
+                const col1 = campos.slice(0, 7);
+                const col2 = campos.slice(7);
+
+                let yLinha = y;
+                const alturaLinha = 4.2;
+
+                // Coluna 1
+                col1.forEach((campo) => {
+                    const valor = item[campo.id] || 0;
+                    doc.setFontSize(7);
+                    doc.setFont('courier', 'normal');
+                    doc.setTextColor(60, 60, 80);
+                    doc.text(campo.label, xEsquerda, yLinha);
+
+                    if (valor > 0) {
+                        doc.setFont('courier', 'bold');
+                        doc.setTextColor(15, 43, 109);
+                        doc.setFontSize(7.5);
+                    } else {
+                        doc.setFont('courier', 'normal');
+                        doc.setTextColor(160, 160, 180);
+                        doc.setFontSize(7);
+                    }
+                    doc.text(String(valor), xEsquerda + 62, yLinha);
+                    yLinha += alturaLinha;
+                });
+
+                // Coluna 2
+                yLinha = y;
+                col2.forEach((campo) => {
+                    const valor = item[campo.id] || 0;
+                    doc.setFontSize(7);
+                    doc.setFont('courier', 'normal');
+                    doc.setTextColor(60, 60, 80);
+                    doc.text(campo.label, xDireita, yLinha);
+
+                    if (valor > 0) {
+                        doc.setFont('courier', 'bold');
+                        doc.setTextColor(15, 43, 109);
+                        doc.setFontSize(7.5);
+                    } else {
+                        doc.setFont('courier', 'normal');
+                        doc.setTextColor(160, 160, 180);
+                        doc.setFontSize(7);
+                    }
+                    doc.text(String(valor), xDireita + 50, yLinha);
+                    yLinha += alturaLinha;
+                });
+
+                y = yLinha + 2;
+
+                // Linha final do dia
+                doc.setDrawColor(200, 200, 210);
+                doc.setLineWidth(0.3);
+                doc.line(margemEsquerda, y, pageWidth - margemDireita, y);
+                y += 4;
+
+                return y;
+            }
+
+            // ============================================================
+            // FUNÇÃO: ESCREVER RESUMO DE MÊS
+            // ============================================================
+            function escreverResumoMes(titulo, dados, yInicio) {
+                const campos = [
+                    { id: 'eventos_identificados', label: 'Eventos Identificados' },
+                    { id: 'eventos_relevantes', label: 'Eventos Relevantes' },
+                    { id: 'ocorrencias_confirmadas', label: 'Ocorrências Confirmadas' },
+                    { id: 'acionamentos_realizados', label: 'Acionamentos Realizados' },
+                    { id: 'despachos_campo', label: 'Despachos para Equipes' },
+                    { id: 'solicitacao_apoio', label: 'Solicitação de Apoio' },
+                    { id: 'furtos_cameras', label: 'Furtos por Câmeras' },
+                    { id: 'veiculos_furtados', label: 'Veículos Furtados' },
+                    { id: 'veiculos_recuperados', label: 'Veículos Recuperados' },
+                    { id: 'pessoas_procuradas', label: 'Pessoas Procuradas' },
+                    { id: 'armas_suspeitas', label: 'Armas Suspeitas' },
+                    { id: 'vandalismos', label: 'Vandalismos' },
+                    { id: 'depredacoes', label: 'Depredações' },
+                    { id: 'ocorrencias_violencia', label: 'Ocorrências Violência' }
+                ];
+
+                let totais = {};
+                campos.forEach(c => totais[c.id] = 0);
+                dados.forEach(item => {
+                    campos.forEach(c => {
+                        totais[c.id] += item[c.id] || 0;
+                    });
+                });
+
+                let totalGeral = 0;
+                campos.forEach(c => totalGeral += totais[c.id]);
+
+                const alturaBloco = 25;
+                let y = yInicio;
+
+                if (y + alturaBloco > pageHeight - 15) {
+                    return null;
+                }
+
+                const tituloLimpo = removerAcentos(titulo);
+                doc.setFontSize(12);
+                doc.setFont('courier', 'bold');
+                doc.setTextColor(15, 43, 109);
+                doc.text(`${tituloLimpo}`, margemEsquerda, y);
+                y += 5;
+
+                doc.setDrawColor(15, 43, 109);
+                doc.setLineWidth(0.3);
+                doc.line(margemEsquerda + 5, y, pageWidth - margemDireita - 5, y);
+                y += 4;
+
+                // 2 colunas para o resumo
+                const col1 = campos.slice(0, 7);
+                const col2 = campos.slice(7);
+
+                const xCol1 = margemEsquerda + 5;
+                const xCol2 = pageWidth / 2 + 5;
+                let yLinha = y;
+                const alturaLinha = 4.2;
+
+                col1.forEach((campo) => {
+                    const valor = totais[campo.id] || 0;
+                    doc.setFontSize(7);
+                    doc.setFont('courier', 'normal');
+                    doc.setTextColor(60, 60, 80);
+                    doc.text(campo.label, xCol1, yLinha);
+
+                    if (valor > 0) {
+                        doc.setFont('courier', 'bold');
+                        doc.setTextColor(15, 43, 109);
+                        doc.setFontSize(7.5);
+                    } else {
+                        doc.setFont('courier', 'normal');
+                        doc.setTextColor(160, 160, 180);
+                        doc.setFontSize(7);
+                    }
+                    doc.text(String(valor), xCol1 + 62, yLinha);
+                    yLinha += alturaLinha;
+                });
+
+                yLinha = y;
+                col2.forEach((campo) => {
+                    const valor = totais[campo.id] || 0;
+                    doc.setFontSize(7);
+                    doc.setFont('courier', 'normal');
+                    doc.setTextColor(60, 60, 80);
+                    doc.text(campo.label, xCol2, yLinha);
+
+                    if (valor > 0) {
+                        doc.setFont('courier', 'bold');
+                        doc.setTextColor(15, 43, 109);
+                        doc.setFontSize(7.5);
+                    } else {
+                        doc.setFont('courier', 'normal');
+                        doc.setTextColor(160, 160, 180);
+                        doc.setFontSize(7);
+                    }
+                    doc.text(String(valor), xCol2 + 50, yLinha);
+                    yLinha += alturaLinha;
+                });
+
+                y = yLinha + 2;
+                doc.setDrawColor(200, 200, 210);
+                doc.setLineWidth(0.3);
+                doc.line(margemEsquerda + 5, y, pageWidth - margemDireita - 5, y);
+                y += 3;
+
+                doc.setFontSize(9);
+                doc.setFont('courier', 'bold');
+                doc.setTextColor(15, 43, 109);
+                doc.text(`TOTAL DO MES: ${totalGeral}`, margemEsquerda + 10, y);
+                y += 6;
+
+                return y;
+            }
+
+            // ============================================================
+            // INICIAR A GERAÇÃO DO PDF
+            // ============================================================
+            try {
+                yAtual = await adicionarCabecalhoPagina();
+
+                const temDia = filtroAtivo.dia && filtroAtivo.dia !== '';
+                const temMes = filtroAtivo.mes && filtroAtivo.mes !== '';
+                const temTodos = !temDia && !temMes;
+
+                // CASO 1: DIA ESPECÍFICO
+                if (temDia) {
+                    for (let i = 0; i < dadosFiltrados.length; i++) {
+                        const novoY = escreverBlocoDia(dadosFiltrados[i], yAtual);
+                        if (novoY === null) {
+                            doc.addPage();
+                            paginaAtual++;
+                            yAtual = await adicionarCabecalhoPagina();
+                            i--;
+                        } else {
+                            yAtual = novoY;
+                        }
+                    }
+
+                    // Resumo do dia
+                    if (dadosFiltrados.length > 1) {
+                        // Calcula totais
+                        const campos = ['eventos_identificados', 'eventos_relevantes', 'ocorrencias_confirmadas',
+                            'acionamentos_realizados', 'despachos_campo', 'solicitacao_apoio',
+                            'furtos_cameras', 'veiculos_furtados', 'veiculos_recuperados',
+                            'pessoas_procuradas', 'armas_suspeitas', 'vandalismos',
+                            'depredacoes', 'ocorrencias_violencia'
+                        ];
+                        let totais = {};
+                        campos.forEach(c => totais[c] = 0);
+                        dadosFiltrados.forEach(item => {
+                            campos.forEach(c => {
+                                totais[c] += item[c] || 0;
+                            });
+                        });
+
+                        let somaGeral = 0;
+                        campos.forEach(c => somaGeral += totais[c]);
+
+                        if (yAtual + 20 > pageHeight - 15) {
+                            doc.addPage();
+                            paginaAtual++;
+                            yAtual = await adicionarCabecalhoPagina();
+                        }
+
+                        yAtual += 3;
+                        doc.setDrawColor(15, 43, 109);
+                        doc.setLineWidth(0.8);
+                        doc.line(margemEsquerda, yAtual, pageWidth - margemDireita, yAtual);
+                        yAtual += 5;
+
+                        const diaLimpo = removerAcentos(formatDateDisplay(filtroAtivo.dia));
+                        doc.setFontSize(13);
+                        doc.setFont('courier', 'bold');
+                        doc.setTextColor(15, 43, 109);
+                        doc.text(`RESUMO DO DIA ${diaLimpo}`, pageWidth / 2, yAtual, { align: 'center' });
+                        yAtual += 6;
+
+                        const labels = {
+                            'eventos_identificados': 'Eventos',
+                            'eventos_relevantes': 'Relev.',
+                            'ocorrencias_confirmadas': 'Ocorr.',
+                            'acionamentos_realizados': 'Acion.',
+                            'despachos_campo': 'Desp.',
+                            'solicitacao_apoio': 'Apoio',
+                            'furtos_cameras': 'Furtos',
+                            'veiculos_furtados': 'Veic.Furt.',
+                            'veiculos_recuperados': 'Veic.Rec.',
+                            'pessoas_procuradas': 'Proc.',
+                            'armas_suspeitas': 'Armas',
+                            'vandalismos': 'Vandal.',
+                            'depredacoes': 'Depred.',
+                            'ocorrencias_violencia': 'Viol.'
+                        };
+
+                        let x = margemEsquerda + 3;
+                        const labelsPerRow = 7;
+                        campos.forEach((campo, idx) => {
+                            const label = labels[campo] || campo;
+                            const valor = totais[campo] || 0;
+                            doc.setFontSize(6.5);
+                            doc.setFont('courier', 'normal');
+                            doc.setTextColor(60, 60, 80);
+                            doc.text(label, x, yAtual);
+
+                            if (valor > 0) {
+                                doc.setFont('courier', 'bold');
+                                doc.setTextColor(15, 43, 109);
+                                doc.setFontSize(7);
+                            } else {
+                                doc.setFont('courier', 'normal');
+                                doc.setTextColor(160, 160, 180);
+                                doc.setFontSize(6.5);
+                            }
+                            doc.text(String(valor), x + (label.length * 1.8) + 2, yAtual);
+                            x += (label.length * 1.8) + 10;
+
+                            if ((idx + 1) % labelsPerRow === 0) {
+                                yAtual += 4.5;
+                                x = margemEsquerda + 3;
+                            }
+                        });
+
+                        yAtual += 5;
+                        doc.setDrawColor(15, 43, 109);
+                        doc.setLineWidth(0.5);
+                        doc.line(margemEsquerda, yAtual, pageWidth - margemDireita, yAtual);
+                        yAtual += 4;
+
+                        doc.setFontSize(10);
+                        doc.setFont('courier', 'bold');
+                        doc.setTextColor(15, 43, 109);
+                        doc.text(`TOTAL DO DIA: ${somaGeral}`, margemEsquerda + 10, yAtual);
+                        yAtual += 8;
+                    }
+                }
+
+                // CASO 2: MÊS ESPECÍFICO
+                else if (temMes) {
+                    const dadosOrdenados = [...dadosFiltrados].sort((a, b) => a.data.localeCompare(b.data));
+
+                    for (let i = 0; i < dadosOrdenados.length; i++) {
+                        const novoY = escreverBlocoDia(dadosOrdenados[i], yAtual);
+                        if (novoY === null) {
+                            doc.addPage();
+                            paginaAtual++;
+                            yAtual = await adicionarCabecalhoPagina();
+                            i--;
+                        } else {
+                            yAtual = novoY;
+                        }
+                    }
+
+                    // Resumo do mês
+                    const [ano, mesNum] = filtroAtivo.mes.split('-');
+                    const nomesMeses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
+                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                    ];
+                    const nomeMes = nomesMeses[parseInt(mesNum) - 1];
+
+                    const novoY = escreverResumoMes(`${nomeMes} ${ano} - RESUMO DO MES`, dadosOrdenados, yAtual);
+                    if (novoY === null) {
+                        doc.addPage();
+                        paginaAtual++;
+                        yAtual = await adicionarCabecalhoPagina();
+                        yAtual = escreverResumoMes(`${nomeMes} ${ano} - RESUMO DO MES`, dadosOrdenados, yAtual);
+                    } else {
+                        yAtual = novoY;
+                    }
+                }
+
+                // CASO 3: TODOS OS REGISTROS
+                else if (temTodos) {
+                    const grupos = {};
+                    dadosFiltrados.forEach(item => {
+                        if (item.data) {
+                            const [ano, mes] = item.data.split('-');
+                            const chave = `${ano}-${mes}`;
+                            if (!grupos[chave]) {
+                                grupos[chave] = [];
+                            }
+                            grupos[chave].push(item);
+                        }
+                    });
+
+                    const chavesOrdenadas = Object.keys(grupos).sort().reverse();
+                    let totalGeralFinal = {};
+                    const camposFinais = [
+                        'eventos_identificados', 'eventos_relevantes', 'ocorrencias_confirmadas',
+                        'acionamentos_realizados', 'despachos_campo', 'solicitacao_apoio',
+                        'furtos_cameras', 'veiculos_furtados', 'veiculos_recuperados',
+                        'pessoas_procuradas', 'armas_suspeitas', 'vandalismos',
+                        'depredacoes', 'ocorrencias_violencia'
+                    ];
+                    camposFinais.forEach(c => totalGeralFinal[c] = 0);
+
+                    for (let m = 0; m < chavesOrdenadas.length; m++) {
+                        const chave = chavesOrdenadas[m];
+                        const [ano, mes] = chave.split('-');
+                        const nomesMeses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
+                            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                        ];
+                        const nomeMes = nomesMeses[parseInt(mes) - 1];
+
+                        const dadosMes = [...grupos[chave]].sort((a, b) => a.data.localeCompare(b.data));
+
+                        // Dias do mês
+                        for (let i = 0; i < dadosMes.length; i++) {
+                            const novoY = escreverBlocoDia(dadosMes[i], yAtual);
+                            if (novoY === null) {
+                                doc.addPage();
+                                paginaAtual++;
+                                yAtual = await adicionarCabecalhoPagina();
+                                i--;
+                            } else {
+                                yAtual = novoY;
+                            }
+                        }
+
+                        // Resumo do mês
+                        const totaisMes = {};
+                        camposFinais.forEach(c => totaisMes[c] = 0);
+                        dadosMes.forEach(item => {
+                            camposFinais.forEach(c => {
+                                totaisMes[c] += item[c] || 0;
+                            });
+                        });
+                        camposFinais.forEach(c => {
+                            totalGeralFinal[c] += totaisMes[c] || 0;
+                        });
+
+                        const novoY = escreverResumoMes(`${nomeMes} ${ano} - RESUMO DO MES`, dadosMes, yAtual);
+                        if (novoY === null) {
+                            doc.addPage();
+                            paginaAtual++;
+                            yAtual = await adicionarCabecalhoPagina();
+                            yAtual = escreverResumoMes(`${nomeMes} ${ano} - RESUMO DO MES`, dadosMes, yAtual);
+                        } else {
+                            yAtual = novoY;
+                        }
+
+                        // Separador entre meses
+                        if (m < chavesOrdenadas.length - 1) {
+                            if (yAtual + 5 > pageHeight - 15) {
+                                doc.addPage();
+                                paginaAtual++;
+                                yAtual = await adicionarCabecalhoPagina();
+                            }
+                            doc.setDrawColor(150, 150, 170);
+                            doc.setLineWidth(0.2);
+                            doc.line(margemEsquerda + 20, yAtual, pageWidth - margemDireita - 20, yAtual);
+                            yAtual += 4;
+                        }
+                    }
+
+                    // ============================================================
+                    // RESUMO GERAL FINAL
+                    // ============================================================
+                    if (yAtual + 25 > pageHeight - 15) {
+                        doc.addPage();
+                        paginaAtual++;
+                        yAtual = await adicionarCabecalhoPagina();
+                    }
+
+                    yAtual += 4;
+                    doc.setDrawColor(15, 43, 109);
+                    doc.setLineWidth(0.8);
+                    doc.line(margemEsquerda, yAtual, pageWidth - margemDireita, yAtual);
+                    yAtual += 6;
+
+                    doc.setFontSize(15);
+                    doc.setFont('courier', 'bold');
+                    doc.setTextColor(15, 43, 109);
+                    doc.text('RESUMO GERAL', pageWidth / 2, yAtual, { align: 'center' });
+                    yAtual += 8;
+
+                    let somaGeral = 0;
+                    const labels = {
+                        'eventos_identificados': 'Eventos Identificados',
+                        'eventos_relevantes': 'Eventos Relevantes',
+                        'ocorrencias_confirmadas': 'Ocorrências Confirmadas',
+                        'acionamentos_realizados': 'Acionamentos Realizados',
+                        'despachos_campo': 'Despachos para Equipes',
+                        'solicitacao_apoio': 'Solicitação de Apoio',
+                        'furtos_cameras': 'Furtos por Câmeras',
+                        'veiculos_furtados': 'Veículos Furtados',
+                        'veiculos_recuperados': 'Veículos Recuperados',
+                        'pessoas_procuradas': 'Pessoas Procuradas',
+                        'armas_suspeitas': 'Armas Suspeitas',
+                        'vandalismos': 'Vandalismos',
+                        'depredacoes': 'Depredações',
+                        'ocorrencias_violencia': 'Ocorrências Violência'
+                    };
+
+                    const col1 = camposFinais.slice(0, 7);
+                    const col2 = camposFinais.slice(7);
+
+                    const xCol1 = margemEsquerda + 5;
+                    const xCol2 = pageWidth / 2 + 5;
+                    let yLinha = yAtual;
+                    const alturaLinha = 4.5;
+
+                    col1.forEach(campo => {
+                        const valor = totalGeralFinal[campo] || 0;
+                        somaGeral += valor;
+                        doc.setFontSize(7);
+                        doc.setFont('courier', 'normal');
+                        doc.setTextColor(60, 60, 80);
+                        doc.text(labels[campo] || campo, xCol1, yLinha);
+
+                        if (valor > 0) {
+                            doc.setFont('courier', 'bold');
+                            doc.setTextColor(15, 43, 109);
+                            doc.setFontSize(7.5);
+                        } else {
+                            doc.setFont('courier', 'normal');
+                            doc.setTextColor(160, 160, 180);
+                            doc.setFontSize(7);
+                        }
+                        doc.text(String(valor), xCol1 + 62, yLinha);
+                        yLinha += alturaLinha;
+                    });
+
+                    yLinha = yAtual;
+                    col2.forEach(campo => {
+                        const valor = totalGeralFinal[campo] || 0;
+                        somaGeral += valor;
+                        doc.setFontSize(7);
+                        doc.setFont('courier', 'normal');
+                        doc.setTextColor(60, 60, 80);
+                        doc.text(labels[campo] || campo, xCol2, yLinha);
+
+                        if (valor > 0) {
+                            doc.setFont('courier', 'bold');
+                            doc.setTextColor(15, 43, 109);
+                            doc.setFontSize(7.5);
+                        } else {
+                            doc.setFont('courier', 'normal');
+                            doc.setTextColor(160, 160, 180);
+                            doc.setFontSize(7);
+                        }
+                        doc.text(String(valor), xCol2 + 50, yLinha);
+                        yLinha += alturaLinha;
+                    });
+
+                    yAtual = yLinha + 4;
+                    doc.setDrawColor(15, 43, 109);
+                    doc.setLineWidth(0.5);
+                    doc.line(margemEsquerda, yAtual, pageWidth - margemDireita, yAtual);
+                    yAtual += 5;
+
+                    doc.setFontSize(11);
+                    doc.setFont('courier', 'bold');
+                    doc.setTextColor(15, 43, 109);
+                    doc.text(`TOTAL GERAL: ${somaGeral}`, pageWidth / 2, yAtual, { align: 'center' });
+                    yAtual += 8;
+                    doc.setDrawColor(15, 43, 109);
+                    doc.setLineWidth(0.8);
+                    doc.line(margemEsquerda, yAtual, pageWidth - margemDireita, yAtual);
+                    yAtual += 6;
+                }
+
+                // ============================================================
+                // RODAPÉ
+                // ============================================================
+                const footerY = pageHeight - 10;
+                doc.setDrawColor(200, 200, 210);
+                doc.setLineWidth(0.3);
+                doc.line(margemEsquerda, footerY - 3, pageWidth - margemDireita, footerY - 3);
+                doc.setFont('courier', 'italic');
+                doc.setFontSize(8);
+                doc.setTextColor(120, 120, 140);
+                doc.text('Prefeitura do Cabo de Santo Agostinho - COI', pageWidth / 2, footerY + 2, { align: 'center' });
+                doc.text(`Página ${paginaAtual}`, pageWidth - margemDireita, footerY + 2, { align: 'right' });
+
+                // ============================================================
+                // SALVAR PDF
+                // ============================================================
+                let fileName = 'Resumo_Estatistico';
+                if (filtroAtivo.mes) {
+                    fileName += `_${filtroAtivo.mes}`;
+                }
+                if (filtroAtivo.dia) {
+                    fileName += `_${filtroAtivo.dia}`;
+                }
+                if (!filtroAtivo.mes && !filtroAtivo.dia) {
+                    fileName += `_todos`;
+                }
+                const now = new Date();
+                fileName +=
+                    `_${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}.pdf`;
+
+                doc.save(fileName);
+                setStatus('online', `PDF gerado com sucesso! (${dadosFiltrados.length} registros)`);
+
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF: ' + error.message);
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Inicializando Resumo Estatístico...');
+
+           // Busca rápida de dias
+document.getElementById('buscarDiaBtn').addEventListener('click', function() {
+    const container = document.getElementById('buscaDiaContainer');
+    if (container.style.display === 'block') {
+        container.style.display = 'none';
+    } else {
+        const mes = document.getElementById('filtroMes').value;
+        if (!mes) {
+            alert('Selecione um mês primeiro para buscar dias.');
+            return;
+        }
+        container.style.display = 'block';
+        document.getElementById('buscaDiaInput').focus();
+    }
+});
+
+document.getElementById('buscaDiaConfirmar').addEventListener('click', buscarDia);
+document.getElementById('buscaDiaCancelar').addEventListener('click', fecharBuscaDia);
+
+document.getElementById('buscaDiaInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        buscarDia();
+    }
+    if (e.key === 'Escape') {
+        fecharBuscaDia();
+    }
+});
+
+// Quando o mês muda, atualiza os dias disponíveis
+document.getElementById('filtroMes').addEventListener('change', function() {
+    const mes = this.value;
+    const buscaContainer = document.getElementById('buscaDiaContainer');
+    if (mes) {
+        buscaContainer.style.display = 'block';
+        // Recarrega os dias do mês
+        atualizarFiltros(dadosCompletos);
+    } else {
+        buscaContainer.style.display = 'none';
+        // Limpa os dias
+        const diaSelect = document.getElementById('filtroDia');
+        diaSelect.innerHTML = '<option value="">Todos os dias</option>';
+    }
+});
+           
+            applyDateMask(document.getElementById('dataResumo'));
+
+            setStatus('syncing', 'Conectando ao Sistema MIRA Analytics...');
+
+            carregarHistorico();
+
+            document.getElementById('salvarBtn').addEventListener('click', salvarResumo);
+            document.getElementById('gerarPdfBtn').addEventListener('click', gerarPDF);
+            document.getElementById('limparBtn').addEventListener('click', limparCampos);
+            document.getElementById('aplicarFiltroBtn').addEventListener('click', aplicarFiltro);
+            document.getElementById('limparFiltroBtn').addEventListener('click', limparFiltro);
+
+            document.getElementById('confirmationModal').addEventListener('click', function(e) {
+                if (e.target === this) hideConfirmation();
+            });
+
+            document.getElementById('filtroMes').addEventListener('change', aplicarFiltro);
+            document.getElementById('filtroDia').addEventListener('change', aplicarFiltro);
+
+            console.log('✅ Resumo Estatístico inicializado!');
+        });
+
+        console.log('📄 Resumo Estatístico - Script carregado!');
+    </script>
+</body>
+</html>
