@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -295,6 +296,7 @@
             transition: var(--transition-bounce);
             position: relative;
             overflow: hidden;
+            font-family: inherit;
         }
 
         .action-btn::before {
@@ -373,33 +375,64 @@
         }
 
         @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
+        /* ============================================================
+           HISTÓRICO
+           ============================================================ */
         .historico-section {
             margin-top: 20px;
             border-top: 1px solid var(--border-color);
             padding-top: 20px;
         }
 
-        .historico-section h3 {
+        .historico-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .historico-header h3 {
             font-size: 16px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
+            margin: 0;
         }
 
-        .historico-section h3 i {
+        .historico-header h3 i {
             color: var(--primary-light);
+        }
+
+        .historico-stats {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: rgba(15, 43, 109, 0.15);
+            border: 1px solid rgba(15, 43, 109, 0.3);
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary-light);
+            letter-spacing: 0.3px;
+        }
+
+        .stat-badge i {
+            color: var(--info);
+            font-size: 11px;
         }
 
         .filter-row {
@@ -440,9 +473,275 @@
             color: var(--text-primary);
         }
 
+        /* ============================================================
+           ACCORDION DE MESES
+           ============================================================ */
+        .meses-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mes-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .mes-card:hover {
+            border-color: rgba(15, 43, 109, 0.4);
+        }
+
+        .mes-card.expanded {
+            border-color: rgba(15, 43, 109, 0.5);
+            box-shadow: 0 8px 24px -8px rgba(15, 43, 109, 0.4);
+        }
+
+        .mes-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .mes-card-header:hover {
+            background: rgba(15, 43, 109, 0.08);
+        }
+
+        .mes-card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mes-card-title i.fa-chevron-right {
+            color: var(--primary-light);
+            font-size: 12px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+            flex-shrink: 0;
+        }
+
+        .mes-card.expanded .mes-card-title i.fa-chevron-right {
+            transform: rotate(90deg);
+        }
+
+        .mes-card-icon {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(15, 43, 109, 0.4), rgba(15, 43, 109, 0.2));
+            border: 1px solid rgba(15, 43, 109, 0.4);
+            border-radius: 10px;
+            color: var(--primary-light);
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .mes-card-name {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .mes-card-name h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+        }
+
+        .mes-card-name small {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mes-card-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .mes-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .mes-badge.registros {
+            background: rgba(59, 130, 246, 0.12);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
+        .mes-badge.total {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        /* ============================================================
+           VARIAÇÃO MÊS A MÊS
+           ============================================================ */
+        .variacao-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 40px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .variacao-badge.up {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .variacao-badge.down {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .variacao-badge.neutral {
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text-secondary);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .variacao-badge i {
+            font-size: 9px;
+        }
+
+        /* ============================================================
+           BOTÃO PDF NO CARD
+           ============================================================ */
+        .mes-pdf-btn {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            color: #f87171;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .mes-pdf-btn:hover {
+            background: rgba(239, 68, 68, 0.18);
+            border-color: rgba(239, 68, 68, 0.4);
+            transform: scale(1.05);
+            color: #fca5a5;
+        }
+
+        /* ============================================================
+           SPARKLINE
+           ============================================================ */
+        .mes-sparkline-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.15);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sparkline-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex-shrink: 0;
+            min-width: 100px;
+        }
+
+        .sparkline-info .sparkline-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .sparkline-info .sparkline-values {
+            font-size: 10px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sparkline-info .sparkline-values span {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .sparkline-chart-wrapper {
+            flex: 1;
+            height: 60px;
+            min-width: 0;
+            position: relative;
+        }
+
+        .sparkline-chart-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .mes-card-body {
+            display: none;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .mes-card.expanded .mes-card-body {
+            display: block;
+            animation: slideDown 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mes-card-body .table-wrapper {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+        }
+
+        /* ============================================================
+           TABELA
+           ============================================================ */
         .table-wrapper {
             overflow-x: auto;
-            margin-top: 12px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
         }
@@ -496,17 +795,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
-        .table-manual .total-row td {
-            font-weight: 700;
-            color: var(--text-primary);
-            background: rgba(15, 43, 109, 0.15);
-            border-top: 2px solid var(--border-color);
-        }
-
-        .table-manual .total-row td:first-child {
-            color: var(--primary-light);
-        }
-
         .table-manual td.valor-destaque {
             color: var(--text-primary);
             font-weight: 600;
@@ -524,6 +812,145 @@
         .table-wrapper::-webkit-scrollbar-thumb {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 10px;
+        }
+
+        /* ============================================================
+           PAGINAÇÃO
+           ============================================================ */
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pagination-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+
+        .pagination-info strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 32px;
+            height: 32px;
+            padding: 0 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: rgba(15, 43, 109, 0.3);
+            border-color: var(--primary-light);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary-light);
+            color: white;
+            box-shadow: 0 2px 8px rgba(15, 43, 109, 0.4);
+        }
+
+        .page-btn.nav {
+            padding: 0 10px;
+        }
+
+        .page-ellipsis {
+            color: var(--text-tertiary);
+            font-size: 12px;
+            padding: 0 4px;
+            user-select: none;
+        }
+
+        /* ============================================================
+           TOTAIS DO MÊS
+           ============================================================ */
+        .mes-totais {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, rgba(15, 43, 109, 0.15), rgba(15, 43, 109, 0.05));
+            border-top: 1px solid rgba(15, 43, 109, 0.3);
+        }
+
+        .mes-total-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 10px;
+            letter-spacing: 0.2px;
+            color: var(--text-secondary);
+        }
+
+        .mes-total-item strong {
+            color: var(--primary-light);
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        /* ============================================================
+           ESTADO VAZIO
+           ============================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            opacity: 0.4;
+            margin-bottom: 12px;
+            display: block;
+            color: var(--primary-light);
+        }
+
+        .empty-state p {
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state small {
+            font-size: 10px;
+            color: var(--text-tertiary);
         }
 
         .site-footer {
@@ -559,6 +986,9 @@
             transform: translateY(-2px);
         }
 
+        /* ============================================================
+           MODAL
+           ============================================================ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -589,23 +1019,13 @@
         }
 
         @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-container i {
@@ -640,6 +1060,7 @@
             border: none;
             transition: var(--transition);
             font-size: 14px;
+            font-family: inherit;
         }
 
         .modal-buttons button:hover {
@@ -664,40 +1085,37 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 12px;
-            }
-            .glass-header {
-                padding: 16px;
+        /* ============================================================
+           RESPONSIVO
+           ============================================================ */
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .glass-header { padding: 16px; flex-direction: column; text-align: center; }
+            .main-card { padding: 20px; }
+            .form-group { min-width: 100%; }
+            .filter-row .form-group { min-width: 100%; }
+            .title-section h1 { font-size: 14px; }
+            .indicador-item label { font-size: 10px; }
+            .indicador-item input { width: 60px; font-size: 13px; }
+
+            .historico-header { flex-direction: column; align-items: flex-start; }
+            .mes-card-header { padding: 12px 14px; }
+            .mes-card-badges { width: 100%; }
+            .pagination-bar { flex-direction: column; align-items: stretch; }
+            .pagination-controls { justify-content: center; }
+            .page-btn { min-width: 30px; height: 30px; font-size: 11px; }
+
+            .mes-sparkline-container {
                 flex-direction: column;
-                text-align: center;
+                align-items: stretch;
+                gap: 8px;
             }
-            .main-card {
-                padding: 20px;
-            }
-            .form-group {
-                min-width: 100%;
-            }
-            .filter-row .form-group {
-                min-width: 100%;
-            }
-            .title-section h1 {
-                font-size: 14px;
-            }
-            .indicador-item label {
-                font-size: 10px;
-            }
-            .indicador-item input {
-                width: 60px;
-                font-size: 13px;
-            }
+            .sparkline-info { min-width: 0; }
+            .sparkline-chart-wrapper { height: 50px; }
         }
 
         @media print {
-            .action-bar,
-            .back-btn,
-            .filter-row {
+            .action-bar, .back-btn, .filter-row, .pagination-bar, .historico-stats, .expandir-todos-btn, .mes-pdf-btn {
                 display: none !important;
             }
             .glass-header h1 {
@@ -706,52 +1124,21 @@
                 -webkit-background-clip: unset !important;
                 background-clip: unset !important;
             }
-            .main-card {
-                background: white !important;
-                border: 1px solid #ddd !important;
-                box-shadow: none !important;
-            }
-            .main-card p,
-            .main-card li,
-            .indicador-item {
-                color: #333 !important;
-            }
-            .indicador-item {
-                background: #f5f5f5 !important;
-                border: 1px solid #ddd !important;
-            }
-            .indicador-item input {
+            .main-card { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; }
+            .main-card p, .main-card li, .indicador-item { color: #333 !important; }
+            .indicador-item { background: #f5f5f5 !important; border: 1px solid #ddd !important; }
+            .indicador-item input, .form-group input {
                 background: #f5f5f5 !important;
                 color: #333 !important;
                 border-color: #ddd !important;
             }
-            .form-group input {
-                background: #f5f5f5 !important;
-                color: #333 !important;
-                border-color: #ddd !important;
-            }
-            .table-manual th {
-                background: #e8e8e8 !important;
-                color: #0f2b6d !important;
-            }
-            .table-manual td {
-                color: #333 !important;
-            }
-            .table-manual .total-row td {
-                background: #f0f0f0 !important;
-                color: #0f2b6d !important;
-            }
-            .site-footer {
-                color: #999 !important;
-                border-top: 1px solid #ddd !important;
-            }
-            .status-bar {
-                display: none !important;
-            }
-            .glass-header {
-                background: #f5f5f5 !important;
-                border: 1px solid #ddd !important;
-            }
+            .table-manual th { background: #e8e8e8 !important; color: #0f2b6d !important; }
+            .table-manual td { color: #333 !important; }
+            .site-footer { color: #999 !important; border-top: 1px solid #ddd !important; }
+            .status-bar { display: none !important; }
+            .glass-header { background: #f5f5f5 !important; border: 1px solid #ddd !important; }
+            .mes-card { page-break-inside: avoid; }
+            .mes-card-body { display: block !important; }
         }
     </style>
 </head>
@@ -862,137 +1249,106 @@
             </div>
 
             <!-- Botões -->
-<div class="action-bar">
-    <button class="action-btn primary" id="salvarBtn">
-        <i class="fas fa-save"></i> Salvar Resumo
-    </button>
-    <button class="action-btn warning" id="gerarPdfBtn">
-        <i class="fas fa-file-pdf"></i> Gerar PDF
-    </button>
-    <button class="action-btn danger" id="limparBtn">
-        <i class="fas fa-undo"></i> Limpar
-    </button>
-    <!-- NOVO BOTÃO -->
-    <a href="dashboard-resumo-estatistico.html" class="action-btn info" style="text-decoration: none; background: linear-gradient(135deg, #3b82f6, #2563eb);">
-        <i class="fas fa-chart-line"></i> 📊 Ver Gráficos
-    </a>
-</div>
+            <div class="action-bar">
+                <button class="action-btn primary" id="salvarBtn">
+                    <i class="fas fa-save"></i> Salvar Resumo
+                </button>
+                <button class="action-btn warning" id="gerarPdfBtn">
+                    <i class="fas fa-file-pdf"></i> Gerar PDF
+                </button>
+                <button class="action-btn danger" id="limparBtn">
+                    <i class="fas fa-undo"></i> Limpar
+                </button>
+                <a href="dashboard-resumo-estatistico.html" class="action-btn info" style="text-decoration: none;">
+                    <i class="fas fa-chart-line"></i> Ver Gráficos
+                </a>
+            </div>
 
             <!-- Histórico -->
             <div class="historico-section">
-                <h3><i class="fas fa-history"></i> HISTÓRICO</h3>
+                <div class="historico-header">
+                    <h3><i class="fas fa-history"></i> HISTÓRICO</h3>
+                    <div class="historico-stats">
+                        <span class="stat-badge">
+                            <i class="fas fa-database"></i> <span id="totalRegistros">0</span> registros
+                        </span>
+                        <span class="stat-badge">
+                            <i class="fas fa-calendar-alt"></i> <span id="totalMeses">0</span> meses
+                        </span>
+                    </div>
+                </div>
 
                 <div class="filter-row">
-    <div class="form-group">
-        <label><i class="fas fa-calendar-alt"></i> MÊS/ANO</label>
-        <select id="filtroMes">
-            <option value="">Todos</option>
-        </select>
-    </div>
-    <div class="form-group" id="diaGroup">
-        <label><i class="fas fa-calendar-day"></i> DIA</label>
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <select id="filtroDia" style="flex: 1;">
-                <option value="">Todos</option>
-            </select>
-            <button id="buscarDiaBtn" class="action-btn" style="padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.05); flex: 0 0 auto;" title="Buscar dia específico">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </div>
-    <div class="form-group" style="flex: 0 0 auto;">
-        <button class="action-btn info" id="aplicarFiltroBtn" style="padding: 8px 20px; font-size: 12px;">
-            <i class="fas fa-filter"></i> Filtrar
-        </button>
-    </div>
-    <div class="form-group" style="flex: 0 0 auto;">
-        <button class="action-btn" id="limparFiltroBtn" style="padding: 8px 20px; font-size: 12px; background: rgba(255,255,255,0.05);">
-            <i class="fas fa-times"></i> Limpar
-        </button>
-    </div>
-</div>
-
-<!-- Campo de busca rápida de dias (aparece apenas quando um mês é selecionado) -->
-<div id="buscaDiaContainer" style="display: none; margin-bottom: 12px;">
-    <div style="display: flex; gap: 8px; align-items: center;">
-        <input type="text" id="buscaDiaInput" placeholder="Digite o dia (ex: 15) ou data (ex: 15/08/2026)" style="
-            flex: 1;
-            padding: 8px 14px;
-            background: var(--bg-input);
-            border: 1.5px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-family: inherit;
-            color: var(--text-primary);
-            transition: var(--transition);
-        ">
-        <button id="buscaDiaConfirmar" class="action-btn" style="padding: 8px 16px; font-size: 12px; background: linear-gradient(135deg, var(--info), #2563eb); border: none;">
-            <i class="fas fa-arrow-right"></i>
-        </button>
-        <button id="buscaDiaCancelar" class="action-btn" style="padding: 8px 16px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">
-        <i class="fas fa-info-circle"></i> Digite o número do dia ou a data completa (DD/MM/AAAA)
-    </div>
-</div>
-
-                <div class="table-wrapper">
-                    <table class="table-manual" id="historicoTable">
-                        <thead>
-                            <tr>
-                                <th style="min-width: 90px;">📅 Data</th>
-                                <th style="min-width: 130px;">👤 Responsável</th>
-                                <th title="Eventos Identificados pelos Operadores">📋 Eventos Identificados</th>
-                                <th title="Eventos Relevantes">⭐ Eventos Relevantes</th>
-                                <th title="Ocorrências Confirmadas">✅ Ocorrências Confirmadas</th>
-                                <th title="Acionamentos Realizados">📞 Acionamentos Realizados</th>
-                                <th title="Despachos para Equipes de Campo">🚓 Despachos para Equipes</th>
-                                <th title="Solicitação de Apoio">🆘 Solicitação de Apoio</th>
-                                <th title="Furtos Identificados por Câmeras">🎥 Furtos por Câmeras</th>
-                                <th title="Veículos Furtados/Roubados Identificados">🚗 Veículos Furtados</th>
-                                <th title="Veículos Recuperados por Alertas Central">✅ Veículos Recuperados</th>
-                                <th title="Pessoas Procuradas Identificadas">🔍 Pessoas Procuradas</th>
-                                <th title="Armas/Situações Suspeitas Identificadas">🔫 Armas/Situações Suspeitas</th>
-                                <th title="Vandalismos Identificados">💢 Vandalismos</th>
-                                <th title="Depredações do Patrimônio Público">🏛️ Depredações</th>
-                                <th title="Ocorrências de Violência">⚠️ Violência</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historicoBody">
-                            <tr>
-                                <td colspan="16" style="text-align: center; padding: 20px; color: var(--text-tertiary);">
-                                    <i class="fas fa-inbox"></i> Nenhum registro encontrado
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot id="historicoFooter" style="display: none;">
-                            <tr class="total-row">
-                                <td><strong>📊 TOTAIS</strong></td>
-                                <td></td>
-                                <td id="totEventos">0</td>
-                                <td id="totRelevantes">0</td>
-                                <td id="totOcorrencias">0</td>
-                                <td id="totAcionamentos">0</td>
-                                <td id="totDespachos">0</td>
-                                <td id="totApoio">0</td>
-                                <td id="totFurtos">0</td>
-                                <td id="totVeicFurtados">0</td>
-                                <td id="totVeicRecup">0</td>
-                                <td id="totProcurados">0</td>
-                                <td id="totArmas">0</td>
-                                <td id="totVandalismos">0</td>
-                                <td id="totDepredacoes">0</td>
-                                <td id="totViolencia">0</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> MÊS/ANO</label>
+                        <select id="filtroMes">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="diaGroup">
+                        <label><i class="fas fa-calendar-day"></i> DIA</label>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <select id="filtroDia" style="flex: 1;">
+                                <option value="">Todos</option>
+                            </select>
+                            <button id="buscarDiaBtn" class="action-btn" style="padding: 6px 12px; font-size: 11px; flex: 0 0 auto;" title="Buscar dia específico">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 0 0 auto;">
+                        <button class="action-btn info" id="aplicarFiltroBtn" style="padding: 8px 20px; font-size: 12px;">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                    </div>
+                    <div class="form-group" style="flex: 0 0 auto;">
+                        <button class="action-btn" id="limparFiltroBtn" style="padding: 8px 20px; font-size: 12px; background: rgba(255,255,255,0.05);">
+                            <i class="fas fa-times"></i> Limpar
+                        </button>
+                    </div>
+                    <div class="form-group" style="flex: 0 0 auto;">
+                        <button class="action-btn expandir-todos-btn" id="expandirTodosBtn" style="padding: 8px 20px; font-size: 12px; background: rgba(255,255,255,0.05);">
+                            <i class="fas fa-expand-alt"></i> Expandir Todos
+                        </button>
+                    </div>
                 </div>
-                <div style="text-align: right; margin-top: 8px; font-size: 11px; color: var(--text-tertiary);">
-                    <span id="registrosCount">0 registros</span>
-                    <span id="filtroInfo" style="margin-left: 12px; color: var(--info);"></span>
+
+                <!-- Busca rápida -->
+                <div id="buscaDiaContainer" style="display: none; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" id="buscaDiaInput" placeholder="Digite o dia (ex: 15) ou data (ex: 15/08/2026)" style="
+                            flex: 1;
+                            padding: 8px 14px;
+                            background: var(--bg-input);
+                            border: 1.5px solid var(--border-color);
+                            border-radius: var(--radius-sm);
+                            font-size: 13px;
+                            font-family: inherit;
+                            color: var(--text-primary);
+                            transition: var(--transition);
+                        ">
+                        <button id="buscaDiaConfirmar" class="action-btn" style="padding: 8px 16px; font-size: 12px; background: linear-gradient(135deg, var(--info), #2563eb); border: none;">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button id="buscaDiaCancelar" class="action-btn" style="padding: 8px 16px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">
+                        <i class="fas fa-info-circle"></i> Digite o número do dia ou a data completa (DD/MM/AAAA)
+                    </div>
                 </div>
+
+                <!-- ACCORDION DE MESES -->
+                <div id="mesesAccordion" class="meses-accordion">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Nenhum registro encontrado</p>
+                        <small>Salve um novo resumo ou ajuste os filtros</small>
+                    </div>
+                </div>
+
+                <div id="filtroInfo" style="text-align: right; margin-top: 12px; font-size: 11px; color: var(--info);"></div>
             </div>
 
             <div style="text-align: center; margin-top: 16px;">
@@ -1038,6 +1394,26 @@
         let dadosCompletos = [];
         let dadosFiltrados = [];
         let filtroAtivo = { mes: '', dia: '' };
+
+        const ITENS_POR_PAGINA = 10;
+
+        let uiState = {
+            mesesExpandidos: new Set(),
+            paginasPorMes: {}
+        };
+
+        const sparklineInstances = new Map();
+
+        const CAMPOS_INDICADORES = [
+            'eventos_identificados', 'eventos_relevantes', 'ocorrencias_confirmadas',
+            'acionamentos_realizados', 'despachos_campo', 'solicitacao_apoio',
+            'furtos_cameras', 'veiculos_furtados', 'veiculos_recuperados',
+            'pessoas_procuradas', 'armas_suspeitas', 'vandalismos',
+            'depredacoes', 'ocorrencias_violencia'
+        ];
+
+        const NOMES_MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
         // ============================================================
         // FUNÇÕES DE UTILIDADE
@@ -1318,285 +1694,661 @@
                 renderizarHistorico(dadosFiltrados);
                 atualizarFiltros(dadosCompletos);
                 
-                document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros`;
-                document.getElementById('filtroInfo').textContent = '';
-                
                 setStatus('online', 'Conectado ao Sistema MIRA Analytics');
                 
             } catch (error) {
                 console.error('Erro ao carregar histórico:', error);
                 
-                // Fallback para dados locais
                 const localData = loadLocalData();
                 if (localData && localData.length > 0) {
                     dadosCompletos = localData;
                     dadosFiltrados = [...dadosCompletos];
                     renderizarHistorico(dadosFiltrados);
                     atualizarFiltros(dadosCompletos);
-                    document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros (offline)`;
-                    document.getElementById('filtroInfo').textContent = '';
                     setStatus('offline', '⚠️ Offline - dados locais');
                 } else {
-                    // Se não tem dados locais, mostra tabela vazia
                     dadosCompletos = [];
                     dadosFiltrados = [];
                     renderizarHistorico([]);
-                    document.getElementById('registrosCount').textContent = '0 registros';
                     setStatus('offline', '⚠️ Offline - sem dados');
                 }
             }
         }
 
+        // ============================================================
+        // CÁLCULO DE TOTAIS
+        // ============================================================
+
+        function calcularTotaisMes(items) {
+            const totais = {};
+            CAMPOS_INDICADORES.forEach(c => totais[c] = 0);
+            items.forEach(item => {
+                CAMPOS_INDICADORES.forEach(c => {
+                    totais[c] += item[c] || 0;
+                });
+            });
+            return totais;
+        }
+
+        function calcularSomaGeral(totais) {
+            return CAMPOS_INDICADORES.reduce((s, c) => s + (totais[c] || 0), 0);
+        }
+
+        // ============================================================
+        // CÁLCULO DE VARIAÇÃO MÊS A MÊS
+        // ============================================================
+
+        function calcularVariacaoMesAtual(mesAtual, todosGrupos, chavesOrdenadas) {
+            const idx = chavesOrdenadas.indexOf(mesAtual);
+            if (idx === -1) return null;
+            
+            const mesAnteriorChave = chavesOrdenadas[idx + 1];
+            if (!mesAnteriorChave) return null;
+
+            const totaisAtual = calcularTotaisMes(todosGrupos[mesAtual]);
+            const totaisAnterior = calcularTotaisMes(todosGrupos[mesAnteriorChave]);
+
+            const somaAtual = calcularSomaGeral(totaisAtual);
+            const somaAnterior = calcularSomaGeral(totaisAnterior);
+
+            let percentual = 0;
+            if (somaAnterior > 0) {
+                percentual = ((somaAtual - somaAnterior) / somaAnterior) * 100;
+            } else if (somaAtual > 0) {
+                percentual = 100;
+            }
+
+            return {
+                atual: somaAtual,
+                anterior: somaAnterior,
+                delta: somaAtual - somaAnterior,
+                percentual: percentual,
+                mesAnterior: mesAnteriorChave
+            };
+        }
+
+        // ============================================================
+        // RENDERIZAR HISTÓRICO
+        // ============================================================
+
         function renderizarHistorico(data) {
-            const tbody = document.getElementById('historicoBody');
-            const footer = document.getElementById('historicoFooter');
+            const container = document.getElementById('mesesAccordion');
+            if (!container) return;
+
+            // Destrói sparklines anteriores
+            sparklineInstances.forEach(chart => {
+                try { chart.destroy(); } catch(e) {}
+            });
+            sparklineInstances.clear();
+
+            document.getElementById('totalRegistros').textContent = dadosCompletos.length;
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="16" style="text-align: center; padding: 20px; color: var(--text-tertiary);">
-                            <i class="fas fa-inbox"></i> Nenhum registro encontrado
-                        </td>
-                    </tr>
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Nenhum registro encontrado</p>
+                        <small>Salve um novo resumo ou ajuste os filtros</small>
+                    </div>
                 `;
-                footer.style.display = 'none';
+                document.getElementById('totalMeses').textContent = '0';
                 return;
             }
 
-            let html = '';
-            let totais = {
-                eventos_identificados: 0,
-                eventos_relevantes: 0,
-                ocorrencias_confirmadas: 0,
-                acionamentos_realizados: 0,
-                despachos_campo: 0,
-                solicitacao_apoio: 0,
-                furtos_cameras: 0,
-                veiculos_furtados: 0,
-                veiculos_recuperados: 0,
-                pessoas_procuradas: 0,
-                armas_suspeitas: 0,
-                vandalismos: 0,
-                depredacoes: 0,
-                ocorrencias_violencia: 0
-            };
-
+            // Agrupa por mês/ano
+            const grupos = {};
             data.forEach(item => {
+                if (!item.data) return;
+                const [ano, mes] = item.data.split('-');
+                const chave = `${ano}-${mes}`;
+                if (!grupos[chave]) {
+                    grupos[chave] = [];
+                }
+                grupos[chave].push(item);
+            });
+
+            const chavesOrdenadas = Object.keys(grupos).sort().reverse();
+            chavesOrdenadas.forEach(chave => {
+                grupos[chave].sort((a, b) => b.data.localeCompare(a.data));
+            });
+
+            document.getElementById('totalMeses').textContent = chavesOrdenadas.length;
+
+            // Renderiza os cards
+            container.innerHTML = chavesOrdenadas.map(chave => 
+                renderizarCardMes(chave, grupos[chave], grupos, chavesOrdenadas)
+            ).join('');
+
+            aplicarEventosAccordion();
+
+            // Cria os sparklines após o DOM estar pronto
+            requestAnimationFrame(() => {
+                chavesOrdenadas.forEach(chave => {
+                    if (uiState.mesesExpandidos.has(chave)) {
+                        criarSparkline(chave, grupos[chave]);
+                    }
+                });
+            });
+        }
+
+        function renderizarCardMes(chave, items, todosGrupos, chavesOrdenadas) {
+            const [ano, mesNum] = chave.split('-');
+            const nomeMes = NOMES_MESES[parseInt(mesNum) - 1];
+
+            const isExpandido = uiState.mesesExpandidos.has(chave);
+            const totalEventos = items.reduce((acc, i) => acc + (i.eventos_identificados || 0), 0);
+            const totalOcorrencias = items.reduce((acc, i) => acc + (i.ocorrencias_confirmadas || 0), 0);
+            
+            const totais = calcularTotaisMes(items);
+            const somaGeral = calcularSomaGeral(totais);
+
+            // Cálculo de variação mês a mês
+            const variacao = calcularVariacaoMesAtual(chave, todosGrupos, chavesOrdenadas);
+            let variacaoHTML = '';
+            if (variacao && variacao.mesAnterior) {
+                const [anoAnt, mesAnt] = variacao.mesAnterior.split('-');
+                const nomeMesAnt = NOMES_MESES[parseInt(mesAnt) - 1];
+                const percentualAbs = Math.abs(variacao.percentual).toFixed(1);
+                
+                let classe = 'neutral';
+                let icone = 'fa-minus';
+                let texto = '0%';
+                
+                if (variacao.percentual > 0.5) {
+                    classe = 'up';
+                    icone = 'fa-arrow-up';
+                    texto = `+${percentualAbs}%`;
+                } else if (variacao.percentual < -0.5) {
+                    classe = 'down';
+                    icone = 'fa-arrow-down';
+                    texto = `-${percentualAbs}%`;
+                }
+                
+                const tooltip = `vs ${nomeMesAnt} ${anoAnt}: ${variacao.anterior} → ${variacao.atual}`;
+                variacaoHTML = `
+                    <span class="variacao-badge ${classe}" title="${tooltip}">
+                        <i class="fas ${icone}"></i> ${texto}
+                    </span>
+                `;
+            }
+
+            const paginaAtual = uiState.paginasPorMes[chave] || 1;
+            const totalPaginas = Math.ceil(items.length / ITENS_POR_PAGINA);
+            const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+            const fim = inicio + ITENS_POR_PAGINA;
+            const itemsPagina = items.slice(inicio, fim);
+
+            const linhasTabela = itemsPagina.map(item => {
                 const dataFormatada = formatDateDisplay(item.data);
                 const responsavelUpper = (item.responsavel || '').toUpperCase();
+                
+                const valores = CAMPOS_INDICADORES.map(campo => item[campo] || 0);
+                const cells = valores.map(v => 
+                    `<td ${v > 0 ? 'class="valor-destaque"' : ''}>${v}</td>`
+                ).join('');
 
-                const valores = [
-                    item.eventos_identificados || 0,
-                    item.eventos_relevantes || 0,
-                    item.ocorrencias_confirmadas || 0,
-                    item.acionamentos_realizados || 0,
-                    item.despachos_campo || 0,
-                    item.solicitacao_apoio || 0,
-                    item.furtos_cameras || 0,
-                    item.veiculos_furtados || 0,
-                    item.veiculos_recuperados || 0,
-                    item.pessoas_procuradas || 0,
-                    item.armas_suspeitas || 0,
-                    item.vandalismos || 0,
-                    item.depredacoes || 0,
-                    item.ocorrencias_violencia || 0
-                ];
-
-                const highlightClass = (val) => val > 0 ? 'class="valor-destaque"' : '';
-
-                html += `
+                return `
                     <tr>
                         <td><strong>${dataFormatada}</strong></td>
                         <td>${responsavelUpper}</td>
-                        <td ${highlightClass(valores[0])}>${valores[0]}</td>
-                        <td ${highlightClass(valores[1])}>${valores[1]}</td>
-                        <td ${highlightClass(valores[2])}>${valores[2]}</td>
-                        <td ${highlightClass(valores[3])}>${valores[3]}</td>
-                        <td ${highlightClass(valores[4])}>${valores[4]}</td>
-                        <td ${highlightClass(valores[5])}>${valores[5]}</td>
-                        <td ${highlightClass(valores[6])}>${valores[6]}</td>
-                        <td ${highlightClass(valores[7])}>${valores[7]}</td>
-                        <td ${highlightClass(valores[8])}>${valores[8]}</td>
-                        <td ${highlightClass(valores[9])}>${valores[9]}</td>
-                        <td ${highlightClass(valores[10])}>${valores[10]}</td>
-                        <td ${highlightClass(valores[11])}>${valores[11]}</td>
-                        <td ${highlightClass(valores[12])}>${valores[12]}</td>
-                        <td ${highlightClass(valores[13])}>${valores[13]}</td>
+                        ${cells}
                     </tr>
                 `;
+            }).join('');
 
-                totais.eventos_identificados += valores[0];
-                totais.eventos_relevantes += valores[1];
-                totais.ocorrencias_confirmadas += valores[2];
-                totais.acionamentos_realizados += valores[3];
-                totais.despachos_campo += valores[4];
-                totais.solicitacao_apoio += valores[5];
-                totais.furtos_cameras += valores[6];
-                totais.veiculos_furtados += valores[7];
-                totais.veiculos_recuperados += valores[8];
-                totais.pessoas_procuradas += valores[9];
-                totais.armas_suspeitas += valores[10];
-                totais.vandalismos += valores[11];
-                totais.depredacoes += valores[12];
-                totais.ocorrencias_violencia += valores[13];
+            const paginacaoHTML = totalPaginas > 1 ? `
+                <div class="pagination-bar">
+                    <div class="pagination-info">
+                        Mostrando <strong>${inicio + 1}-${Math.min(fim, items.length)}</strong> de <strong>${items.length}</strong> registros
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="page-btn nav" data-acao="primeira" data-mes="${chave}" ${paginaAtual === 1 ? 'disabled' : ''} title="Primeira página">
+                            <i class="fas fa-angle-double-left"></i>
+                        </button>
+                        <button class="page-btn nav" data-acao="anterior" data-mes="${chave}" ${paginaAtual === 1 ? 'disabled' : ''} title="Anterior">
+                            <i class="fas fa-angle-left"></i>
+                        </button>
+                        ${gerarBotoesPagina(paginaAtual, totalPaginas, chave)}
+                        <button class="page-btn nav" data-acao="proxima" data-mes="${chave}" ${paginaAtual === totalPaginas ? 'disabled' : ''} title="Próxima">
+                            <i class="fas fa-angle-right"></i>
+                        </button>
+                        <button class="page-btn nav" data-acao="ultima" data-mes="${chave}" ${paginaAtual === totalPaginas ? 'disabled' : ''} title="Última página">
+                            <i class="fas fa-angle-double-right"></i>
+                        </button>
+                    </div>
+                </div>
+            ` : '';
+
+            const totaisHTML = `
+                <div class="mes-totais">
+                    <span class="mes-total-item">
+                        <i class="fas fa-flag"></i> Eventos: <strong>${totalEventos}</strong>
+                    </span>
+                    <span class="mes-total-item">
+                        <i class="fas fa-check-circle"></i> Ocorrências: <strong>${totalOcorrencias}</strong>
+                    </span>
+                    <span class="mes-total-item">
+                        <i class="fas fa-chart-bar"></i> Soma geral: <strong>${somaGeral}</strong>
+                    </span>
+                    <span class="mes-total-item">
+                        <i class="fas fa-calendar-day"></i> Dias registrados: <strong>${items.length}</strong>
+                    </span>
+                </div>
+            `;
+
+            return `
+                <div class="mes-card ${isExpandido ? 'expanded' : ''}" data-mes="${chave}">
+                    <div class="mes-card-header" data-toggle="${chave}">
+                        <div class="mes-card-title">
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="mes-card-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                            <div class="mes-card-name">
+                                <h4>${nomeMes} ${ano}</h4>
+                                <small>${items.length} ${items.length === 1 ? 'dia registrado' : 'dias registrados'}</small>
+                            </div>
+                        </div>
+                        <div class="mes-card-badges">
+                            ${variacaoHTML}
+                            <span class="mes-badge registros">
+                                <i class="fas fa-file-alt"></i> ${items.length} registros
+                            </span>
+                            <span class="mes-badge total">
+                                <i class="fas fa-chart-line"></i> ${somaGeral} total
+                            </span>
+                            <button class="mes-pdf-btn" data-pdf-mes="${chave}" title="Exportar este mês para PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mes-card-body">
+                        <div class="mes-sparkline-container">
+                            <div class="sparkline-info">
+                                <span class="sparkline-label">Tendência diária</span>
+                                <div class="sparkline-values">
+                                    <span><i class="fas fa-chart-line" style="color:#60a5fa;"></i> Soma/dia</span>
+                                </div>
+                            </div>
+                            <div class="sparkline-chart-wrapper">
+                                <canvas id="sparkline-${chave}"></canvas>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table-manual">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 90px;">📅 Data</th>
+                                        <th style="min-width: 130px;">👤 Responsável</th>
+                                        <th title="Eventos Identificados pelos Operadores">📋 Eventos</th>
+                                        <th title="Eventos Relevantes">⭐ Relev.</th>
+                                        <th title="Ocorrências Confirmadas">✅ Ocorr.</th>
+                                        <th title="Acionamentos Realizados">📞 Acion.</th>
+                                        <th title="Despachos para Equipes de Campo">🚓 Desp.</th>
+                                        <th title="Solicitação de Apoio">🆘 Apoio</th>
+                                        <th title="Furtos Identificados por Câmeras">🎥 Furtos</th>
+                                        <th title="Veículos Furtados/Roubados Identificados">🚗 Veic.Furt.</th>
+                                        <th title="Veículos Recuperados por Alertas Central">✅ Veic.Rec.</th>
+                                        <th title="Pessoas Procuradas Identificadas">🔍 Proc.</th>
+                                        <th title="Armas/Situações Suspeitas Identificadas">🔫 Armas</th>
+                                        <th title="Vandalismos Identificados">💢 Vandal.</th>
+                                        <th title="Depredações do Patrimônio Público">🏛️ Depred.</th>
+                                        <th title="Ocorrências de Violência">⚠️ Viol.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${linhasTabela}</tbody>
+                            </table>
+                        </div>
+                        ${paginacaoHTML}
+                        ${totaisHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // SPARKLINE
+        // ============================================================
+
+        function criarSparkline(chave, items) {
+            const canvas = document.getElementById(`sparkline-${chave}`);
+            if (!canvas) return;
+
+            // Se já existe, destrói antes
+            if (sparklineInstances.has(chave)) {
+                try { sparklineInstances.get(chave).destroy(); } catch(e) {}
+                sparklineInstances.delete(chave);
+            }
+
+            const itemsOrdenados = [...items].sort((a, b) => a.data.localeCompare(b.data));
+
+            const labels = itemsOrdenados.map(item => {
+                const [, , dia] = item.data.split('-');
+                return dia;
             });
 
-            tbody.innerHTML = html;
+            const valores = itemsOrdenados.map(item => {
+                return CAMPOS_INDICADORES.reduce((s, c) => s + (item[c] || 0), 0);
+            });
 
-            document.getElementById('totEventos').textContent = totais.eventos_identificados;
-            document.getElementById('totRelevantes').textContent = totais.eventos_relevantes;
-            document.getElementById('totOcorrencias').textContent = totais.ocorrencias_confirmadas;
-            document.getElementById('totAcionamentos').textContent = totais.acionamentos_realizados;
-            document.getElementById('totDespachos').textContent = totais.despachos_campo;
-            document.getElementById('totApoio').textContent = totais.solicitacao_apoio;
-            document.getElementById('totFurtos').textContent = totais.furtos_cameras;
-            document.getElementById('totVeicFurtados').textContent = totais.veiculos_furtados;
-            document.getElementById('totVeicRecup').textContent = totais.veiculos_recuperados;
-            document.getElementById('totProcurados').textContent = totais.pessoas_procuradas;
-            document.getElementById('totArmas').textContent = totais.armas_suspeitas;
-            document.getElementById('totVandalismos').textContent = totais.vandalismos;
-            document.getElementById('totDepredacoes').textContent = totais.depredacoes;
-            document.getElementById('totViolencia').textContent = totais.ocorrencias_violencia;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 60);
+            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
 
-            footer.style.display = 'table-footer-group';
+            const chart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: valores,
+                        borderColor: '#60a5fa',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: '#60a5fa',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 600,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleColor: '#93c5fd',
+                            titleFont: { size: 10, weight: '600', family: 'Inter' },
+                            bodyColor: '#fff',
+                            bodyFont: { size: 11, weight: '700', family: 'Inter' },
+                            borderColor: 'rgba(59, 130, 246, 0.3)',
+                            borderWidth: 1,
+                            padding: 8,
+                            displayColors: false,
+                            callbacks: {
+                                title: (ctx) => `Dia ${ctx[0].label}`,
+                                label: (ctx) => `${ctx.parsed.y} eventos`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false, beginAtZero: true }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+
+            sparklineInstances.set(chave, chart);
+        }
+
+        // ============================================================
+        // PDF DE MÊS INDIVIDUAL
+        // ============================================================
+
+        async function gerarPDFMes(chave) {
+            const itemsMes = dadosCompletos.filter(item => item.data && item.data.startsWith(chave));
+            if (itemsMes.length === 0) {
+                alert('Nenhum dado para este mês.');
+                return;
+            }
+
+            const filtroAnterior = { ...filtroAtivo };
+            const dadosFiltradosAnterior = [...dadosFiltrados];
+
+            filtroAtivo = { mes: chave, dia: '' };
+            dadosFiltrados = itemsMes;
+
+            try {
+                await gerarPDF();
+            } finally {
+                filtroAtivo = filtroAnterior;
+                dadosFiltrados = dadosFiltradosAnterior;
+            }
+        }
+
+        // ============================================================
+        // PAGINAÇÃO
+        // ============================================================
+
+        function gerarBotoesPagina(atual, total, chave) {
+            const botoes = [];
+            const maxVisiveis = 5;
+
+            if (total <= maxVisiveis) {
+                for (let i = 1; i <= total; i++) {
+                    botoes.push(criarBotaoPagina(i, atual, chave));
+                }
+            } else {
+                if (atual <= 3) {
+                    for (let i = 1; i <= 4; i++) botoes.push(criarBotaoPagina(i, atual, chave));
+                    botoes.push('<span class="page-ellipsis">...</span>');
+                    botoes.push(criarBotaoPagina(total, atual, chave));
+                } else if (atual >= total - 2) {
+                    botoes.push(criarBotaoPagina(1, atual, chave));
+                    botoes.push('<span class="page-ellipsis">...</span>');
+                    for (let i = total - 3; i <= total; i++) botoes.push(criarBotaoPagina(i, atual, chave));
+                } else {
+                    botoes.push(criarBotaoPagina(1, atual, chave));
+                    botoes.push('<span class="page-ellipsis">...</span>');
+                    for (let i = atual - 1; i <= atual + 1; i++) botoes.push(criarBotaoPagina(i, atual, chave));
+                    botoes.push('<span class="page-ellipsis">...</span>');
+                    botoes.push(criarBotaoPagina(total, atual, chave));
+                }
+            }
+            return botoes.join('');
+        }
+
+        function criarBotaoPagina(numero, atual, chave) {
+            return `<button class="page-btn ${numero === atual ? 'active' : ''}" data-acao="ir" data-pagina="${numero}" data-mes="${chave}">${numero}</button>`;
+        }
+
+        // ============================================================
+        // ATUALIZAR PÁGINA DE UM MÊS (SEM RE-RENDERIZAR O CARD)
+        // ============================================================
+
+        function atualizarPaginaMes(chave, items, pagina, totalPaginas) {
+            const card = document.querySelector(`.mes-card[data-mes="${chave}"]`);
+            if (!card) return;
+
+            const inicio = (pagina - 1) * ITENS_POR_PAGINA;
+            const fim = inicio + ITENS_POR_PAGINA;
+            const itemsPagina = items.slice(inicio, fim);
+
+            // 1) Atualiza o tbody
+            const tbody = card.querySelector('tbody');
+            if (tbody) {
+                tbody.innerHTML = itemsPagina.map(item => {
+                    const dataFormatada = formatDateDisplay(item.data);
+                    const responsavelUpper = (item.responsavel || '').toUpperCase();
+                    const valores = CAMPOS_INDICADORES.map(campo => item[campo] || 0);
+                    const cells = valores.map(v => 
+                        `<td ${v > 0 ? 'class="valor-destaque"' : ''}>${v}</td>`
+                    ).join('');
+                    return `
+                        <tr>
+                            <td><strong>${dataFormatada}</strong></td>
+                            <td>${responsavelUpper}</td>
+                            ${cells}
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // 2) Atualiza a barra de paginação
+            const paginacaoExistente = card.querySelector('.pagination-bar');
+            if (paginacaoExistente) {
+                paginacaoExistente.innerHTML = `
+                    <div class="pagination-info">
+                        Mostrando <strong>${inicio + 1}-${Math.min(fim, items.length)}</strong> de <strong>${items.length}</strong> registros
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="page-btn nav" data-acao="primeira" data-mes="${chave}" ${pagina === 1 ? 'disabled' : ''} title="Primeira página">
+                            <i class="fas fa-angle-double-left"></i>
+                        </button>
+                        <button class="page-btn nav" data-acao="anterior" data-mes="${chave}" ${pagina === 1 ? 'disabled' : ''} title="Anterior">
+                            <i class="fas fa-angle-left"></i>
+                        </button>
+                        ${gerarBotoesPagina(pagina, totalPaginas, chave)}
+                        <button class="page-btn nav" data-acao="proxima" data-mes="${chave}" ${pagina === totalPaginas ? 'disabled' : ''} title="Próxima">
+                            <i class="fas fa-angle-right"></i>
+                        </button>
+                        <button class="page-btn nav" data-acao="ultima" data-mes="${chave}" ${pagina === totalPaginas ? 'disabled' : ''} title="Última página">
+                            <i class="fas fa-angle-double-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            // 3) Reconecta os listeners nos novos botões
+            card.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', handlePaginacaoClick);
+            });
+        }
+
+        // ============================================================
+        // HANDLER DE PAGINAÇÃO
+        // ============================================================
+
+        function handlePaginacaoClick(e) {
+            e.stopPropagation();
+            if (this.disabled) return;
+
+            const chave = this.dataset.mes;
+            const acao = this.dataset.acao;
+
+            const items = dadosFiltrados.filter(item => item.data && item.data.startsWith(chave));
+            const totalPaginas = Math.ceil(items.length / ITENS_POR_PAGINA);
+            let pagina = uiState.paginasPorMes[chave] || 1;
+
+            switch (acao) {
+                case 'primeira': pagina = 1; break;
+                case 'anterior': pagina = Math.max(1, pagina - 1); break;
+                case 'proxima': pagina = Math.min(totalPaginas, pagina + 1); break;
+                case 'ultima': pagina = totalPaginas; break;
+                case 'ir': pagina = parseInt(this.dataset.pagina); break;
+            }
+
+            uiState.paginasPorMes[chave] = pagina;
+            atualizarPaginaMes(chave, items, pagina, totalPaginas);
+        }
+
+        // ============================================================
+        // EVENTOS DO ACCORDION
+        // ============================================================
+
+        function aplicarEventosAccordion() {
+            // Toggle de meses
+            document.querySelectorAll('[data-toggle]').forEach(header => {
+                header.addEventListener('click', function(e) {
+                    if (e.target.closest('.pagination-controls') || e.target.closest('.mes-pdf-btn')) return;
+                    
+                    const chave = this.dataset.toggle;
+                    const card = document.querySelector(`.mes-card[data-mes="${chave}"]`);
+                    if (!card) return;
+                    
+                    if (uiState.mesesExpandidos.has(chave)) {
+                        uiState.mesesExpandidos.delete(chave);
+                        card.classList.remove('expanded');
+                    } else {
+                        uiState.mesesExpandidos.add(chave);
+                        card.classList.add('expanded');
+                        
+                        // Cria o sparkline se ainda não existir
+                        if (!sparklineInstances.has(chave)) {
+                            const itemsDoMes = dadosFiltrados.filter(item => item.data && item.data.startsWith(chave));
+                            requestAnimationFrame(() => criarSparkline(chave, itemsDoMes));
+                        }
+                    }
+                });
+            });
+
+            // Botões de PDF por mês
+            document.querySelectorAll('.mes-pdf-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const chave = this.dataset.pdfMes;
+                    gerarPDFMes(chave);
+                });
+            });
+
+            // Botões de paginação
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', handlePaginacaoClick);
+            });
         }
 
         // ============================================================
         // FILTROS
         // ============================================================
-function atualizarFiltros(data) {
-    const mesSelect = document.getElementById('filtroMes');
-    const diaSelect = document.getElementById('filtroDia');
 
-    const mesAtual = mesSelect.value;
-    const diaAtual = diaSelect.value;
+        function atualizarFiltros(data) {
+            const mesSelect = document.getElementById('filtroMes');
+            const diaSelect = document.getElementById('filtroDia');
 
-    mesSelect.innerHTML = '<option value="">Todos os meses</option>';
-    diaSelect.innerHTML = '<option value="">Todos os dias</option>';
+            const mesAtual = mesSelect.value;
+            const diaAtual = diaSelect.value;
 
-    if (!data || data.length === 0) return;
+            mesSelect.innerHTML = '<option value="">Todos os meses</option>';
+            diaSelect.innerHTML = '<option value="">Todos os dias</option>';
 
-    // Extrai meses únicos
-    const meses = new Set();
-    const diasPorMes = {};
+            if (!data || data.length === 0) return;
 
-    data.forEach(item => {
-        if (item.data) {
-            const parts = item.data.split('-');
-            if (parts.length === 3) {
-                const mes = `${parts[0]}-${parts[1]}`;
-                meses.add(mes);
-                if (!diasPorMes[mes]) {
-                    diasPorMes[mes] = new Set();
+            const meses = new Set();
+            const diasPorMes = {};
+
+            data.forEach(item => {
+                if (item.data) {
+                    const parts = item.data.split('-');
+                    if (parts.length === 3) {
+                        const mes = `${parts[0]}-${parts[1]}`;
+                        meses.add(mes);
+                        if (!diasPorMes[mes]) diasPorMes[mes] = new Set();
+                        diasPorMes[mes].add(item.data);
+                    }
                 }
-                diasPorMes[mes].add(item.data);
+            });
+
+            const mesesArray = Array.from(meses).sort().reverse();
+
+            mesesArray.forEach(mes => {
+                const [ano, mesNum] = mes.split('-');
+                const option = document.createElement('option');
+                option.value = mes;
+                option.textContent = `${NOMES_MESES[parseInt(mesNum) - 1]} ${ano}`;
+                if (mes === mesAtual) option.selected = true;
+                mesSelect.appendChild(option);
+            });
+
+            if (mesAtual && diasPorMes[mesAtual]) {
+                const dias = Array.from(diasPorMes[mesAtual]).sort().reverse();
+                dias.forEach(dia => {
+                    const option = document.createElement('option');
+                    option.value = dia;
+                    option.textContent = formatDateDisplay(dia);
+                    if (dia === diaAtual) option.selected = true;
+                    diaSelect.appendChild(option);
+                });
+            }
+
+            const buscaContainer = document.getElementById('buscaDiaContainer');
+            if (mesAtual) {
+                buscaContainer.style.display = 'block';
+            } else {
+                buscaContainer.style.display = 'none';
             }
         }
-    });
-
-    // Ordena meses (mais recente primeiro)
-    const mesesArray = Array.from(meses).sort().reverse();
-    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ];
-
-    mesesArray.forEach(mes => {
-        const [ano, mesNum] = mes.split('-');
-        const option = document.createElement('option');
-        option.value = mes;
-        option.textContent = `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
-        if (mes === mesAtual) option.selected = true;
-        mesSelect.appendChild(option);
-    });
-
-    // Se um mês está selecionado, preenche os dias desse mês
-    if (mesAtual && diasPorMes[mesAtual]) {
-        const dias = Array.from(diasPorMes[mesAtual]).sort().reverse();
-        dias.forEach(dia => {
-            const option = document.createElement('option');
-            option.value = dia;
-            option.textContent = formatDateDisplay(dia);
-            if (dia === diaAtual) option.selected = true;
-            diaSelect.appendChild(option);
-        });
-    }
-
-    // Mostra/esconde o campo de busca
-    const buscaContainer = document.getElementById('buscaDiaContainer');
-    if (mesAtual) {
-        buscaContainer.style.display = 'block';
-    } else {
-        buscaContainer.style.display = 'none';
-    }
-}
-
-// ============================================================
-// BUSCA RÁPIDA DE DIAS
-// ============================================================
-
-function buscarDia() {
-    const mes = document.getElementById('filtroMes').value;
-    const busca = document.getElementById('buscaDiaInput').value.trim();
-    
-    if (!mes) {
-        alert('Selecione um mês primeiro para buscar dias.');
-        return;
-    }
-    
-    if (!busca) {
-        alert('Digite um dia para buscar.');
-        return;
-    }
-    
-    // Verifica se é um número (dia) ou data completa
-    const diaSelect = document.getElementById('filtroDia');
-    const options = diaSelect.options;
-    let encontrado = false;
-    
-    // Se for apenas número, busca por dia
-    if (/^\d{1,2}$/.test(busca)) {
-        const diaNum = parseInt(busca).toString().padStart(2, '0');
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            if (option.value) {
-                const parts = option.value.split('-');
-                if (parts.length === 3 && parts[2] === diaNum) {
-                    option.selected = true;
-                    encontrado = true;
-                    break;
-                }
-            }
-        }
-    } else {
-        // Busca por data completa (DD/MM/AAAA) ou parcial
-        const buscaFormatada = busca.replace(/\//g, '-').split('-').reverse().join('-');
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            if (option.value && option.value.includes(buscaFormatada)) {
-                option.selected = true;
-                encontrado = true;
-                break;
-            }
-        }
-    }
-    
-    if (!encontrado) {
-        alert(`Nenhum dia encontrado para "${busca}" no mês selecionado.`);
-    } else {
-        // Aplica o filtro automaticamente
-        aplicarFiltro();
-        // Limpa o campo de busca
-        document.getElementById('buscaDiaInput').value = '';
-    }
-}
-
-function fecharBuscaDia() {
-    document.getElementById('buscaDiaInput').value = '';
-    document.getElementById('buscaDiaContainer').style.display = 'none';
-    // Reseta o filtro de dia
-    document.getElementById('filtroDia').value = '';
-    aplicarFiltro();
-}
 
         function aplicarFiltro() {
             const mes = document.getElementById('filtroMes').value;
@@ -1607,38 +2359,32 @@ function fecharBuscaDia() {
             let filtrados = [...dadosCompletos];
 
             if (mes) {
-                filtrados = filtrados.filter(item => {
-                    if (!item.data) return false;
-                    return item.data.startsWith(mes);
-                });
+                filtrados = filtrados.filter(item => item.data && item.data.startsWith(mes));
             }
-
             if (dia) {
                 filtrados = filtrados.filter(item => item.data === dia);
             }
 
             dadosFiltrados = filtrados;
+            
+            uiState.paginasPorMes = {};
+            uiState.mesesExpandidos.clear();
+            if (mes) uiState.mesesExpandidos.add(mes);
+
             renderizarHistorico(dadosFiltrados);
 
             let infoMsg = '';
             if (mes) {
                 const [ano, mesNum] = mes.split('-');
-                const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-                ];
-                infoMsg += `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
+                infoMsg += `${NOMES_MESES[parseInt(mesNum) - 1]} ${ano}`;
             }
             if (dia) {
                 if (infoMsg) infoMsg += ' - ';
                 infoMsg += formatDateDisplay(dia);
             }
-            if (infoMsg) {
-                document.getElementById('filtroInfo').textContent = `🔍 Filtrado por: ${infoMsg}`;
-            } else {
-                document.getElementById('filtroInfo').textContent = '📋 Todos os registros';
-            }
-
-            document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros`;
+            document.getElementById('filtroInfo').textContent = infoMsg 
+                ? `🔍 Filtrado por: ${infoMsg}` 
+                : '📋 Todos os registros';
         }
 
         function limparFiltro() {
@@ -1646,9 +2392,98 @@ function fecharBuscaDia() {
             document.getElementById('filtroDia').value = '';
             filtroAtivo = { mes: '', dia: '' };
             dadosFiltrados = [...dadosCompletos];
+            
+            uiState.mesesExpandidos.clear();
+            uiState.paginasPorMes = {};
+            
             renderizarHistorico(dadosFiltrados);
-            document.getElementById('registrosCount').textContent = `${dadosFiltrados.length} registros`;
             document.getElementById('filtroInfo').textContent = '📋 Todos os registros';
+        }
+
+        function toggleExpandirTodos() {
+            const btn = document.getElementById('expandirTodosBtn');
+            const todosExpandidos = uiState.mesesExpandidos.size > 0 &&
+                document.querySelectorAll('.mes-card').length === uiState.mesesExpandidos.size;
+            
+            if (todosExpandidos) {
+                uiState.mesesExpandidos.clear();
+                document.querySelectorAll('.mes-card').forEach(c => c.classList.remove('expanded'));
+                btn.innerHTML = '<i class="fas fa-expand-alt"></i> Expandir Todos';
+            } else {
+                document.querySelectorAll('.mes-card').forEach(c => {
+                    const chave = c.dataset.mes;
+                    uiState.mesesExpandidos.add(chave);
+                    c.classList.add('expanded');
+                    
+                    if (!sparklineInstances.has(chave)) {
+                        const itemsDoMes = dadosFiltrados.filter(item => item.data && item.data.startsWith(chave));
+                        requestAnimationFrame(() => criarSparkline(chave, itemsDoMes));
+                    }
+                });
+                btn.innerHTML = '<i class="fas fa-compress-alt"></i> Recolher Todos';
+            }
+        }
+
+        // ============================================================
+        // BUSCA RÁPIDA DE DIAS
+        // ============================================================
+
+        function buscarDia() {
+            const mes = document.getElementById('filtroMes').value;
+            const busca = document.getElementById('buscaDiaInput').value.trim();
+            
+            if (!mes) {
+                alert('Selecione um mês primeiro para buscar dias.');
+                return;
+            }
+            
+            if (!busca) {
+                alert('Digite um dia para buscar.');
+                return;
+            }
+            
+            const diaSelect = document.getElementById('filtroDia');
+            const options = diaSelect.options;
+            let encontrado = false;
+            
+            if (/^\d{1,2}$/.test(busca)) {
+                const diaNum = parseInt(busca).toString().padStart(2, '0');
+                for (let i = 0; i < options.length; i++) {
+                    const option = options[i];
+                    if (option.value) {
+                        const parts = option.value.split('-');
+                        if (parts.length === 3 && parts[2] === diaNum) {
+                            option.selected = true;
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                const buscaFormatada = busca.replace(/\//g, '-').split('-').reverse().join('-');
+                for (let i = 0; i < options.length; i++) {
+                    const option = options[i];
+                    if (option.value && option.value.includes(buscaFormatada)) {
+                        option.selected = true;
+                        encontrado = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!encontrado) {
+                alert(`Nenhum dia encontrado para "${busca}" no mês selecionado.`);
+            } else {
+                aplicarFiltro();
+                document.getElementById('buscaDiaInput').value = '';
+            }
+        }
+
+        function fecharBuscaDia() {
+            document.getElementById('buscaDiaInput').value = '';
+            document.getElementById('buscaDiaContainer').style.display = 'none';
+            document.getElementById('filtroDia').value = '';
+            aplicarFiltro();
         }
 
         // ============================================================
@@ -1691,7 +2526,7 @@ function fecharBuscaDia() {
         }
 
         // ============================================================
-        // GERAR PDF (VERSÃO OTIMIZADA)
+        // GERAR PDF
         // ============================================================
 
         async function gerarPDF() {
@@ -1702,9 +2537,6 @@ function fecharBuscaDia() {
                 return;
             }
 
-            // ============================================================
-            // FUNÇÃO: REMOVER ACENTOS E CARACTERES ESTRANHOS
-            // ============================================================
             function removerAcentos(texto) {
                 if (!texto) return '';
                 const mapa = {
@@ -1738,9 +2570,6 @@ function fecharBuscaDia() {
                 return limpo.trim();
             }
 
-            // ============================================================
-            // CRIAÇÃO DO DOCUMENTO
-            // ============================================================
             const doc = new jsPDF({
                 unit: 'mm',
                 format: 'a4',
@@ -1755,73 +2584,40 @@ function fecharBuscaDia() {
             let yAtual = margemTopo;
             let paginaAtual = 1;
 
-            // ============================================================
-            // FUNÇÃO PARA ADICIONAR OS BRASÕES
-            // ============================================================
-async function adicionarBrasoes() {
-    try {
-        console.log('🖼️ Tentando carregar brasões...');
-        
-        // Brasão GCM
-        const imgGCM = new Image();
-        imgGCM.crossOrigin = 'Anonymous';
-        imgGCM.src = 'https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png';
-        
-        // Brasão COI (modo escuro)
-        const imgCOI = new Image();
-        imgCOI.crossOrigin = 'Anonymous';
-        imgCOI.src = 'https://i.postimg.cc/pLBkYpqC/brasao-coi-transparente.png';
-        
-        // Aguarda o carregamento das imagens
-        await Promise.all([
-            new Promise((resolve) => {
-                imgGCM.onload = function() {
-                    console.log('✅ Brasão GCM carregado');
-                    resolve();
-                };
-                imgGCM.onerror = function() {
-                    console.warn('⚠️ Falha ao carregar Brasão GCM');
-                    resolve();
-                };
-                // Timeout para não travar
-                setTimeout(resolve, 5000);
-            }),
-            new Promise((resolve) => {
-                imgCOI.onload = function() {
-                    console.log('✅ Brasão COI carregado');
-                    resolve();
-                };
-                imgCOI.onerror = function() {
-                    console.warn('⚠️ Falha ao carregar Brasão COI');
-                    resolve();
-                };
-                setTimeout(resolve, 5000);
-            })
-        ]);
-        
-        // Adiciona as imagens ao PDF se foram carregadas
-        if (imgGCM.complete && imgGCM.naturalWidth > 0) {
-            doc.addImage(imgGCM, 'PNG', margemEsquerda, margemTopo - 2, 22, 22);
-            console.log('✅ Brasão GCM adicionado ao PDF');
-        } else {
-            console.warn('⚠️ Brasão GCM NÃO foi adicionado');
-        }
-        
-        if (imgCOI.complete && imgCOI.naturalWidth > 0) {
-            doc.addImage(imgCOI, 'PNG', pageWidth - margemDireita - 22, margemTopo - 2, 22, 22);
-            console.log('✅ Brasão COI adicionado ao PDF');
-        } else {
-            console.warn('⚠️ Brasão COI NÃO foi adicionado');
-        }
-        
-    } catch (e) {
-        console.error('❌ Erro ao carregar brasões:', e);
-    }
-}
+            async function adicionarBrasoes() {
+                try {
+                    const imgGCM = new Image();
+                    imgGCM.crossOrigin = 'Anonymous';
+                    imgGCM.src = 'https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png';
+                    
+                    const imgCOI = new Image();
+                    imgCOI.crossOrigin = 'Anonymous';
+                    imgCOI.src = 'https://i.postimg.cc/pLBkYpqC/brasao-coi-transparente.png';
+                    
+                    await Promise.all([
+                        new Promise((resolve) => {
+                            imgGCM.onload = resolve;
+                            imgGCM.onerror = resolve;
+                            setTimeout(resolve, 5000);
+                        }),
+                        new Promise((resolve) => {
+                            imgCOI.onload = resolve;
+                            imgCOI.onerror = resolve;
+                            setTimeout(resolve, 5000);
+                        })
+                    ]);
+                    
+                    if (imgGCM.complete && imgGCM.naturalWidth > 0) {
+                        doc.addImage(imgGCM, 'PNG', margemEsquerda, margemTopo - 2, 22, 22);
+                    }
+                    if (imgCOI.complete && imgCOI.naturalWidth > 0) {
+                        doc.addImage(imgCOI, 'PNG', pageWidth - margemDireita - 22, margemTopo - 2, 22, 22);
+                    }
+                } catch (e) {
+                    console.error('❌ Erro ao carregar brasões:', e);
+                }
+            }
 
-            // ============================================================
-            // FUNÇÃO: ADICIONAR CABEÇALHO DA PÁGINA
-            // ============================================================
             async function adicionarCabecalhoPagina() {
                 await adicionarBrasoes();
 
@@ -1836,10 +2632,7 @@ async function adicionarBrasoes() {
                 let filtroTexto = 'Todos os registros';
                 if (filtroAtivo.mes) {
                     const [ano, mesNum] = filtroAtivo.mes.split('-');
-                    const nomesMeses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
-                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-                    ];
-                    filtroTexto = `${nomesMeses[parseInt(mesNum) - 1]} ${ano}`;
+                    filtroTexto = `${NOMES_MESES[parseInt(mesNum) - 1]} ${ano}`;
                     if (filtroAtivo.dia) {
                         filtroTexto += ` - ${removerAcentos(formatDateDisplay(filtroAtivo.dia))}`;
                     }
@@ -1868,9 +2661,6 @@ async function adicionarBrasoes() {
                 return y;
             }
 
-            // ============================================================
-            // FUNÇÃO: ESCREVER UM DIA COMPLETO (BLOCO ÚNICO)
-            // ============================================================
             function escreverBlocoDia(item, yInicio) {
                 const dataFormatada = removerAcentos(formatDateDisplay(item.data));
                 const responsavel = removerAcentos((item.responsavel || 'Responsavel nao informado').toUpperCase());
@@ -1880,15 +2670,12 @@ async function adicionarBrasoes() {
                 const xEsquerda = margemEsquerda + 3;
                 const xDireita = pageWidth / 2 + 3;
 
-                // Altura estimada do bloco
                 const alturaBloco = 38;
 
-                // Verifica se cabe na página
                 if (y + alturaBloco > pageHeight - 15) {
-                    return null; // Indica que precisa de nova página
+                    return null;
                 }
 
-                // Cabeçalho do dia
                 doc.setFontSize(10);
                 doc.setFont('courier', 'bold');
                 doc.setTextColor(15, 43, 109);
@@ -1906,7 +2693,6 @@ async function adicionarBrasoes() {
                 doc.line(margemEsquerda, y, pageWidth - margemDireita, y);
                 y += 3;
 
-                // Indicadores - 2 colunas
                 const campos = [
                     { id: 'eventos_identificados', label: 'Eventos Identificados' },
                     { id: 'eventos_relevantes', label: 'Eventos Relevantes' },
@@ -1930,7 +2716,6 @@ async function adicionarBrasoes() {
                 let yLinha = y;
                 const alturaLinha = 4.2;
 
-                // Coluna 1
                 col1.forEach((campo) => {
                     const valor = item[campo.id] || 0;
                     doc.setFontSize(7);
@@ -1951,7 +2736,6 @@ async function adicionarBrasoes() {
                     yLinha += alturaLinha;
                 });
 
-                // Coluna 2
                 yLinha = y;
                 col2.forEach((campo) => {
                     const valor = item[campo.id] || 0;
@@ -1975,7 +2759,6 @@ async function adicionarBrasoes() {
 
                 y = yLinha + 2;
 
-                // Linha final do dia
                 doc.setDrawColor(200, 200, 210);
                 doc.setLineWidth(0.3);
                 doc.line(margemEsquerda, y, pageWidth - margemDireita, y);
@@ -1984,9 +2767,6 @@ async function adicionarBrasoes() {
                 return y;
             }
 
-            // ============================================================
-            // FUNÇÃO: ESCREVER RESUMO DE MÊS
-            // ============================================================
             function escreverResumoMes(titulo, dados, yInicio) {
                 const campos = [
                     { id: 'eventos_identificados', label: 'Eventos Identificados' },
@@ -2035,7 +2815,6 @@ async function adicionarBrasoes() {
                 doc.line(margemEsquerda + 5, y, pageWidth - margemDireita - 5, y);
                 y += 4;
 
-                // 2 colunas para o resumo
                 const col1 = campos.slice(0, 7);
                 const col2 = campos.slice(7);
 
@@ -2100,9 +2879,6 @@ async function adicionarBrasoes() {
                 return y;
             }
 
-            // ============================================================
-            // INICIAR A GERAÇÃO DO PDF
-            // ============================================================
             try {
                 yAtual = await adicionarCabecalhoPagina();
 
@@ -2110,7 +2886,6 @@ async function adicionarBrasoes() {
                 const temMes = filtroAtivo.mes && filtroAtivo.mes !== '';
                 const temTodos = !temDia && !temMes;
 
-                // CASO 1: DIA ESPECÍFICO
                 if (temDia) {
                     for (let i = 0; i < dadosFiltrados.length; i++) {
                         const novoY = escreverBlocoDia(dadosFiltrados[i], yAtual);
@@ -2124,15 +2899,8 @@ async function adicionarBrasoes() {
                         }
                     }
 
-                    // Resumo do dia
                     if (dadosFiltrados.length > 1) {
-                        // Calcula totais
-                        const campos = ['eventos_identificados', 'eventos_relevantes', 'ocorrencias_confirmadas',
-                            'acionamentos_realizados', 'despachos_campo', 'solicitacao_apoio',
-                            'furtos_cameras', 'veiculos_furtados', 'veiculos_recuperados',
-                            'pessoas_procuradas', 'armas_suspeitas', 'vandalismos',
-                            'depredacoes', 'ocorrencias_violencia'
-                        ];
+                        const campos = CAMPOS_INDICADORES;
                         let totais = {};
                         campos.forEach(c => totais[c] = 0);
                         dadosFiltrados.forEach(item => {
@@ -2222,7 +2990,6 @@ async function adicionarBrasoes() {
                     }
                 }
 
-                // CASO 2: MÊS ESPECÍFICO
                 else if (temMes) {
                     const dadosOrdenados = [...dadosFiltrados].sort((a, b) => a.data.localeCompare(b.data));
 
@@ -2238,12 +3005,8 @@ async function adicionarBrasoes() {
                         }
                     }
 
-                    // Resumo do mês
                     const [ano, mesNum] = filtroAtivo.mes.split('-');
-                    const nomesMeses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
-                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-                    ];
-                    const nomeMes = nomesMeses[parseInt(mesNum) - 1];
+                    const nomeMes = NOMES_MESES[parseInt(mesNum) - 1];
 
                     const novoY = escreverResumoMes(`${nomeMes} ${ano} - RESUMO DO MES`, dadosOrdenados, yAtual);
                     if (novoY === null) {
@@ -2256,7 +3019,6 @@ async function adicionarBrasoes() {
                     }
                 }
 
-                // CASO 3: TODOS OS REGISTROS
                 else if (temTodos) {
                     const grupos = {};
                     dadosFiltrados.forEach(item => {
@@ -2272,26 +3034,15 @@ async function adicionarBrasoes() {
 
                     const chavesOrdenadas = Object.keys(grupos).sort().reverse();
                     let totalGeralFinal = {};
-                    const camposFinais = [
-                        'eventos_identificados', 'eventos_relevantes', 'ocorrencias_confirmadas',
-                        'acionamentos_realizados', 'despachos_campo', 'solicitacao_apoio',
-                        'furtos_cameras', 'veiculos_furtados', 'veiculos_recuperados',
-                        'pessoas_procuradas', 'armas_suspeitas', 'vandalismos',
-                        'depredacoes', 'ocorrencias_violencia'
-                    ];
-                    camposFinais.forEach(c => totalGeralFinal[c] = 0);
+                    CAMPOS_INDICADORES.forEach(c => totalGeralFinal[c] = 0);
 
                     for (let m = 0; m < chavesOrdenadas.length; m++) {
                         const chave = chavesOrdenadas[m];
                         const [ano, mes] = chave.split('-');
-                        const nomesMeses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
-                            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-                        ];
-                        const nomeMes = nomesMeses[parseInt(mes) - 1];
+                        const nomeMes = NOMES_MESES[parseInt(mes) - 1];
 
                         const dadosMes = [...grupos[chave]].sort((a, b) => a.data.localeCompare(b.data));
 
-                        // Dias do mês
                         for (let i = 0; i < dadosMes.length; i++) {
                             const novoY = escreverBlocoDia(dadosMes[i], yAtual);
                             if (novoY === null) {
@@ -2304,15 +3055,14 @@ async function adicionarBrasoes() {
                             }
                         }
 
-                        // Resumo do mês
                         const totaisMes = {};
-                        camposFinais.forEach(c => totaisMes[c] = 0);
+                        CAMPOS_INDICADORES.forEach(c => totaisMes[c] = 0);
                         dadosMes.forEach(item => {
-                            camposFinais.forEach(c => {
+                            CAMPOS_INDICADORES.forEach(c => {
                                 totaisMes[c] += item[c] || 0;
                             });
                         });
-                        camposFinais.forEach(c => {
+                        CAMPOS_INDICADORES.forEach(c => {
                             totalGeralFinal[c] += totaisMes[c] || 0;
                         });
 
@@ -2326,7 +3076,6 @@ async function adicionarBrasoes() {
                             yAtual = novoY;
                         }
 
-                        // Separador entre meses
                         if (m < chavesOrdenadas.length - 1) {
                             if (yAtual + 5 > pageHeight - 15) {
                                 doc.addPage();
@@ -2340,9 +3089,6 @@ async function adicionarBrasoes() {
                         }
                     }
 
-                    // ============================================================
-                    // RESUMO GERAL FINAL
-                    // ============================================================
                     if (yAtual + 25 > pageHeight - 15) {
                         doc.addPage();
                         paginaAtual++;
@@ -2379,8 +3125,8 @@ async function adicionarBrasoes() {
                         'ocorrencias_violencia': 'Ocorrências Violência'
                     };
 
-                    const col1 = camposFinais.slice(0, 7);
-                    const col2 = camposFinais.slice(7);
+                    const col1 = CAMPOS_INDICADORES.slice(0, 7);
+                    const col2 = CAMPOS_INDICADORES.slice(7);
 
                     const xCol1 = margemEsquerda + 5;
                     const xCol2 = pageWidth / 2 + 5;
@@ -2447,9 +3193,6 @@ async function adicionarBrasoes() {
                     yAtual += 6;
                 }
 
-                // ============================================================
-                // RODAPÉ
-                // ============================================================
                 const footerY = pageHeight - 10;
                 doc.setDrawColor(200, 200, 210);
                 doc.setLineWidth(0.3);
@@ -2460,22 +3203,12 @@ async function adicionarBrasoes() {
                 doc.text('Prefeitura do Cabo de Santo Agostinho - COI', pageWidth / 2, footerY + 2, { align: 'center' });
                 doc.text(`Página ${paginaAtual}`, pageWidth - margemDireita, footerY + 2, { align: 'right' });
 
-                // ============================================================
-                // SALVAR PDF
-                // ============================================================
                 let fileName = 'Resumo_Estatistico';
-                if (filtroAtivo.mes) {
-                    fileName += `_${filtroAtivo.mes}`;
-                }
-                if (filtroAtivo.dia) {
-                    fileName += `_${filtroAtivo.dia}`;
-                }
-                if (!filtroAtivo.mes && !filtroAtivo.dia) {
-                    fileName += `_todos`;
-                }
+                if (filtroAtivo.mes) fileName += `_${filtroAtivo.mes}`;
+                if (filtroAtivo.dia) fileName += `_${filtroAtivo.dia}`;
+                if (!filtroAtivo.mes && !filtroAtivo.dia) fileName += `_todos`;
                 const now = new Date();
-                fileName +=
-                    `_${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}.pdf`;
+                fileName += `_${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}.pdf`;
 
                 doc.save(fileName);
                 setStatus('online', `PDF gerado com sucesso! (${dadosFiltrados.length} registros)`);
@@ -2493,50 +3226,6 @@ async function adicionarBrasoes() {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Inicializando Resumo Estatístico...');
 
-           // Busca rápida de dias
-document.getElementById('buscarDiaBtn').addEventListener('click', function() {
-    const container = document.getElementById('buscaDiaContainer');
-    if (container.style.display === 'block') {
-        container.style.display = 'none';
-    } else {
-        const mes = document.getElementById('filtroMes').value;
-        if (!mes) {
-            alert('Selecione um mês primeiro para buscar dias.');
-            return;
-        }
-        container.style.display = 'block';
-        document.getElementById('buscaDiaInput').focus();
-    }
-});
-
-document.getElementById('buscaDiaConfirmar').addEventListener('click', buscarDia);
-document.getElementById('buscaDiaCancelar').addEventListener('click', fecharBuscaDia);
-
-document.getElementById('buscaDiaInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        buscarDia();
-    }
-    if (e.key === 'Escape') {
-        fecharBuscaDia();
-    }
-});
-
-// Quando o mês muda, atualiza os dias disponíveis
-document.getElementById('filtroMes').addEventListener('change', function() {
-    const mes = this.value;
-    const buscaContainer = document.getElementById('buscaDiaContainer');
-    if (mes) {
-        buscaContainer.style.display = 'block';
-        // Recarrega os dias do mês
-        atualizarFiltros(dadosCompletos);
-    } else {
-        buscaContainer.style.display = 'none';
-        // Limpa os dias
-        const diaSelect = document.getElementById('filtroDia');
-        diaSelect.innerHTML = '<option value="">Todos os dias</option>';
-    }
-});
-           
             applyDateMask(document.getElementById('dataResumo'));
 
             setStatus('syncing', 'Conectando ao Sistema MIRA Analytics...');
@@ -2548,13 +3237,50 @@ document.getElementById('filtroMes').addEventListener('change', function() {
             document.getElementById('limparBtn').addEventListener('click', limparCampos);
             document.getElementById('aplicarFiltroBtn').addEventListener('click', aplicarFiltro);
             document.getElementById('limparFiltroBtn').addEventListener('click', limparFiltro);
+            document.getElementById('expandirTodosBtn').addEventListener('click', toggleExpandirTodos);
 
             document.getElementById('confirmationModal').addEventListener('click', function(e) {
                 if (e.target === this) hideConfirmation();
             });
 
-            document.getElementById('filtroMes').addEventListener('change', aplicarFiltro);
+            document.getElementById('filtroMes').addEventListener('change', function() {
+                const mes = this.value;
+                const buscaContainer = document.getElementById('buscaDiaContainer');
+                if (mes) {
+                    buscaContainer.style.display = 'block';
+                    atualizarFiltros(dadosCompletos);
+                } else {
+                    buscaContainer.style.display = 'none';
+                    const diaSelect = document.getElementById('filtroDia');
+                    diaSelect.innerHTML = '<option value="">Todos os dias</option>';
+                }
+                aplicarFiltro();
+            });
+
             document.getElementById('filtroDia').addEventListener('change', aplicarFiltro);
+
+            document.getElementById('buscarDiaBtn').addEventListener('click', function() {
+                const container = document.getElementById('buscaDiaContainer');
+                if (container.style.display === 'block') {
+                    container.style.display = 'none';
+                } else {
+                    const mes = document.getElementById('filtroMes').value;
+                    if (!mes) {
+                        alert('Selecione um mês primeiro para buscar dias.');
+                        return;
+                    }
+                    container.style.display = 'block';
+                    document.getElementById('buscaDiaInput').focus();
+                }
+            });
+
+            document.getElementById('buscaDiaConfirmar').addEventListener('click', buscarDia);
+            document.getElementById('buscaDiaCancelar').addEventListener('click', fecharBuscaDia);
+
+            document.getElementById('buscaDiaInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') buscarDia();
+                if (e.key === 'Escape') fecharBuscaDia();
+            });
 
             console.log('✅ Resumo Estatístico inicializado!');
         });
