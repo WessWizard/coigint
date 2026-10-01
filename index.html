@@ -166,6 +166,8 @@
             transition: var(--transition-bounce);
             position: relative;
             overflow: hidden;
+            font-family: inherit;
+            text-decoration: none;
         }
 
         .action-btn::before {
@@ -202,6 +204,38 @@
 
         .action-btn.warning {
             background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        /* ============================================
+           BOTÃO TELEFONES ÚTEIS (NOVO)
+           ============================================ */
+        .action-btn.telefones {
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+        }
+
+        .action-btn.telefones:hover {
+            background: linear-gradient(135deg, #0284c7, #0891b2);
+            box-shadow: 0 8px 22px rgba(14, 165, 233, 0.4);
+        }
+
+        .action-btn.telefones i {
+            animation: telefone-ring 2.5s ease-in-out infinite;
+            transform-origin: top center;
+            display: inline-block;
+        }
+
+        @keyframes telefone-ring {
+            0%, 100% { transform: rotate(0deg); }
+            10% { transform: rotate(-12deg); }
+            20% { transform: rotate(12deg); }
+            30% { transform: rotate(-10deg); }
+            40% { transform: rotate(10deg); }
+            50% { transform: rotate(-6deg); }
+            60% { transform: rotate(6deg); }
+            70%, 99% { transform: rotate(0deg); }
         }
 
         .main-card {
@@ -911,7 +945,7 @@
             .checkbox-grid-modern { grid-template-columns: 1fr; }
             .footer-actions { flex-direction: column; }
             .footer-btn { justify-content: center; }
-            .action-btn { padding: 8px 16px; font-size: 12px; }
+            .action-btn { padding: 8px 16px; font-size: 12px; flex: 1 1 100%; justify-content: center; }
         }
 
         .hidden-input {
@@ -946,11 +980,15 @@
         <div class="action-bar">
             <button class="action-btn primary" id="openShiftBtn"><i class="fas fa-door-open"></i> Abertura de Plantão</button>
             <button class="action-btn primary" id="openSinespBtn"><i class="fas fa-car"></i> Equipes SINESP</button>
-  <a href="gerador-nbot.html" class="action-btn primary" style="text-decoration: none;">
-    <i class="fas fa-file-signature"></i> Gerar Número de Boletim - Trânsito
-</a>
+            <a href="gerador-nbot.html" class="action-btn primary" style="text-decoration: none;">
+                <i class="fas fa-file-signature"></i> Gerar Número de Boletim - Trânsito
+            </a>
             <button class="action-btn success" id="generateMonthlyPdfBtn"><i class="fas fa-calendar-alt"></i> PDF Mensal</button>
             <button class="action-btn warning" id="dashboardBtn"><i class="fas fa-chart-line"></i> Resumo Estatístico Diário</button>
+            <!-- NOVO BOTÃO: TELEFONES ÚTEIS -->
+            <a href="telefones-uteis.html" class="action-btn telefones" id="telefonesBtn">
+                <i class="fas fa-phone-volume"></i> Telefones Úteis
+            </a>
         </div>
 
         <div class="main-card">
