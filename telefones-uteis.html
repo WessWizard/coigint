@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telefones Úteis - COI | MIRA</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/Prx3cKFq/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.postimg.cc/9fTNbMgt/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/vT8qGvY3/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #0f2b6d;
+            --primary-light: #1e3a8a;
+            --primary-dark: #0a1a4a;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --bg-card-solid: #1e293b;
+            --bg-input: rgba(15, 23, 42, 0.8);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-sm: 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0f172a, #020617);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .glass-header {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.5));
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 14px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.3), transparent);
+        }
+
+        .logo-left, .logo-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-left img, .logo-right img {
+            height: 44px;
+            width: 44px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+            transition: var(--transition);
+        }
+
+        .logo-left img:hover, .logo-right img:hover {
+            transform: scale(1.06);
+        }
+
+        .title-section {
+            text-align: center;
+            flex: 1 1 200px;
+            min-width: 0;
+        }
+
+        .title-section h1 {
+            font-size: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+        }
+
+        .title-section .badge {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 6px;
+            font-size: 9px;
+            flex-wrap: wrap;
+        }
+
+        .title-section .badge span {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.18);
+            padding: 3px 9px;
+            border-radius: 20px;
+            color: #93c5fd;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================
+           BOTÃO VOLTAR
+           ============================================ */
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 40px;
+            color: #60a5fa;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .btn-voltar:hover {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.35);
+            color: #93c5fd;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-voltar i {
+            font-size: 13px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-voltar:hover i {
+            transform: translateX(-3px);
+        }
+
+        /* ============================================
+           BUSCA
+           ============================================ */
+        .search-wrapper {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .search-wrapper:hover {
+            border-color: rgba(59, 130, 246, 0.25);
+        }
+
+        .search-wrapper:focus-within {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .search-wrapper > i.fa-search {
+            color: #60a5fa;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+            font-weight: 400;
+        }
+
+        .search-clear {
+            background: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: var(--transition);
+            display: none;
+        }
+
+        .search-clear.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-clear:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           FILTROS POR CATEGORIA
+           ============================================ */
+        .filtros-wrapper {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filtro-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .filtro-chip:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--border-color-strong);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .filtro-chip.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 43, 109, 0.4);
+        }
+
+        .filtro-chip i {
+            font-size: 11px;
+        }
+
+        .filtro-chip .count {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 1px 6px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-left: 2px;
+        }
+
+        /* ============================================
+           ESTATÍSTICAS
+           ============================================ */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+
+        .stat-item i {
+            color: #60a5fa;
+            font-size: 12px;
+        }
+
+        .stat-item strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* ============================================
+           GRID DE CONTATOS
+           ============================================ */
+        .contatos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 12px;
+        }
+
+        /* ============================================
+           CARD DE CONTATO
+           ============================================ */
+        .contato-card {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contato-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--info));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .contato-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+        }
+
+        .contato-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Ícone */
+        .contato-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .contato-card:hover .contato-icon {
+            transform: scale(1.05);
+        }
+
+        /* Cores por categoria */
+        .contato-icon.seguranca {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .contato-icon.emergencia {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .contato-icon.saude {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .contato-icon.ambiental {
+            background: linear-gradient(135deg, rgba(132, 204, 22, 0.2), rgba(101, 163, 13, 0.1));
+            border: 1px solid rgba(132, 204, 22, 0.3);
+            color: #a3e635;
+        }
+
+        .contato-icon.administrativo {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #a78bfa;
+        }
+
+        .contato-icon.social {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.1));
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: #f472b6;
+        }
+
+        .contato-icon.transito {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+
+        /* Conteúdo */
+        .contato-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contato-nome {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.1px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .contato-categoria {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+
+        /* Números */
+        .contato-numeros {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .numero-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: rgba(2, 6, 23, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .numero-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            transform: translateX(3px);
+        }
+
+        .numero-item i {
+            font-size: 11px;
+            color: #60a5fa;
+            flex-shrink: 0;
+        }
+
+        .numero-item .numero {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            flex: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .numero-item .copy-icon {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+            padding: 3px;
+            border-radius: 4px;
+        }
+
+        .numero-item .copy-icon:hover {
+            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .numero-item.copiado {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .numero-item.copiado i {
+            color: #34d399;
+        }
+
+        /* ============================================
+           ESTADO VAZIO
+           ============================================ */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            opacity: 0.4;
+            margin-bottom: 16px;
+            display: block;
+            color: var(--primary-light);
+        }
+
+        .empty-state p {
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .empty-state small {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* ============================================
+           TOAST DE CÓPIA
+           ============================================ */
+        .copy-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 12px 24px;
+            background: rgba(16, 185, 129, 0.95);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            border-radius: 40px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .copy-toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .copy-toast i {
+            font-size: 16px;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .site-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-tertiary);
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 24px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================
+           RESPONSIVO
+           ============================================ */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+
+            .glass-header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: var(--radius-lg);
+            }
+
+            .title-section h1 { font-size: 13px; line-height: 1.35; }
+
+            .logo-left, .logo-right {
+                justify-content: center;
+                width: 100%;
+            }
+            .logo-left img, .logo-right img { height: 36px; width: 36px; }
+
+            .search-wrapper {
+                padding: 14px 16px;
+            }
+
+            .filtros-wrapper {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 6px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .filtro-chip {
+                flex-shrink: 0;
+            }
+
+            .contatos-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .contato-card {
+                padding: 14px 16px;
+            }
+
+            .contato-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .contato-nome {
+                font-size: 12px;
+            }
+
+            .numero-item .numero {
+                font-size: 12px;
+            }
+        }
+
+        /* ============================================
+           IMPRESSÃO
+           ============================================ */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0;
+                color: #000;
+            }
+
+            .glass-header, .search-wrapper, .filtros-wrapper, .stats-bar, .btn-voltar, .copy-toast {
+                display: none !important;
+            }
+
+            .contatos-grid {
+                display: block;
+                columns: 2;
+                column-gap: 20px;
+            }
+
+            .contato-card {
+                break-inside: avoid;
+                background: white !important;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                margin-bottom: 8px;
+                page-break-inside: avoid;
+            }
+
+            .contato-nome { color: #0f2b6d !important; }
+            .contato-categoria { color: #666 !important; }
+            .numero-item {
+                background: #f5f5f5 !important;
+                border-color: #ddd !important;
+                color: #333 !important;
+            }
+            .numero-item .numero { color: #0f2b6d !important; }
+            .site-footer { color: #999 !important; border-top: 1px solid #ddd !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="glass-header">
+            <div class="logo-left">
+                <img src="https://i.postimg.cc/Sn3cRFqT/brasao-gcm.png" alt="Brasão GCM">
+            </div>
+            <div class="title-section">
+                <h1>📞 TELEFONES ÚTEIS</h1>
+                <div class="badge">
+                    <span><i class="fas fa-shield-alt"></i> SMDS/GINT/COI</span>
+                    <span><i class="fas fa-phone-volume"></i> Contatos de Emergência</span>
+                </div>
+            </div>
+            <div class="logo-right">
+                <a href="index.html" class="btn-voltar" title="Voltar ao início">
+                    <i class="fas fa-arrow-left"></i><span>Voltar</span>
+                </a>
+                <img src="https://i.postimg.cc/gc4J2ByG/brasao-coi2.png" alt="Brasão COI">
+            </div>
+        </div>
+
+        <!-- Busca -->
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nome, número ou categoria..." autocomplete="off">
+            <button class="search-clear" id="searchClear" title="Limpar busca">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Filtros de categoria -->
+        <div class="filtros-wrapper" id="filtrosWrapper">
+            <!-- Preenchido via JS -->
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <i class="fas fa-address-book"></i>
+                <span><strong id="totalContatos">0</strong> contatos</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-phone"></i>
+                <span><strong id="totalNumeros">0</strong> números</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-filter"></i>
+                <span>Exibindo <strong id="exibindoContatos">0</strong></span>
+            </div>
+        </div>
+
+        <!-- Grid de contatos -->
+        <div class="contatos-grid" id="contatosGrid">
+            <!-- Preenchido via JS -->
+        </div>
+
+        <footer class="site-footer">
+            MONITORAMENTO INTEGRADO DE RELATÓRIOS E ANÁLISES - <strong>M I R A</strong> | Prefeitura do Cabo de Santo Agostinho
+        </footer>
+    </div>
+
+    <!-- Toast de cópia -->
+    <div class="copy-toast" id="copyToast">
+        <i class="fas fa-check-circle"></i>
+        <span id="copyToastText">Copiado!</span>
+    </div>
+
+    <script>
+        // ============================================================
+        // BASE DE DADOS DE CONTATOS
+        // ============================================================
+
+        const CATEGORIAS = {
+            seguranca: { nome: 'Segurança', icone: 'fa-shield-alt' },
+            emergencia: { nome: 'Emergência', icone: 'fa-ambulance' },
+            saude: { nome: 'Saúde', icone: 'fa-hospital' },
+            ambiental: { nome: 'Ambiental', icone: 'fa-leaf' },
+            administrativo: { nome: 'Administrativo', icone: 'fa-building' },
+            social: { nome: 'Social', icone: 'fa-hands-helping' },
+            transito: { nome: 'Trânsito', icone: 'fa-traffic-light' }
+        };
+
+        const CONTATOS = [
+            {
+                nome: 'Guarda Civil Municipal',
+                categoria: 'seguranca',
+                icone: 'fa-shield-alt',
+                numeros: [
+                    { numero: '153', label: 'Emergência' },
+                    { numero: '3521-4756', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'COI - Central de Operações',
+                categoria: 'seguranca',
+                icone: 'fa-satellite-dish',
+                numeros: [
+                    { numero: '0800-281-8181', label: 'Denúncia' }
+                ]
+            },
+            {
+                nome: 'WhatsApp Denúncia',
+                categoria: 'seguranca',
+                icone: 'fa-whatsapp',
+                numeros: [
+                    { numero: '(81) 9.9165-1765', label: 'WhatsApp' }
+                ]
+            },
+            {
+                nome: 'Defesa Civil',
+                categoria: 'emergencia',
+                icone: 'fa-house-crack',
+                numeros: [
+                    { numero: '0800-281-8531', label: 'Emergência' },
+                    { numero: '3521-6701', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'GTT - Gerência de Trânsito e Transporte',
+                categoria: 'transito',
+                icone: 'fa-traffic-light',
+                numeros: [
+                    { numero: '3524-8650', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Multas',
+                categoria: 'transito',
+                icone: 'fa-ticket',
+                numeros: [
+                    { numero: '3521-6704', label: 'Atendimento' }
+                ]
+            },
+            {
+                nome: 'Ouvidoria Municipal',
+                categoria: 'administrativo',
+                icone: 'fa-comments',
+                numeros: [
+                    { numero: '0800-281-8855', label: '0800' }
+                ]
+            },
+            {
+                nome: 'Telefonista CAM',
+                categoria: 'administrativo',
+                icone: 'fa-phone-volume',
+                numeros: [
+                    { numero: '3521-6645', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'SAMU',
+                categoria: 'emergencia',
+                icone: 'fa-ambulance',
+                numeros: [
+                    { numero: '192', label: 'Emergência' }
+                ]
+            },
+            {
+                nome: 'Corpo de Bombeiros',
+                categoria: 'emergencia',
+                icone: 'fa-fire-extinguisher',
+                numeros: [
+                    { numero: '193', label: 'Emergência' }
+                ]
+            },
+            {
+                nome: 'Polícia Rodoviária Federal',
+                categoria: 'seguranca',
+                icone: 'fa-road',
+                numeros: [
+                    { numero: '191', label: 'Emergência' }
+                ]
+            },
+            {
+                nome: 'DER - Departamento de Estradas',
+                categoria: 'transito',
+                icone: 'fa-road-circle-check',
+                numeros: [
+                    { numero: '3181-4313', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'IBAMA',
+                categoria: 'ambiental',
+                icone: 'fa-leaf',
+                numeros: [
+                    { numero: '0800-061-8080', label: 'Denúncia' }
+                ]
+            },
+            {
+                nome: 'CIPOMA - Cia. Independente de Polícia Militar',
+                categoria: 'ambiental',
+                icone: 'fa-tree',
+                numeros: [
+                    { numero: '3181-1700', label: 'Central' }
+                ]
+            },
+            {
+                nome: '18º BPM - Batalhão de Polícia Militar',
+                categoria: 'seguranca',
+                icone: 'fa-star-of-life',
+                numeros: [
+                    { numero: '3181-3580', label: 'Central' }
+                ]
+            },
+            {
+                nome: '40ª DP - Delegacia de Polícia Civil',
+                categoria: 'seguranca',
+                icone: 'fa-building-shield',
+                numeros: [
+                    { numero: '3184-3464', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Hospital Mendo Sampaio',
+                categoria: 'saude',
+                icone: 'fa-hospital',
+                numeros: [
+                    { numero: '3524-9239', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Policlínica Jamaci de Medeiros',
+                categoria: 'saude',
+                icone: 'fa-stethoscope',
+                numeros: [
+                    { numero: '3522-2720', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Hospital Dom Câmara',
+                categoria: 'saude',
+                icone: 'fa-hospital-user',
+                numeros: [
+                    { numero: '3183-0000', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Fiscalização Ambiental',
+                categoria: 'ambiental',
+                icone: 'fa-seedling',
+                numeros: [
+                    { numero: '(81) 9.9151-8127', label: 'WhatsApp' }
+                ]
+            },
+            {
+                nome: 'Unidade de Vigilância de Zoonoses',
+                categoria: 'saude',
+                icone: 'fa-bug',
+                numeros: [
+                    { numero: '3524-9030', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Disque Denúncia',
+                categoria: 'seguranca',
+                icone: 'fa-user-secret',
+                numeros: [
+                    { numero: '0800-281-9050', label: 'Anônimo' }
+                ]
+            },
+            {
+                nome: 'Conselho Tutelar',
+                categoria: 'social',
+                icone: 'fa-children',
+                numeros: [
+                    { numero: '(81) 9.9135-0934', label: 'Plantão' }
+                ]
+            },
+            {
+                nome: 'Controle Urbano',
+                categoria: 'administrativo',
+                icone: 'fa-city',
+                numeros: [
+                    { numero: '3521-1480', label: 'Central' },
+                    { numero: '3521-3695', label: 'Setor' }
+                ]
+            }
+        ];
+
+        // ============================================================
+        // ESTADO
+        // ============================================================
+
+        let filtroCategoria = 'todas';
+        let termoBusca = '';
+
+        // ============================================================
+        // UTILITÁRIOS
+        // ============================================================
+
+        function normalizarTexto(texto) {
+            return String(texto)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[m]);
+        }
+
+        // ============================================================
+        // RENDERIZAÇÃO DOS FILTROS
+        // ============================================================
+
+        function contarPorCategoria() {
+            const contagem = { todas: CONTATOS.length };
+            Object.keys(CATEGORIAS).forEach(cat => {
+                contagem[cat] = CONTATOS.filter(c => c.categoria === cat).length;
+            });
+            return contagem;
+        }
+
+        function renderizarFiltros() {
+            const wrapper = document.getElementById('filtrosWrapper');
+            const contagem = contarPorCategoria();
+
+            let html = `
+                <button class="filtro-chip ${filtroCategoria === 'todas' ? 'active' : ''}" data-categoria="todas">
+                    <i class="fas fa-layer-group"></i>
+                    Todas
+                    <span class="count">${contagem.todas}</span>
+                </button>
+            `;
+
+            Object.entries(CATEGORIAS).forEach(([key, cat]) => {
+                if (contagem[key] === 0) return;
+                html += `
+                    <button class="filtro-chip ${filtroCategoria === key ? 'active' : ''}" data-categoria="${key}">
+                        <i class="fas ${cat.icone}"></i>
+                        ${cat.nome}
+                        <span class="count">${contagem[key]}</span>
+                    </button>
+                `;
+            });
+
+            wrapper.innerHTML = html;
+
+            wrapper.querySelectorAll('.filtro-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    filtroCategoria = this.dataset.categoria;
+                    renderizarFiltros();
+                    renderizarContatos();
+                });
+            });
+        }
+
+        // ============================================================
+        // FILTRAGEM
+        // ============================================================
+
+        function filtrarContatos() {
+            let resultado = [...CONTATOS];
+
+            // Filtro por categoria
+            if (filtroCategoria !== 'todas') {
+                resultado = resultado.filter(c => c.categoria === filtroCategoria);
+            }
+
+            // Filtro por termo de busca
+            if (termoBusca) {
+                const termoNorm = normalizarTexto(termoBusca);
+                resultado = resultado.filter(c => {
+                    const nomeNorm = normalizarTexto(c.nome);
+                    const catNorm = normalizarTexto(CATEGORIAS[c.categoria]?.nome || '');
+                    
+                    // Busca nos números
+                    const matchNumero = c.numeros.some(n => 
+                        normalizarTexto(n.numero).includes(termoNorm) ||
+                        normalizarTexto(n.label || '').includes(termoNorm)
+                    );
+
+                    return nomeNorm.includes(termoNorm) || 
+                           catNorm.includes(termoNorm) || 
+                           matchNumero;
+                });
+            }
+
+            return resultado;
+        }
+
+        // ============================================================
+        // RENDERIZAÇÃO DOS CONTATOS
+        // ============================================================
+
+        function renderizarContatos() {
+            const grid = document.getElementById('contatosGrid');
+            const contatos = filtrarContatos();
+
+            // Atualiza stats
+            document.getElementById('exibindoContatos').textContent = contatos.length;
+
+            if (contatos.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search-minus"></i>
+                        <p>Nenhum contato encontrado</p>
+                        <small>Tente ajustar a busca ou o filtro de categoria</small>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = contatos.map(contato => {
+                const categoria = CATEGORIAS[contato.categoria];
+                const numerosHtml = contato.numeros.map((num, idx) => `
+                    <div class="numero-item" 
+                         data-numero="${escapeHtml(num.numero)}"
+                         data-id="${contato.nome}-${idx}"
+                         title="Clique para copiar">
+                        <i class="fas fa-phone"></i>
+                        <span class="numero">${escapeHtml(num.numero)}</span>
+                        <i class="fas fa-copy copy-icon"></i>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="contato-card" data-categoria="${contato.categoria}">
+                        <div class="contato-icon ${contato.categoria}">
+                            <i class="fas ${contato.icone}"></i>
+                        </div>
+                        <div class="contato-content">
+                            <div class="contato-nome">${escapeHtml(contato.nome)}</div>
+                            <div class="contato-categoria">
+                                ${categoria.icone ? `<i class="fas ${categoria.icone}"></i> ` : ''}${categoria.nome}
+                            </div>
+                            <div class="contato-numeros">
+                                ${numerosHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Aplica eventos de cópia
+            grid.querySelectorAll('.numero-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Se clicou no ícone de cópia ou no próprio item
+                    const numero = this.dataset.numero;
+                    copiarNumero(numero, this);
+                });
+            });
+        }
+
+        // ============================================================
+        // CÓPIA DE NÚMERO
+        // ============================================================
+
+        async function copiarNumero(numero, elemento) {
+            // Remove formatação para copiar apenas dígitos? Não — mantém o formato original
+            const textoParaCopiar = numero;
+
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(textoParaCopiar);
+                } else {
+                    // Fallback para navegadores antigos ou contexto não seguro
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textoParaCopiar;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+
+                // Feedback visual no item
+                elemento.classList.add('copiado');
+                setTimeout(() => elemento.classList.remove('copiado'), 1200);
+
+                // Toast de confirmação
+                mostrarToast(`"${textoParaCopiar}" copiado!`);
+            } catch (error) {
+                console.error('Erro ao copiar:', error);
+                mostrarToast('Erro ao copiar', true);
+            }
+        }
+
+        let toastTimer = null;
+        function mostrarToast(mensagem, isError = false) {
+            const toast = document.getElementById('copyToast');
+            const text = document.getElementById('copyToastText');
+            
+            text.textContent = mensagem;
+            
+            if (isError) {
+                toast.style.background = 'rgba(239, 68, 68, 0.95)';
+                toast.style.borderColor = 'rgba(248, 113, 113, 0.5)';
+                toast.style.boxShadow = '0 12px 32px rgba(239, 68, 68, 0.4)';
+                toast.querySelector('i').className = 'fas fa-exclamation-circle';
+            } else {
+                toast.style.background = 'rgba(16, 185, 129, 0.95)';
+                toast.style.borderColor = 'rgba(52, 211, 153, 0.5)';
+                toast.style.boxShadow = '0 12px 32px rgba(16, 185, 129, 0.4)';
+                toast.querySelector('i').className = 'fas fa-check-circle';
+            }
+
+            toast.classList.add('visible');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('visible'), 2000);
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Stats iniciais
+            const totalNumeros = CONTATOS.reduce((acc, c) => acc + c.numeros.length, 0);
+            document.getElementById('totalContatos').textContent = CONTATOS.length;
+            document.getElementById('totalNumeros').textContent = totalNumeros;
+
+            renderizarFiltros();
+            renderizarContatos();
+
+            // Busca com debounce
+            const searchInput = document.getElementById('searchInput');
+            const searchClear = document.getElementById('searchClear');
+            let debounceTimer;
+
+            searchInput.addEventListener('input', function() {
+                termoBusca = this.value.trim();
+                searchClear.classList.toggle('visible', termoBusca.length > 0);
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    renderizarContatos();
+                }, 200);
+            });
+
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                termoBusca = '';
+                searchClear.classList.remove('visible');
+                renderizarContatos();
+                searchInput.focus();
+            });
+
+            // Atalho: Ctrl+F ou / foca na busca
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey && e.key === 'f') || (e.key === '/' && document.activeElement !== searchInput)) {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+                if (e.key === 'Escape' && document.activeElement === searchInput) {
+                    searchInput.value = '';
+                    termoBusca = '';
+                    searchClear.classList.remove('visible');
+                    renderizarContatos();
+                    searchInput.blur();
+                }
+            });
+
+            console.log(`📞 ${CONTATOS.length} contatos carregados (${totalNumeros} números)`);
+        });
+    </script>
+</body>
+</html>
