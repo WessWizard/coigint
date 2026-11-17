@@ -819,6 +819,7 @@
         };
 
         const CONTATOS = [
+            // ===== SEGURANÇA =====
             {
                 nome: 'Guarda Civil Municipal',
                 categoria: 'seguranca',
@@ -845,60 +846,11 @@
                 ]
             },
             {
-                nome: 'Defesa Civil',
-                categoria: 'emergencia',
-                icone: 'fa-house-crack',
+                nome: 'Polícia Municipal - Cabo',
+                categoria: 'seguranca',
+                icone: 'fa-shield-halved',
                 numeros: [
-                    { numero: '0800-281-8531', label: 'Emergência' },
-                    { numero: '3521-6701', label: 'Central' }
-                ]
-            },
-            {
-                nome: 'GTT - Gerência de Trânsito e Transporte',
-                categoria: 'transito',
-                icone: 'fa-traffic-light',
-                numeros: [
-                    { numero: '3524-8650', label: 'Central' }
-                ]
-            },
-            {
-                nome: 'Multas',
-                categoria: 'transito',
-                icone: 'fa-ticket',
-                numeros: [
-                    { numero: '3521-6704', label: 'Atendimento' }
-                ]
-            },
-            {
-                nome: 'Ouvidoria Municipal',
-                categoria: 'administrativo',
-                icone: 'fa-comments',
-                numeros: [
-                    { numero: '0800-281-8855', label: '0800' }
-                ]
-            },
-            {
-                nome: 'Telefonista CAM',
-                categoria: 'administrativo',
-                icone: 'fa-phone-volume',
-                numeros: [
-                    { numero: '3521-6645', label: 'Central' }
-                ]
-            },
-            {
-                nome: 'SAMU',
-                categoria: 'emergencia',
-                icone: 'fa-ambulance',
-                numeros: [
-                    { numero: '192', label: 'Emergência' }
-                ]
-            },
-            {
-                nome: 'Corpo de Bombeiros',
-                categoria: 'emergencia',
-                icone: 'fa-fire-extinguisher',
-                numeros: [
-                    { numero: '193', label: 'Emergência' }
+                    { numero: '153', label: 'Emergência' }
                 ]
             },
             {
@@ -907,30 +859,6 @@
                 icone: 'fa-road',
                 numeros: [
                     { numero: '191', label: 'Emergência' }
-                ]
-            },
-            {
-                nome: 'DER - Departamento de Estradas',
-                categoria: 'transito',
-                icone: 'fa-road-circle-check',
-                numeros: [
-                    { numero: '3181-4313', label: 'Central' }
-                ]
-            },
-            {
-                nome: 'IBAMA',
-                categoria: 'ambiental',
-                icone: 'fa-leaf',
-                numeros: [
-                    { numero: '0800-061-8080', label: 'Denúncia' }
-                ]
-            },
-            {
-                nome: 'CIPOMA - Cia. Independente de Polícia Militar',
-                categoria: 'ambiental',
-                icone: 'fa-tree',
-                numeros: [
-                    { numero: '3181-1700', label: 'Central' }
                 ]
             },
             {
@@ -949,6 +877,43 @@
                     { numero: '3184-3464', label: 'Central' }
                 ]
             },
+            {
+                nome: 'Disque Denúncia',
+                categoria: 'seguranca',
+                icone: 'fa-user-secret',
+                numeros: [
+                    { numero: '0800-281-9050', label: 'Anônimo' }
+                ]
+            },
+
+            // ===== EMERGÊNCIA =====
+            {
+                nome: 'Defesa Civil',
+                categoria: 'emergencia',
+                icone: 'fa-house-crack',
+                numeros: [
+                    { numero: '0800-281-8531', label: 'Emergência' },
+                    { numero: '3521-6701', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'SAMU',
+                categoria: 'emergencia',
+                icone: 'fa-ambulance',
+                numeros: [
+                    { numero: '192', label: 'Emergência' }
+                ]
+            },
+            {
+                nome: 'Corpo de Bombeiros',
+                categoria: 'emergencia',
+                icone: 'fa-fire-extinguisher',
+                numeros: [
+                    { numero: '193', label: 'Emergência' }
+                ]
+            },
+
+            // ===== SAÚDE =====
             {
                 nome: 'Hospital Mendo Sampaio',
                 categoria: 'saude',
@@ -974,6 +939,32 @@
                 ]
             },
             {
+                nome: 'Unidade de Vigilância de Zoonoses',
+                categoria: 'saude',
+                icone: 'fa-bug',
+                numeros: [
+                    { numero: '3524-9030', label: 'Central' }
+                ]
+            },
+
+            // ===== AMBIENTAL =====
+            {
+                nome: 'IBAMA',
+                categoria: 'ambiental',
+                icone: 'fa-leaf',
+                numeros: [
+                    { numero: '0800-061-8080', label: 'Denúncia' }
+                ]
+            },
+            {
+                nome: 'CIPOMA - Cia. Independente de Polícia Militar',
+                categoria: 'ambiental',
+                icone: 'fa-tree',
+                numeros: [
+                    { numero: '3181-1700', label: 'Central' }
+                ]
+            },
+            {
                 nome: 'Fiscalização Ambiental',
                 categoria: 'ambiental',
                 icone: 'fa-seedling',
@@ -982,27 +973,81 @@
                 ]
             },
             {
-                nome: 'Unidade de Vigilância de Zoonoses',
-                categoria: 'saude',
-                icone: 'fa-bug',
+                nome: 'CVA - Controle de Vigilância Ambiental',
+                categoria: 'ambiental',
+                icone: 'fa-binoculars',
                 numeros: [
-                    { numero: '3524-9030', label: 'Central' }
+                    { numero: '99159-1148', label: 'Plantão' }
                 ]
             },
             {
-                nome: 'Disque Denúncia',
-                categoria: 'seguranca',
-                icone: 'fa-user-secret',
+                nome: 'Secretaria de Meio Ambiente (SEMA)',
+                categoria: 'ambiental',
+                icone: 'fa-leaf',
                 numeros: [
-                    { numero: '0800-281-9050', label: 'Anônimo' }
+                    { numero: '3521-6681', label: 'Central' },
+                    { numero: '3521-3695', label: 'Setor' }
+                ]
+            },
+
+            // ===== TRÂNSITO =====
+            {
+                nome: 'GTT - Gerência de Trânsito e Transporte',
+                categoria: 'transito',
+                icone: 'fa-traffic-light',
+                numeros: [
+                    { numero: '3524-8650', label: 'Central' },
+                    { numero: '3521-6791', label: 'Gabinete' }
                 ]
             },
             {
-                nome: 'Conselho Tutelar',
-                categoria: 'social',
-                icone: 'fa-children',
+                nome: 'Multas / Infrações',
+                categoria: 'transito',
+                icone: 'fa-ticket',
                 numeros: [
-                    { numero: '(81) 9.9135-0934', label: 'Plantão' }
+                    { numero: '3521-6704', label: 'Atendimento' }
+                ]
+            },
+            {
+                nome: 'DER - Departamento de Estradas',
+                categoria: 'transito',
+                icone: 'fa-road-circle-check',
+                numeros: [
+                    { numero: '3181-4313', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Táxi / Transporte Escolar',
+                categoria: 'transito',
+                icone: 'fa-taxi',
+                numeros: [
+                    { numero: '3521-6705', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Transporte (Recepção)',
+                categoria: 'transito',
+                icone: 'fa-bus',
+                numeros: [
+                    { numero: '3521-9358', label: 'Central' }
+                ]
+            },
+
+            // ===== ADMINISTRATIVO =====
+            {
+                nome: 'Ouvidoria Municipal',
+                categoria: 'administrativo',
+                icone: 'fa-comments',
+                numeros: [
+                    { numero: '0800-281-8855', label: '0800' }
+                ]
+            },
+            {
+                nome: 'Telefonista CAM / Central Telefônica',
+                categoria: 'administrativo',
+                icone: 'fa-phone-volume',
+                numeros: [
+                    { numero: '3521-6645', label: 'Central' }
                 ]
             },
             {
@@ -1011,7 +1056,141 @@
                 icone: 'fa-city',
                 numeros: [
                     { numero: '3521-1480', label: 'Central' },
-                    { numero: '3521-3695', label: 'Setor' }
+                    { numero: '3521-6680', label: 'Setor' }
+                ]
+            },
+            {
+                nome: 'Gabinete - SMDS',
+                categoria: 'administrativo',
+                icone: 'fa-briefcase',
+                numeros: [
+                    { numero: '3524-9118', label: 'Gabinete' }
+                ]
+            },
+            {
+                nome: 'DIVAD - Divisão ADM GM',
+                categoria: 'administrativo',
+                icone: 'fa-user-tie',
+                numeros: [
+                    { numero: '3518-1845', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'COAFIN (Ademir)',
+                categoria: 'administrativo',
+                icone: 'fa-calculator',
+                numeros: [
+                    { numero: '3521-6620', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'GETEC - Tecnologia',
+                categoria: 'administrativo',
+                icone: 'fa-microchip',
+                numeros: [
+                    { numero: '3521-6640', label: 'Central' },
+                    { numero: '3521-9021', label: 'Suporte' }
+                ]
+            },
+            {
+                nome: 'Logística - Depósito (CAM 3)',
+                categoria: 'administrativo',
+                icone: 'fa-warehouse',
+                numeros: [
+                    { numero: '3521-3078', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'RH - Prefeitura',
+                categoria: 'administrativo',
+                icone: 'fa-users-gear',
+                numeros: [
+                    { numero: '3521-6682', label: 'Central' },
+                    { numero: '3521-6857', label: 'Setor' }
+                ]
+            },
+            {
+                nome: 'Secretaria de Agricultura',
+                categoria: 'administrativo',
+                icone: 'fa-wheat-awn',
+                numeros: [
+                    { numero: '99149-2967', label: 'Plantão' },
+                    { numero: '3521-6645', label: 'Central' },
+                    { numero: '3521-4760', label: 'Setor' }
+                ]
+            },
+            {
+                nome: 'Permanência',
+                categoria: 'administrativo',
+                icone: 'fa-clock',
+                numeros: [
+                    { numero: '3521-6763', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Remoção de Animais de Grande Porte',
+                categoria: 'administrativo',
+                icone: 'fa-cow',
+                numeros: [
+                    { numero: '0800-281-9050', label: '0800' }
+                ]
+            },
+            {
+                nome: 'Djalma',
+                categoria: 'administrativo',
+                icone: 'fa-user',
+                numeros: [
+                    { numero: '3518-6268', label: 'Direto' }
+                ]
+            },
+            {
+                nome: 'Recepção',
+                categoria: 'administrativo',
+                icone: 'fa-bell-concierge',
+                numeros: [
+                    { numero: '3521-6268', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'CCO',
+                categoria: 'administrativo',
+                icone: 'fa-headset',
+                numeros: [
+                    { numero: '3521-6791', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'INSS',
+                categoria: 'administrativo',
+                icone: 'fa-building-columns',
+                numeros: [
+                    { numero: '135', label: 'Atendimento' }
+                ]
+            },
+            {
+                nome: 'CELPE',
+                categoria: 'administrativo',
+                icone: 'fa-bolt',
+                numeros: [
+                    { numero: '116', label: 'Atendimento' }
+                ]
+            },
+
+            // ===== SOCIAL =====
+            {
+                nome: 'Bem Fácil',
+                categoria: 'social',
+                icone: 'fa-hand-holding-heart',
+                numeros: [
+                    { numero: '3521-7595', label: 'Central' }
+                ]
+            },
+            {
+                nome: 'Conselho Tutelar',
+                categoria: 'social',
+                icone: 'fa-children',
+                numeros: [
+                    { numero: '(81) 9.9135-0934', label: 'Plantão' }
                 ]
             }
         ];
@@ -1177,7 +1356,6 @@
             // Aplica eventos de cópia
             grid.querySelectorAll('.numero-item').forEach(item => {
                 item.addEventListener('click', function(e) {
-                    // Se clicou no ícone de cópia ou no próprio item
                     const numero = this.dataset.numero;
                     copiarNumero(numero, this);
                 });
@@ -1189,14 +1367,12 @@
         // ============================================================
 
         async function copiarNumero(numero, elemento) {
-            // Remove formatação para copiar apenas dígitos? Não — mantém o formato original
             const textoParaCopiar = numero;
 
             try {
                 if (navigator.clipboard && window.isSecureContext) {
                     await navigator.clipboard.writeText(textoParaCopiar);
                 } else {
-                    // Fallback para navegadores antigos ou contexto não seguro
                     const textarea = document.createElement('textarea');
                     textarea.value = textoParaCopiar;
                     textarea.style.position = 'fixed';
@@ -1207,11 +1383,9 @@
                     document.body.removeChild(textarea);
                 }
 
-                // Feedback visual no item
                 elemento.classList.add('copiado');
                 setTimeout(() => elemento.classList.remove('copiado'), 1200);
 
-                // Toast de confirmação
                 mostrarToast(`"${textoParaCopiar}" copiado!`);
             } catch (error) {
                 console.error('Erro ao copiar:', error);
